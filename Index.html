@@ -1183,17 +1183,12 @@ function renderTable() {
     const idx = obj.idx;
     const tr = document.createElement("tr");
     const onDrink = isOnDrink(w.Drinkvenster);
-    const locationMissing = (w.Vak === null || w.Vak === undefined || w.Vak === "" || Number.isNaN(w.Vak));
 
-    let voorraadBadge = "";
-    if (w.Aantal <= 0) {
-      voorraadBadge = '<span class="tag tag-danger">Op</span>';
-    } else if (w.Aantal === 1) {
-      voorraadBadge = '<span class="tag tag-danger">Laatste fles</span>';
-    } else if (w.Aantal <= 3) {
-      voorraadBadge = '<span class="tag tag-ok">Lage voorraad</span>';
-    }
-
+let drinkBadge = "";
+// Badge alleen tonen in de "Alle wijnen"-view, niet in de "Nu op dronk"-tab
+if (onDrink && currentView === 'all') {
+  drinkBadge = '<span class="chip-badge">Nu op dronk</span>';
+}
     let drinkBadge = "";
     if (onDrink) {
       drinkBadge = '<span class="chip-badge">Nu op dronk</span>';
@@ -1226,20 +1221,17 @@ function renderTable() {
 
         tr.innerHTML = `
       <td>${vakDisplay}</td>
-            <td>
-        <div><strong>${w.Wijn || ""}</strong></div>
-        <div class="small">
-          ${typeLabel ? `<span class="tag">${typeLabel}</span>` : ""}
-          ${w.Foodpairing || ""}
-          ${drinkBadge}
-          ${infoBadge}
-        </div>
-      </td>
-      <td>${w.Jaargang || ""}</td>
-      <td>
-        <div>${w.Aantal}</div>
-        <div>${voorraadBadge}</div>
-      </td>
+         <td>
+  <div><strong>${w.Wijn || ""}</strong></div>
+  <div class="small">
+    ${typeLabel ? `<span class="tag">${typeLabel}</span>` : ""}
+    ${w.Foodpairing ? `<span class="fp-text">${w.Foodpairing}</span>` : ""}
+    <div class="small-line">
+      ${drinkBadge}
+      ${infoBadge}
+    </div>
+  </div>
+</td>
       <td>${priceText}</td>
       <td>${valueText}</td>
       <td>${w.Drinkvenster || ""}</td>

@@ -316,6 +316,10 @@
       Gebruik <strong>Fles genomen</strong> om de voorraad aan te passen. Met <strong>Locatie wijzigen</strong> kun je het vak van bestaande flessen corrigeren. Met <strong>Prijs instellen</strong> bewaar je een (huidige) prijs per fles. Wijzigingen worden lokaal bewaard in je browser.
     </div>
 
+    <div style="margin:8px 0 4px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button type="button" class="btn-ghost" onclick="autoFillAllDrinkWindows()">Drinkvenster aanvullen</button>
+    </div>
+
     <!-- Samenvattingsbalk -->
     <div id="summaryBar" class="summary-bar"></div>
 
@@ -759,7 +763,7 @@ const baseWines = [
 // Werkarray (met voorraadwijzigingen)
 let wines = [];
 let currentView = 'all'; // 'all' of 'onDrink'
-const STORAGE_KEY = 'wijnkelderData_v5_prijzen';
+const STORAGE_KEY = 'wijnkelderData_v6_drinkvenster';
 
 // Helper: eenvoudige inschatting type wijn o.b.v. naam
 function guessType(name) {
@@ -795,6 +799,62 @@ function isOnDrink(drinkvenster) {
   }
 
   return false;
+}
+
+// Automatisch drinkvenster schatten op basis van jaargang + type
+function estimateDrinkWindowForWine(w) {
+  const nowYear = new Date().getFullYear();
+  let y = parseInt(w.Jaargang, 10);
+  if (!y || isNaN(y)) return null;
+
+  const type = guessType(w.Wijn);
+  const name = (w.Wijn || "").toLowerCase();
+
+  let start, end;
+
+  if (type === 'wit') {
+    // Frisse witte + aromatische: eerder korter venster
+    start = Math.max(y + 1, nowYear);
+    end = start + 4;
+  } else if (type === 'bubbels') {
+    if (name.includes("champagne") || name.includes("gimonnet") || name.includes("de venoge")) {
+      // serieuze champagne
+      start = Math.max(y + 2, nowYear);
+      end = start + 8;
+    } else {
+      // andere bubbels
+      start = Math.max(y, nowYear);
+      end = start + 5;
+    }
+  } else if (type === 'rood') {
+    if (
+      name.includes("barolo") ||
+      name.includes("amarone") ||
+      name.includes("valpolicella") ||
+      name.includes("pingus") ||
+      name.includes("dal forno") ||
+      name.includes("ribera")
+    ) {
+      // grote bewaarwijnen
+      start = Math.max(y + 5, nowYear);
+      end = start + 15;
+    } else if (name.includes("riserva") || name.includes("superiore")) {
+      start = Math.max(y + 3, nowYear);
+      end = start + 10;
+    } else {
+      // standaard kwaliteitsrood
+      start = Math.max(y + 2, nowYear);
+      end = start + 6;
+    }
+  } else {
+    // fallback
+    start = Math.max(y + 1, nowYear);
+    end = start + 5;
+  }
+
+  if (end < start) end = start + 1;
+
+  return `${start}–${end}`;
 }
 
 function initData() {
@@ -965,6 +1025,7 @@ function renderTable() {
           <button class="btn-small" onclick="takeBottle(${idx})">Fles genomen</button>
           <button class="btn-small" onclick="editLocation(${idx})">Locatie wijzigen</button>
           <button class="btn-small" onclick="editPrice(${idx})">Prijs instellen</button>
+          <button class="btn-small" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
           <button class="btn-small" onclick="searchPrice(${idx})">Zoek prijs</button>
         </div>
       </td>
@@ -1053,6 +1114,43 @@ function searchPrice(idx) {
   const queryParts = [w.Wijn, w.Jaargang].filter(Boolean).join(" ");
   const url = "https://www.google.com/search?q=" + encodeURIComponent(queryParts + " prijs");
   window.open(url, "_blank");
+}
+
+function autoFillDrinkWindow(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const suggestion = estimateDrinkWindowForWine(w);
+  if (!suggestion) {
+    alert("Geen automatisch drinkvenster mogelijk (jaargang ontbreekt).");
+    return;
+  }
+  if (w.Drinkvenster && !confirm("Bestaand drinkvenster overschrijven?\nHuidig: " + w.Drinkvenster + "\nNieuw: " + suggestion)) {
+    return;
+  }
+  w.Drinkvenster = suggestion;
+  saveData();
+  renderTable();
+}
+
+function autoFillAllDrinkWindows() {
+  let changed = 0;
+  wines.forEach(w => {
+    const current = w.Drinkvenster ? String(w.Drinkvenster).trim() : "";
+    if (!current) {
+      const suggestion = estimateDrinkWindowForWine(w);
+      if (suggestion) {
+        w.Drinkvenster = suggestion;
+        changed++;
+      }
+    }
+  });
+  if (changed > 0) {
+    saveData();
+    renderTable();
+    alert(changed + " wijnen kregen een automatisch drinkvenster.");
+  } else {
+    alert("Geen wijnen gevonden zonder drinkvenster (of zonder jaargang).");
+  }
 }
 
 function setDishAndSuggest(text) {
@@ -1149,14 +1247,20 @@ function addWine(event) {
   const aankoopPrijs = aankoopPrijsVal ? parseFloat(aankoopPrijsVal.replace(",", ".")) : null;
   const huidigePrijs = huidigePrijsVal ? parseFloat(huidigePrijsVal.replace(",", ".")) : null;
 
+  const jaargangNum = jaargang ? parseInt(jaargang, 10) : null;
+  let autoDV = null;
+  if (!drink) {
+    autoDV = estimateDrinkWindowForWine({ Wijn: wijn, Jaargang: jaargangNum });
+  }
+
   const newWine = {
     Vak: parseInt(vak, 10),
     Wijn: wijn,
-    Jaargang: jaargang ? parseInt(jaargang, 10) : null,
+    Jaargang: jaargangNum,
     Aantal: isNaN(aantal) ? 1 : aantal,
     PrijsAankoop: !isNaN(aankoopPrijs) ? aankoopPrijs : null,
     PrijsHuidig: !isNaN(huidigePrijs) ? huidigePrijs : null,
-    Drinkvenster: drink || null,
+    Drinkvenster: drink || autoDV || null,
     Serveertemperatuur: serveer || null,
     Foodpairing: food || null,
     Notities: notes || null,
@@ -1180,7 +1284,7 @@ function clearAddForm() {
 }
 
 function resetAll() {
-  if (!confirm("Alle lokale wijzigingen (voorraad, locaties & toevoegingen) wissen en terug naar de basislijst?")) return;
+  if (!confirm("Alle lokale wijzigingen (voorraad, locaties, prijzen & drinkvensters) wissen en terug naar de basislijst?")) return;
   localStorage.removeItem(STORAGE_KEY);
   initData();
   fillVakFilter();
@@ -1194,7 +1298,3 @@ renderTable();
 
 </body>
 </html>
-
-
-
-   

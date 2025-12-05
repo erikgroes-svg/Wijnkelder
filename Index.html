@@ -1150,10 +1150,13 @@ function renderTable() {
         if (!inName && !inNotes && !inFood) return false;
       }
 
-           if (typeFilter) {
+      if (typeFilter) {
         const t = w.Type || guessType(w.Wijn);
         if (typeFilter === "dessert") {
-          if (!((w.Foodpairing || "").toLowerCase().includes("dessert") || (w.Notities || "").toLowerCase().includes("dessert"))) {
+          if (
+            !((w.Foodpairing || "").toLowerCase().includes("dessert") ||
+              (w.Notities || "").toLowerCase().includes("dessert"))
+          ) {
             return false;
           }
         } else if (t !== typeFilter) {
@@ -1184,17 +1187,28 @@ function renderTable() {
     const tr = document.createElement("tr");
     const onDrink = isOnDrink(w.Drinkvenster);
 
-let drinkBadge = "";
-// Badge alleen tonen in de "Alle wijnen"-view, niet in de "Nu op dronk"-tab
-if (onDrink && currentView === 'all') {
-  drinkBadge = '<span class="chip-badge">Nu op dronk</span>';
-}
+    // voorraad & locatie
+    const locationMissing =
+      w.Vak === null || w.Vak === undefined || w.Vak === "" || Number.isNaN(w.Vak);
+
+    let voorraadBadge = "";
+    if (w.Aantal <= 0) {
+      voorraadBadge = '<span class="tag tag-danger">Op</span>';
+    } else if (w.Aantal === 1) {
+      voorraadBadge = '<span class="tag tag-danger">Laatste fles</span>';
+    } else if (w.Aantal <= 3) {
+      voorraadBadge = '<span class="tag tag-ok">Lage voorraad</span>';
+    }
+
+    // Nu op dronk-badge enkel in "Alle wijnen"
     let drinkBadge = "";
-    if (onDrink) {
+    if (onDrink && currentView === 'all') {
       drinkBadge = '<span class="chip-badge">Nu op dronk</span>';
     }
 
-    let vakDisplay = locationMissing ? '<span class="tag tag-danger">Geen vak!</span>' : (w.Vak ?? '');
+    const vakDisplay = locationMissing
+      ? '<span class="tag tag-danger">Geen vak!</span>'
+      : (w.Vak ?? '');
 
     const price = w.PrijsHuidig != null ? Number(w.PrijsHuidig)
                  : w.PrijsAankoop != null ? Number(w.PrijsAankoop)
@@ -1212,6 +1226,7 @@ if (onDrink && currentView === 'all') {
     if (!w.Drinkvenster) {
       infoBadge += '<span class="tag">Geen drinkvenster</span>';
     }
+
     let typeLabel = "";
     const type = w.Type || guessType(w.Wijn);
     if (type === "wit") typeLabel = "Wit";
@@ -1219,19 +1234,24 @@ if (onDrink && currentView === 'all') {
     else if (type === "bubbels") typeLabel = "Mousserend";
     else if (type === "rose") typeLabel = "Rosé";
 
-        tr.innerHTML = `
+    tr.innerHTML = `
       <td>${vakDisplay}</td>
-         <td>
-  <div><strong>${w.Wijn || ""}</strong></div>
-  <div class="small">
-    ${typeLabel ? `<span class="tag">${typeLabel}</span>` : ""}
-    ${w.Foodpairing ? `<span class="fp-text">${w.Foodpairing}</span>` : ""}
-    <div class="small-line">
-      ${drinkBadge}
-      ${infoBadge}
-    </div>
-  </div>
-</td>
+      <td>
+        <div><strong>${w.Wijn || ""}</strong></div>
+        <div class="small">
+          ${typeLabel ? `<span class="tag">${typeLabel}</span>` : ""}
+          ${w.Foodpairing ? `<span class="fp-text">${w.Foodpairing}</span>` : ""}
+          <div class="small-line">
+            ${drinkBadge}
+            ${infoBadge}
+          </div>
+        </div>
+      </td>
+      <td>${w.Jaargang || ""}</td>
+      <td>
+        <div>${w.Aantal}</div>
+        <div>${voorraadBadge}</div>
+      </td>
       <td>${priceText}</td>
       <td>${valueText}</td>
       <td>${w.Drinkvenster || ""}</td>

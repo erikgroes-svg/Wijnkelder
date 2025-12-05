@@ -1357,47 +1357,98 @@ function searchPrice(idx) {
   const url = "https://www.google.com/search?q=" + encodeURIComponent(queryParts + " prijs");
   window.open(url, "_blank");
 }
-function editType(idx) {
+function editWine(idx) {
   const w = wines[idx];
   if (!w) return;
-  const current = w.Type || guessType(w.Wijn) || "";
-  const input = prompt(
-    "Type voor:\n" + (w.Wijn || "onbekende wijn") +
-    "\nMogelijkheden: wit, rood, rosé, mousserend",
-    current
+
+  // Naam
+  const newName = prompt(
+    "Nieuwe naam voor deze wijn (leeg laten = ongewijzigd):",
+    w.Wijn || ""
   );
-  if (input === null) return;
+  if (newName === null) return; // annuleren
+  if (newName.trim() !== "") w.Wijn = newName.trim();
 
-  const val = input.trim().toLowerCase();
-  let normalized = null;
-  if (val === "wit" || val === "white") normalized = "wit";
-  else if (val === "rood" || val === "red") normalized = "rood";
-  else if (val === "rose" || val === "rosé") normalized = "rose";
-  else if (val === "mousserend" || val === "bubbels" || val === "sparkling") normalized = "bubbels";
-
-  if (!normalized) {
-    alert("Onbekend type. Gebruik: wit, rood, rosé of mousserend.");
-    return;
+  // Jaargang
+  const newYear = prompt(
+    "Nieuwe jaargang (leeg laten = ongewijzigd):",
+    w.Jaargang != null ? String(w.Jaargang) : ""
+  );
+  if (newYear === null) return;
+  if (newYear.trim() !== "") {
+    const yr = parseInt(newYear.trim(), 10);
+    if (!isNaN(yr)) w.Jaargang = yr;
   }
+function deleteWine(idx) {
+  const w = wines[idx];
+  if (!w) return;
 
-  w.Type = normalized;
+  const ok = confirm(
+    "Ben je zeker dat je deze wijn volledig wilt verwijderen?\n\n" +
+    (w.Wijn || "Onbekende wijn") +
+    (w.Vak != null ? " (vak " + w.Vak + ")" : "")
+  );
+  if (!ok) return;
+
+  wines.splice(idx, 1);
   saveData();
+  fillVakFilter();
   renderTable();
 }
-// Auto drinkvenster
-function autoFillDrinkWindow(idx) {
-  const w = wines[idx];
-  if (!w) return;
-  const suggestion = estimateDrinkWindowForWine(w);
-  if (!suggestion) {
-    alert("Geen automatisch drinkvenster mogelijk (jaargang ontbreekt).");
-    return;
+  
+  // Vak
+  const newVak = prompt(
+    "Nieuw vak (leeg laten = ongewijzigd):",
+    (w.Vak != null && !Number.isNaN(w.Vak)) ? String(w.Vak) : ""
+  );
+  if (newVak === null) return;
+  if (newVak.trim() !== "") {
+    const vakNum = parseInt(newVak.trim(), 10);
+    w.Vak = isNaN(vakNum) ? newVak.trim() : vakNum;
   }
-  if (w.Drinkvenster && !confirm("Bestaand drinkvenster overschrijven?\nHuidig: " + w.Drinkvenster + "\nNieuw: " + suggestion)) {
-    return;
+
+  // Aantal
+  const newQty = prompt(
+    "Nieuw aantal flessen (leeg laten = ongewijzigd):",
+    w.Aantal != null ? String(w.Aantal) : ""
+  );
+  if (newQty === null) return;
+  if (newQty.trim() !== "") {
+    const q = parseInt(newQty.trim(), 10);
+    if (!isNaN(q) && q >= 0) w.Aantal = q;
   }
-  w.Drinkvenster = suggestion;
+
+  // Drinkvenster
+  const newDV = prompt(
+    "Nieuw drinkvenster (bijv. 2025–2030 of Nu drinken, leeg laten = ongewijzigd):",
+    w.Drinkvenster || ""
+  );
+  if (newDV === null) return;
+  if (newDV.trim() !== "") w.Drinkvenster = newDV.trim();
+
+  // Foodpairing
+  const newFP = prompt(
+    "Nieuwe foodpairing (leeg laten = ongewijzigd):",
+    w.Foodpairing || ""
+  );
+  if (newFP === null) return;
+  if (newFP.trim() !== "") w.Foodpairing = newFP.trim();
+
+  // Notities
+  const newNotes = prompt(
+    "Nieuwe notities (leeg laten = ongewijzigd):",
+    w.Notities || ""
+  );
+  if (newNotes === null) return;
+  if (newNotes.trim() !== "") w.Notities = newNotes.trim();
+
+  // Type eventueel herberekenen als naam verandert en geen expliciet type is ingesteld
+  if (!w.Type) {
+    w.Type = guessType(w.Wijn);
+  }
+
   saveData();
+  fillVakFilter();
   renderTable();
 }
 

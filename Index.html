@@ -931,10 +931,12 @@ const STORAGE_KEY = 'wijnkelderData_v7_fp';
 function guessType(name) {
   if (!name) return 'onbekend';
   const n = name.toLowerCase();
+  if (n.includes("rosé") || n.includes(" rose ")) return "rose";
   if (n.includes("champagne") || n.includes("cava") || n.includes("prosecco") || n.includes("crémant")) return "bubbels";
   if (n.includes("riesling") || n.includes("sauvignon") || n.includes("chardonnay") || n.includes("pinot grigio") || n.includes("veltliner") || n.includes("viognier")) return "wit";
   if (n.includes("barolo") || n.includes("barbera") || n.includes("nebbiolo") || n.includes("rioja") || n.includes("malbec") || n.includes("cabernet") || n.includes("merlot") || n.includes("syrah") || n.includes("shiraz")) return "rood";
   return "onbekend";
+}
 }
 
 // Is wijn nu op dronk?

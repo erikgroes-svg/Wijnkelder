@@ -1,267 +1,248 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mijn Wijnkelder – Voorraad & Sommelier</title>
-    .summary-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 10px;
-      font-size: 13px;
-    }
-    .summary-item {
-      background: #f2f2f7;
-      border-radius: 999px;
-      padding: 6px 12px;
-      display: inline-flex;
-      align-items: baseline;
-      gap: 6px;
-    }
-    .summary-item span.value {
-      font-weight: 600;
-    }
-
-    <style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mijn Wijnkelder – Voorraad & Sommelier</title>
+  <style>
     body {
-        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-        margin: 0;
-        background: #f5f5f7;
-        color: #222;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      background: #f5f5f7;
+      color: #222;
     }
     header {
-        background: #1b1b1f;
-        color: white;
-        padding: 22px 30px;
-        font-size: 26px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        justify-content: space-between;
+      background: #1b1b1f;
+      color: white;
+      padding: 22px 30px;
+      font-size: 26px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
     }
     header .title-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     header span.logo {
-        font-size: 30px;
+      font-size: 30px;
     }
     header .subtitle-top {
-        font-size: 12px;
-        opacity: 0.7;
-        font-weight: 400;
+      font-size: 12px;
+      opacity: 0.7;
+      font-weight: 400;
     }
     .container {
-        max-width: 1200px;
-        margin: auto;
-        padding: 24px 16px 40px;
+      max-width: 1200px;
+      margin: auto;
+      padding: 24px 16px 40px;
     }
     .panel-title {
-        font-size: 20px;
-        font-weight: 600;
-        margin-bottom: 6px;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 6px;
     }
     .subtitle {
-        font-size: 13px;
-        color: #666;
-        margin-bottom: 12px;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 12px;
     }
     .card {
-        background: white;
-        border-radius: 16px;
-        padding: 18px 18px 20px;
-        margin-bottom: 18px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      background: white;
+      border-radius: 16px;
+      padding: 18px 18px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
     }
     input, select, textarea {
-        padding: 9px 11px;
-        width: 100%;
-        border-radius: 10px;
-        border: 1px solid #d1d1d6;
-        font-size: 14px;
-        box-sizing: border-box;
-        outline: none;
-        transition: border 0.15s ease, box-shadow 0.15s ease;
-        font-family: inherit;
+      padding: 9px 11px;
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #d1d1d6;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border 0.15s ease, box-shadow 0.15s ease;
+      font-family: inherit;
     }
     textarea {
-        min-height: 60px;
-        resize: vertical;
+      min-height: 60px;
+      resize: vertical;
     }
     input:focus, select:focus, textarea:focus {
-        border-color: #3b73d1;
-        box-shadow: 0 0 0 1px rgba(59,115,209,0.35);
+      border-color: #3b73d1;
+      box-shadow: 0 0 0 1px rgba(59,115,209,0.35);
     }
     label {
-        font-size: 13px;
-        display: block;
-        margin-top: 8px;
-        margin-bottom: 4px;
+      font-size: 13px;
+      display: block;
+      margin-top: 8px;
+      margin-bottom: 4px;
     }
     table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-        font-size: 13px;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
     }
     th {
-        background: #e6e6e8;
-        text-align: left;
-        padding: 8px 6px;
-        font-weight: 600;
-        white-space: nowrap;
+      background: #e6e6e8;
+      text-align: left;
+      padding: 8px 6px;
+      font-weight: 600;
+      white-space: nowrap;
     }
     td {
-        padding: 7px 6px;
-        border-bottom: 1px solid #f0f0f0;
-        vertical-align: top;
+      padding: 7px 6px;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: top;
     }
     tr:last-child td {
-        border-bottom: none;
+      border-bottom: none;
     }
     .btn-primary, .btn-ghost {
-        padding: 9px 14px;
-        border-radius: 999px;
-        border: none;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
     .btn-primary {
-        background: #1b1b1f;
-        color: white;
+      background: #1b1b1f;
+      color: white;
     }
     .btn-primary:hover {
-        opacity: 0.92;
+      opacity: 0.92;
     }
     .btn-ghost {
-        background: #f2f2f7;
-        color: #222;
+      background: #f2f2f7;
+      color: #222;
     }
     .btn-ghost:hover {
-        background: #e5e5ea;
+      background: #e5e5ea;
     }
     .pill-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
     }
     .pill {
-        padding: 6px 10px;
-        border-radius: 999px;
-        border: 1px solid #d1d1d6;
-        font-size: 12px;
-        cursor: pointer;
-        background: #fcfcfd;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #d1d1d6;
+      font-size: 12px;
+      cursor: pointer;
+      background: #fcfcfd;
     }
     .pill.active {
-        border-color: #3b73d1;
-        background: #e5efff;
+      border-color: #3b73d1;
+      background: #e5efff;
     }
     .view-switch {
-        display: inline-flex;
-        border-radius: 999px;
-        background: #f2f2f7;
-        padding: 3px;
-        font-size: 13px;
-        margin-bottom: 6px;
+      display: inline-flex;
+      border-radius: 999px;
+      background: #f2f2f7;
+      padding: 3px;
+      font-size: 13px;
+      margin-bottom: 6px;
     }
     .view-switch button {
-        border-radius: 999px;
-        border: none;
-        padding: 6px 12px;
-        background: transparent;
-        cursor: pointer;
+      border-radius: 999px;
+      border: none;
+      padding: 6px 12px;
+      background: transparent;
+      cursor: pointer;
     }
     .view-switch button.active {
-        background: white;
-        box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
+      background: white;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.08);
     }
     .tag {
-        display: inline-block;
-        padding: 2px 8px;
-        border-radius: 999px;
-        font-size: 11px;
-        background: #efeff4;
-        margin-left: 4px;
-        color: #555;
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #efeff4;
+      margin-left: 4px;
+      color: #555;
     }
     .tag-danger {
-        background: #ffe6e6;
-        color: #b30000;
+      background: #ffe6e6;
+      color: #b30000;
     }
     .tag-ok {
-        background: #e4f8e4;
-        color: #116611;
+      background: #e4f8e4;
+      color: #116611;
     }
     .chip-badge {
-        font-size: 11px;
-        padding: 2px 7px;
-        border-radius: 999px;
-        background: #f2f2f7;
-        margin-left: 4px;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #f2f2f7;
+      margin-left: 4px;
     }
     .small {
-        font-size: 11px;
-        color: #666;
+      font-size: 11px;
+      color: #666;
     }
     .inline-actions {
-        display: flex;
-        gap: 4px;
-        flex-wrap: wrap;
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
     }
     .btn-small {
-        padding: 4px 8px;
-        border-radius: 999px;
-        border: 1px solid #d1d1d6;
-        background: #ffffff;
-        font-size: 11px;
-        cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid #d1d1d6;
+      background: #ffffff;
+      font-size: 11px;
+      cursor: pointer;
     }
     .btn-small:hover {
-        background: #f5f5f7;
+      background: #f5f5f7;
     }
     .sommelier-result {
-        margin-top: 10px;
-        padding: 10px 10px;
-        background: #f1f8ff;
-        border-left: 4px solid #3b73d1;
-        border-radius: 10px;
-        font-size: 13px;
-        line-height: 1.5;
+      margin-top: 10px;
+      padding: 10px 10px;
+      background: #f1f8ff;
+      border-left: 4px solid #3b73d1;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
     }
     .sommelier-row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
     }
     .sommelier-chip {
-        padding: 5px 9px;
-        border-radius: 999px;
-        background: #f2f2f7;
-        border: 1px solid #d1d1d6;
-        font-size: 12px;
-        cursor: pointer;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #f2f2f7;
+      border: 1px solid #d1d1d6;
+      font-size: 12px;
+      cursor: pointer;
     }
     .grid-add {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
-        gap: 10px 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+      gap: 10px 12px;
     }
     @media (max-width: 899px) {
-        header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 4px;
-        }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
     }
     .summary-bar {
       display: flex;
@@ -281,53 +262,54 @@
     .summary-item span.value {
       font-weight: 600;
     }
-</style>
+  </style>
 </head>
 <body>
 <header>
-    <div class="title-left">
-        <span class="logo">🍷</span>
-        <div>
-            Mijn Wijnkelder
-            <div class="subtitle-top">Voorraad · Locaties · Sommelier</div>
-        </div>
+  <div class="title-left">
+    <span class="logo">🍷</span>
+    <div>
+      Mijn Wijnkelder
+      <div class="subtitle-top">Voorraad · Locaties · Sommelier</div>
     </div>
-    <button class="btn-ghost" onclick="resetAll()">
-        Reset lokale wijzigingen
-    </button>
+  </div>
+  <button class="btn-ghost" onclick="resetAll()">
+    Reset lokale wijzigingen
+  </button>
 </header>
 
 <div class="container">
 
-    <!-- Zoek- en filterpaneel -->
-    <div class="card">
-        <div class="panel-title">Zoeken &amp; filteren</div>
-        <div class="subtitle">Bekijk alle wijnen of enkel degene die nu op dronk zijn. Filter per vak of type, en zoek op naam, notities of foodpairing.</div>
-
-        <div class="view-switch">
-            <button id="viewAll" class="active" onclick="setView('all')">Alle wijnen</button>
-            <button id="viewOnDrink" onclick="setView('onDrink')">Nu op dronk</button>
-        </div>
-
-        <input id="searchInput" type="text" placeholder="Zoek op naam, druif, notities..." oninput="renderTable()" />
-
-        <div style="margin-top:10px;">
-            <select id="vakFilter" onchange="renderTable()">
-                <option value="">— Filter op vak —</option>
-            </select>
-        </div>
-
-        <div class="pill-row">
-            <div class="pill" onclick="quickFilter('wit')" data-type="wit">Wit</div>
-            <div class="pill" onclick="quickFilter('rood')" data-type="rood">Rood</div>
-            <div class="pill" onclick="quickFilter('bubbels')" data-type="bubbels">Mousserend</div>
-            <div class="pill" onclick="quickFilter('dessert')" data-type="dessert">Dessert / zoet</div>
-            <div class="pill" onclick="clearTypeFilter()">Type wissen</div>
-        </div>
+  <!-- Zoek- en filterpaneel -->
+  <div class="card">
+    <div class="panel-title">Zoeken &amp; filteren</div>
+    <div class="subtitle">
+      Bekijk alle wijnen of enkel degene die nu op dronk zijn. Filter per vak of type, en zoek op naam, notities of foodpairing.
     </div>
 
-    <!-- Tabel + voorraad & locatie -->
-     <!-- Overzicht & voorraad -->
+    <div class="view-switch">
+      <button id="viewAll" class="active" onclick="setView('all')">Alle wijnen</button>
+      <button id="viewOnDrink" onclick="setView('onDrink')">Nu op dronk</button>
+    </div>
+
+    <input id="searchInput" type="text" placeholder="Zoek op naam, druif, notities..." oninput="renderTable()" />
+
+    <div style="margin-top:10px;">
+      <select id="vakFilter" onchange="renderTable()">
+        <option value="">— Filter op vak —</option>
+      </select>
+    </div>
+
+    <div class="pill-row">
+      <div class="pill" onclick="quickFilter('wit')" data-type="wit">Wit</div>
+      <div class="pill" onclick="quickFilter('rood')" data-type="rood">Rood</div>
+      <div class="pill" onclick="quickFilter('bubbels')" data-type="bubbels">Mousserend</div>
+      <div class="pill" onclick="quickFilter('dessert')" data-type="dessert">Dessert / zoet</div>
+      <div class="pill" onclick="clearTypeFilter()">Type wissen</div>
+    </div>
+  </div>
+
+  <!-- Overzicht & voorraad -->
   <div class="card">
     <div class="panel-title">Overzicht &amp; voorraad</div>
     <div class="subtitle small">
@@ -335,9 +317,7 @@
     </div>
 
     <!-- Samenvattingsbalk -->
-    <div id="summaryBar" class="summary-bar">
-      <!-- wordt dynamisch ingevuld met JS -->
-    </div>
+    <div id="summaryBar" class="summary-bar"></div>
 
     <table id="wineTable">
       <thead>
@@ -355,34 +335,35 @@
       <tbody></tbody>
     </table>
   </div>
-    <!-- Sommelier – compact -->
-    <div class="card">
-        <div class="panel-title">Sommelier (compact)</div>
-        <div class="subtitle small">
-            Snelle suggesties uit je eigen kelder. Kies een type gerecht of typ zelf iets in.
-        </div>
-        <input id="dishInput" type="text" placeholder="Bijv. kip in room-tomatensaus" />
-        <div class="sommelier-row">
-            <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('kip in room-tomatensaus')">Kip (roomsaus)</button>
-            <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('côte à l’os op de grill')">Rund / grill</button>
-            <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('gebakken vis')">Vis</button>
-            <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('aperitiefhapjes')">Aperitief</button>
-        </div>
-        <button class="btn-primary" style="margin-top:8px;" onclick="suggestWine()">
-            <span>Geef advies</span> <span>✨</span>
-        </button>
 
-        <div id="sommelierResult"></div>
+  <!-- Sommelier – compact -->
+  <div class="card">
+    <div class="panel-title">Sommelier (compact)</div>
+    <div class="subtitle small">
+      Snelle suggesties uit je eigen kelder. Kies een type gerecht of typ zelf iets in.
     </div>
+    <input id="dishInput" type="text" placeholder="Bijv. kip in room-tomatensaus" />
+    <div class="sommelier-row">
+      <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('kip in room-tomatensaus')">Kip (roomsaus)</button>
+      <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('côte à l’os op de grill')">Rund / grill</button>
+      <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('gebakken vis')">Vis</button>
+      <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('aperitiefhapjes')">Aperitief</button>
+    </div>
+    <button class="btn-primary" style="margin-top:8px;" onclick="suggestWine()">
+      <span>Geef advies</span> <span>✨</span>
+    </button>
 
-    <!-- Nieuwe fles toevoegen -->
-    <div class="card">
-        <div class="panel-title">Nieuwe fles toevoegen</div>
-        <div class="subtitle small">
-            Velden <strong>Vak</strong> en <strong>Wijn</strong> zijn verplicht. De locatie moet altijd ingevuld zijn zodat elke fles terug te vinden is.
-        </div>
-        <form id="addForm" onsubmit="addWine(event)">
-               <div class="grid-add">
+    <div id="sommelierResult"></div>
+  </div>
+
+  <!-- Nieuwe fles toevoegen -->
+  <div class="card">
+    <div class="panel-title">Nieuwe fles toevoegen</div>
+    <div class="subtitle small">
+      Velden <strong>Vak</strong> en <strong>Wijn</strong> zijn verplicht. De locatie moet altijd ingevuld zijn zodat elke fles terug te vinden is.
+    </div>
+    <form id="addForm" onsubmit="addWine(event)">
+      <div class="grid-add">
         <div>
           <label for="addVak">Vak *</label>
           <input id="addVak" type="number" min="0" step="1" required />
@@ -416,7 +397,19 @@
           <input id="addServeer" type="text" placeholder="Bijv. 8–10°C" />
         </div>
       </div>
-  
+      <label for="addFood">Foodpairing</label>
+      <input id="addFood" type="text" placeholder="Bijv. geitenkaas, asperges, lichte vis" />
+      <label for="addNotes">Notities</label>
+      <textarea id="addNotes" placeholder="Bijv. frisse stijl, citrus, ideaal als aperitief."></textarea>
+
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="submit" class="btn-primary">Fles toevoegen</button>
+        <button type="button" class="btn-ghost" onclick="clearAddForm()">Formulier leegmaken</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 // Ingebedde wijnkelderdata (basis) – lege lijnen al gefilterd in de bron
 const baseWines = [
@@ -766,91 +759,88 @@ const baseWines = [
 // Werkarray (met voorraadwijzigingen)
 let wines = [];
 let currentView = 'all'; // 'all' of 'onDrink'
-const STORAGE_KEY = 'wijnkelderData_v4';
+const STORAGE_KEY = 'wijnkelderData_v5_prijzen';
 
 // Helper: eenvoudige inschatting type wijn o.b.v. naam
 function guessType(name) {
-    if (!name) return 'onbekend';
-    const n = name.toLowerCase();
-    if (n.includes("champagne") || n.includes("cava") || n.includes("prosecco") || n.includes("crémant")) return "bubbels";
-    if (n.includes("riesling") || n.includes("sauvignon") || n.includes("chardonnay") || n.includes("pinot grigio") || n.includes("veltliner") || n.includes("viognier")) return "wit";
-    if (n.includes("barolo") || n.includes("barbera") || n.includes("nebbiolo") || n.includes("rioja") || n.includes("malbec") || n.includes("cabernet") || n.includes("merlot") || n.includes("syrah") || n.includes("shiraz")) return "rood";
-    return "onbekend";
+  if (!name) return 'onbekend';
+  const n = name.toLowerCase();
+  if (n.includes("champagne") || n.includes("cava") || n.includes("prosecco") || n.includes("crémant")) return "bubbels";
+  if (n.includes("riesling") || n.includes("sauvignon") || n.includes("chardonnay") || n.includes("pinot grigio") || n.includes("veltliner") || n.includes("viognier")) return "wit";
+  if (n.includes("barolo") || n.includes("barbera") || n.includes("nebbiolo") || n.includes("rioja") || n.includes("malbec") || n.includes("cabernet") || n.includes("merlot") || n.includes("syrah") || n.includes("shiraz")) return "rood";
+  return "onbekend";
 }
 
 // Helper: is wijn nu op dronk?
 function isOnDrink(drinkvenster) {
-    if (!drinkvenster) return false;
-    const txt = String(drinkvenster).toLowerCase();
-    const year = new Date().getFullYear();
+  if (!drinkvenster) return false;
+  const txt = String(drinkvenster).toLowerCase();
+  const year = new Date().getFullYear();
 
-    if (txt.includes("nu drinken") || txt.includes("nu op dronk") || txt.trim() === "nu") {
-        return true;
-    }
+  if (txt.includes("nu drinken") || txt.includes("nu op dronk") || txt.trim() === "nu") {
+    return true;
+  }
 
-    // Zoek jaar-range, bijv. 2024–2026
-    const rangeMatch = txt.match(/(\d{4})\D+(\d{4})/);
-    if (rangeMatch) {
-        const start = parseInt(rangeMatch[1], 10);
-        const end = parseInt(rangeMatch[2], 10);
-        return year >= start && year <= end;
-    }
+  const rangeMatch = txt.match(/(\d{4})\D+(\d{4})/);
+  if (rangeMatch) {
+    const start = parseInt(rangeMatch[1], 10);
+    const end = parseInt(rangeMatch[2], 10);
+    return year >= start && year <= end;
+  }
 
-    // Enkel jaar
-    const singleMatch = txt.match(/(\d{4})/);
-    if (singleMatch) {
-        const y = parseInt(singleMatch[1], 10);
-        // Vereenvoudigd: beschouw als op dronk in dat jaar en +-1 jaar
-        return Math.abs(year - y) <= 1;
-    }
+  const singleMatch = txt.match(/(\d{4})/);
+  if (singleMatch) {
+    const y = parseInt(singleMatch[1], 10);
+    return Math.abs(year - y) <= 1;
+  }
 
-    return false;
+  return false;
 }
 
 function initData() {
-    // probeer lokale opslag te laden
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-        try {
-            wines = JSON.parse(stored);
-        } catch (e) {
-            wines = baseWines.slice();
-        }
-    } else {
-        wines = baseWines.slice();
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored) {
+    try {
+      wines = JSON.parse(stored);
+    } catch (e) {
+      wines = baseWines.slice();
     }
+  } else {
+    wines = baseWines.slice();
+  }
 
-    // Voeg index en defaultwaarden toe
-    wines.forEach((w, idx) => {
-        if (w._id == null) w._id = idx;
-        if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
-        // LastDrunk optioneel, laten staan als die al bestaat
-    });
+  wines.forEach((w, idx) => {
+    if (w._id == null) w._id = idx;
+    if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
+  });
 }
 
 function saveData() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(wines));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(wines));
 }
 
 function fillVakFilter() {
-    const filter = document.getElementById("vakFilter");
-    filter.innerHTML = '<option value="">— Filter op vak —</option>';
-    const uniqueVakken = [...new Set(wines.map(w => w.Vak))].filter(v => v !== null && v !== undefined && v !== "").sort((a,b) => a - b);
+  const filter = document.getElementById("vakFilter");
+  filter.innerHTML = '<option value="">— Filter op vak —</option>';
+  const uniqueVakken = [...new Set(wines.map(w => w.Vak))]
+    .filter(v => v !== null && v !== undefined && v !== "" && !Number.isNaN(v))
+    .sort((a,b) => a - b);
 
-    uniqueVakken.forEach(v => {
-        const opt = document.createElement("option");
-        opt.value = v;
-        opt.textContent = "Vak " + v;
-        filter.appendChild(opt);
-    });
+  uniqueVakken.forEach(v => {
+    const opt = document.createElement("option");
+    opt.value = v;
+    opt.textContent = "Vak " + v;
+    filter.appendChild(opt);
+  });
 }
 
 function setView(view) {
-    currentView = view;
-    document.getElementById('viewAll').classList.toggle('active', view === 'all');
-    document.getElementById('viewOnDrink').classList.toggle('active', view === 'onDrink');
-    renderTable();
+  currentView = view;
+  document.getElementById('viewAll').classList.toggle('active', view === 'all');
+  document.getElementById('viewOnDrink').classList.toggle('active', view === 'onDrink');
+  renderTable();
 }
+
 function updateSummary() {
   const el = document.getElementById("summaryBar");
   if (!el) return;
@@ -885,7 +875,6 @@ function updateSummary() {
 }
 
 function renderTable() {
-   function renderTable() {
   const tbody = document.querySelector("#wineTable tbody");
   tbody.innerHTML = "";
 
@@ -895,7 +884,7 @@ function renderTable() {
   const typeFilter = activePill ? activePill.getAttribute("data-type") : null;
 
   const rows = wines
-    .map((w, idx) => { return { w, idx }; })
+    .map((w, idx) => ({ w, idx }))
     .filter(obj => {
       const w = obj.w;
       if (currentView === 'onDrink' && !isOnDrink(w.Drinkvenster)) return false;
@@ -927,7 +916,7 @@ function renderTable() {
     const idx = obj.idx;
     const tr = document.createElement("tr");
     const onDrink = isOnDrink(w.Drinkvenster);
-    const locationMissing = (w.Vak === null || w.Vak === undefined || w.Vak === "");
+    const locationMissing = (w.Vak === null || w.Vak === undefined || w.Vak === "" || Number.isNaN(w.Vak));
 
     let voorraadBadge = "";
     if (w.Aantal <= 0) {
@@ -986,107 +975,60 @@ function renderTable() {
   updateSummary();
 }
 
-            if (typeFilter) {
-                const t = guessType(w.Wijn);
-                if (typeFilter === "dessert") {
-                    if (!((w.Foodpairing || "").toLowerCase().includes("dessert") || (w.Notities || "").toLowerCase().includes("dessert"))) {
-                        return false;
-                    }
-                } else if (t !== typeFilter) {
-                    return false;
-                }
-            }
-            return true;
-        });
-
-    rows.forEach(obj => {
-        const w = obj.w;
-        const idx = obj.idx;
-        const tr = document.createElement("tr");
-        const onDrink = isOnDrink(w.Drinkvenster);
-        const locationMissing = (w.Vak === null || w.Vak === undefined || w.Vak === "");
-
-        let voorraadBadge = "";
-        if (w.Aantal <= 0) {
-            voorraadBadge = '<span class="tag tag-danger">Op</span>';
-        } else if (w.Aantal === 1) {
-            voorraadBadge = '<span class="tag tag-danger">Laatste fles</span>';
-        } else if (w.Aantal <= 3) {
-            voorraadBadge = '<span class="tag tag-ok">Lage voorraad</span>';
-        }
-
-        let drinkBadge = "";
-        if (onDrink) {
-            drinkBadge = '<span class="chip-badge">Nu op dronk</span>';
-        }
-
-        let vakDisplay = locationMissing ? '<span class="tag tag-danger">Geen vak!</span>' : (w.Vak ?? '');
-
-        tr.innerHTML = `
-            <td>${vakDisplay}</td>
-            <td>
-                <div><strong>${w.Wijn || ""}</strong></div>
-                <div class="small">
-                    ${w.Foodpairing || ""}
-                    ${drinkBadge}
-                </div>
-            </td>
-            <td>${w.Jaargang || ""}</td>
-            <td>
-                <div>${w.Aantal}</div>
-                <div>${voorraadBadge}</div>
-            </td>
-            <td>${w.Drinkvenster || ""}</td>
-            <td>
-                <div class="inline-actions">
-                    <button class="btn-small" onclick="takeBottle(${idx})">Fles genomen</button>
-                    <button class="btn-small" onclick="editLocation(${idx})">Locatie wijzigen</button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(tr);
-    });
-}
-
 function quickFilter(type) {
-    document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
-    const selected = Array.from(document.querySelectorAll(".pill")).find(p => p.getAttribute("data-type") === type);
-    if (selected) selected.classList.add("active");
-    renderTable();
+  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  const selected = Array.from(document.querySelectorAll(".pill")).find(p => p.getAttribute("data-type") === type);
+  if (selected) selected.classList.add("active");
+  renderTable();
 }
 
 function clearTypeFilter() {
-    document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
-    renderTable();
+  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  renderTable();
 }
 
 function resetFilters() {
-    document.getElementById("searchInput").value = "";
-    document.getElementById("vakFilter").value = "";
-    document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
-    setView('all');
-    renderTable();
+  document.getElementById("searchInput").value = "";
+  document.getElementById("vakFilter").value = "";
+  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  setView('all');
+  renderTable();
 }
 
 function takeBottle(idx) {
-    const w = wines[idx];
-    if (!w) return;
-    if (!w.Aantal || w.Aantal <= 0) {
-        alert("Er zijn geen flessen meer in voorraad van deze wijn.");
-        return;
-    }
-    if (!confirm("Bevestig: 1 fles genomen van\n" + (w.Wijn || "onbekende wijn") + " (vak " + (w.Vak ?? "?") + ")")) {
-        return;
-    }
-    w.Aantal = (w.Aantal || 0) - 1;
-    // Bewaar datum van laatste gedronken fles
-    w.LastDrunk = new Date().toISOString();
-    saveData();
-    renderTable();
+  const w = wines[idx];
+  if (!w) return;
+  if (!w.Aantal || w.Aantal <= 0) {
+    alert("Er zijn geen flessen meer in voorraad van deze wijn.");
+    return;
+  }
+  if (!confirm("Bevestig: 1 fles genomen van\n" + (w.Wijn || "onbekende wijn") + " (vak " + (w.Vak ?? "?") + ")")) {
+    return;
+  }
+  w.Aantal = (w.Aantal || 0) - 1;
+  w.LastDrunk = new Date().toISOString();
+  saveData();
+  renderTable();
 }
 
 function editLocation(idx) {
-    function editPrice(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const currentVak = (w.Vak !== null && w.Vak !== undefined && !Number.isNaN(w.Vak)) ? w.Vak : "";
+  const newVak = prompt("Nieuwe vaklocatie voor:\n" + (w.Wijn || "onbekende wijn"), currentVak);
+  if (newVak === null) return;
+  if (String(newVak).trim() === "") {
+    alert("Vak mag niet leeg zijn. De locatie van een fles moet altijd ingevuld blijven.");
+    return;
+  }
+  const vakNum = parseInt(newVak, 10);
+  w.Vak = isNaN(vakNum) ? newVak.trim() : vakNum;
+  saveData();
+  fillVakFilter();
+  renderTable();
+}
+
+function editPrice(idx) {
   const w = wines[idx];
   if (!w) return;
   const currentPrice = w.PrijsHuidig != null ? w.PrijsHuidig : w.PrijsAankoop;
@@ -1095,7 +1037,7 @@ function editLocation(idx) {
     currentPrice != null ? String(currentPrice) : ""
   );
   if (input === null) return;
-  const val = parseFloat(input.replace(",", "."));
+  const val = parseFloat(String(input).replace(",", "."));
   if (isNaN(val) || val < 0) {
     alert("Ongeldige prijs.");
     return;
@@ -1113,97 +1055,79 @@ function searchPrice(idx) {
   window.open(url, "_blank");
 }
 
-    const w = wines[idx];
-    if (!w) return;
-    const currentVak = (w.Vak !== null && w.Vak !== undefined) ? w.Vak : "";
-    const newVak = prompt("Nieuwe vaklocatie voor:\n" + (w.Wijn || "onbekende wijn"), currentVak);
-    if (newVak === null) return; // geannuleerd
-    if (String(newVak).trim() === "") {
-        alert("Vak mag niet leeg zijn. De locatie van een fles moet altijd ingevuld blijven.");
-        return;
-    }
-    const vakNum = parseInt(newVak, 10);
-    w.Vak = isNaN(vakNum) ? newVak.trim() : vakNum;
-    saveData();
-    fillVakFilter();
-    renderTable();
-}
-
 function setDishAndSuggest(text) {
-    document.getElementById('dishInput').value = text;
-    suggestWine();
+  document.getElementById('dishInput').value = text;
+  suggestWine();
 }
 
 function formatLastDrunk(last) {
-    if (!last) return "";
-    const d = new Date(last);
-    if (isNaN(d.getTime())) return "";
-    return d.toLocaleDateString('nl-BE');
+  if (!last) return "";
+  const d = new Date(last);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleDateString('nl-BE');
 }
 
 function suggestWine() {
-    const dish = document.getElementById("dishInput").value.toLowerCase();
-    const result = document.getElementById("sommelierResult");
-    result.innerHTML = "";
+  const dish = document.getElementById("dishInput").value.toLowerCase();
+  const result = document.getElementById("sommelierResult");
+  result.innerHTML = "";
 
-    if (!dish) {
-        result.innerHTML = "<div class='sommelier-result'>⚠️ Geef een gerecht in om advies te krijgen.</div>";
-        return;
-    }
+  if (!dish) {
+    result.innerHTML = "<div class='sommelier-result'>⚠️ Geef een gerecht in om advies te krijgen.</div>";
+    return;
+  }
 
-    let candidates = wines.filter(w => (w.Aantal || 0) > 0);
+  let candidates = wines.filter(w => (w.Aantal || 0) > 0);
 
-    if (dish.includes("kip") || dish.includes("poulet") || dish.includes("gevogelte")) {
-        candidates = candidates.filter(w =>
-            (w.Foodpairing || "").toLowerCase().includes("kip") ||
-            guessType(w.Wijn) === "wit"
-        );
-    } else if (dish.includes("rund") || dish.includes("steak") || dish.includes("côte") || dish.includes("os")) {
-        candidates = candidates.filter(w =>
-            guessType(w.Wijn) === "rood"
-        );
-    } else if (dish.includes("vis") || dish.includes("fish") || dish.includes("zee") || dish.includes("scampi") || dish.includes("gamba") || dish.includes("oester")) {
-        candidates = candidates.filter(w =>
-            (w.Foodpairing || "").toLowerCase().includes("vis") ||
-            guessType(w.Wijn) === "wit" || guessType(w.Wijn) === "bubbels"
-        );
-    } else if (dish.includes("aperitief") || dish.includes("aperitiefhapjes") || dish.includes("aperitif")) {
-        candidates = candidates.filter(w =>
-            guessType(w.Wijn) === "bubbels" || (w.Foodpairing || "").toLowerCase().includes("aperitief")
-        );
-    }
+  if (dish.includes("kip") || dish.includes("poulet") || dish.includes("gevogelte")) {
+    candidates = candidates.filter(w =>
+      (w.Foodpairing || "").toLowerCase().includes("kip") ||
+      guessType(w.Wijn) === "wit"
+    );
+  } else if (dish.includes("rund") || dish.includes("steak") || dish.includes("côte") || dish.includes("os")) {
+    candidates = candidates.filter(w =>
+      guessType(w.Wijn) === "rood"
+    );
+  } else if (dish.includes("vis") || dish.includes("fish") || dish.includes("zee") || dish.includes("scampi") || dish.includes("gamba") || dish.includes("oester")) {
+    candidates = candidates.filter(w =>
+      (w.Foodpairing || "").toLowerCase().includes("vis") ||
+      guessType(w.Wijn) === "wit" || guessType(w.Wijn) === "bubbels"
+    );
+  } else if (dish.includes("aperitief") || dish.includes("aperitiefhapjes") || dish.includes("aperitif")) {
+    candidates = candidates.filter(w =>
+      guessType(w.Wijn) === "bubbels" || (w.Foodpairing || "").toLowerCase().includes("aperitief")
+    );
+  }
 
-    if (candidates.length === 0) {
-        candidates = wines.filter(w => (w.Aantal || 0) > 0);
-    }
-    if (candidates.length === 0) {
-        result.innerHTML = "<div class='sommelier-result'>Er zijn geen flessen meer in voorraad.</div>";
-        return;
-    }
+  if (candidates.length === 0) {
+    candidates = wines.filter(w => (w.Aantal || 0) > 0);
+  }
+  if (candidates.length === 0) {
+    result.innerHTML = "<div class='sommelier-result'>Er zijn geen flessen meer in voorraad.</div>";
+    return;
+  }
 
-    // Kies eerste kandidaat die nu op dronk is, anders gewoon eerste
-    let matchWine = candidates.find(w => isOnDrink(w.Drinkvenster)) || candidates[0];
+  let matchWine = candidates.find(w => isOnDrink(w.Drinkvenster)) || candidates[0];
 
-    const weetje = matchWine.Notities || "Geen extra notities, maar dit is een interessante fles uit je kelder.";
-    const drink = matchWine.Drinkvenster ? `Drinkvenster: ${matchWine.Drinkvenster}.` : "";
-    const serveer = matchWine.Serveertemperatuur ? `Serveer rond ${matchWine.Serveertemperatuur}.` : "";
-    const vakInfo = matchWine.Vak ? `De fles ligt in vak ${matchWine.Vak}.` : "Locatie: vak nog niet ingevuld – graag aanvullen in het kelderoverzicht.";
-    const lastDrunkText = matchWine.LastDrunk ? `Laatst gedronken op ${formatLastDrunk(matchWine.LastDrunk)}.` : "";
+  const weetje = matchWine.Notities || "Geen extra notities, maar dit is een interessante fles uit je kelder.";
+  const drink = matchWine.Drinkvenster ? `Drinkvenster: ${matchWine.Drinkvenster}.` : "";
+  const serveer = matchWine.Serveertemperatuur ? `Serveer rond ${matchWine.Serveertemperatuur}.` : "";
+  const vakInfo = matchWine.Vak ? `De fles ligt in vak ${matchWine.Vak}.` : "Locatie: vak nog niet ingevuld – graag aanvullen in het kelderoverzicht.";
+  const lastDrunkText = matchWine.LastDrunk ? `Laatst gedronken op ${formatLastDrunk(matchWine.LastDrunk)}.` : "";
 
-    result.innerHTML = `
-        <div class="sommelier-result">
-            <strong>Advies:</strong> ${matchWine.Wijn} (jaargang ${matchWine.Jaargang || "n.v.t."})<br>
-            ${matchWine.Vak ? `<span class="tag">Vak ${matchWine.Vak}</span>` : `<span class="tag tag-danger">Geen vak ingevuld</span>`}
-            <br><br>
-            <strong>Weetje:</strong> ${weetje}<br>
-            ${drink} ${serveer} ${lastDrunkText}<br><br>
-            <em>${vakInfo}</em>
-        </div>
-    `;
+  result.innerHTML = `
+    <div class="sommelier-result">
+      <strong>Advies:</strong> ${matchWine.Wijn} (jaargang ${matchWine.Jaargang || "n.v.t."})<br>
+      ${matchWine.Vak ? `<span class="tag">Vak ${matchWine.Vak}</span>` : `<span class="tag tag-danger">Geen vak ingevuld</span>`}
+      <br><br>
+      <strong>Weetje:</strong> ${weetje}<br>
+      ${drink} ${serveer} ${lastDrunkText}<br><br>
+      <em>${vakInfo}</em>
+    </div>
+  `;
 }
 
-// Nieuwe fles toevoegen – met verplichte locatie
- function addWine(event) {
+function addWine(event) {
   event.preventDefault();
   const vak = document.getElementById('addVak').value.trim();
   const wijn = document.getElementById('addWijn').value.trim();
@@ -1246,43 +1170,23 @@ function suggestWine() {
   clearAddForm();
 }
 
-
-    const aantal = aantalVal ? parseInt(aantalVal, 10) : 1;
-
-    const newWine = {
-        Vak: parseInt(vak, 10),
-        Wijn: wijn,
-        Jaargang: jaargang ? parseInt(jaargang, 10) : null,
-        Aantal: isNaN(aantal) ? 1 : aantal,
-        Drinkvenster: drink || null,
-        Serveertemperatuur: serveer || null,
-        Foodpairing: food || null,
-        Notities: notes || null,
-        _id: wines.length ? (Math.max(...wines.map(w => w._id || 0)) + 1) : 1
-    };
-
-    wines.push(newWine);
-    saveData();
-    fillVakFilter();
-    renderTable();
-    clearAddForm();
-}
-
 function clearAddForm() {
-    document.getElementById('addForm').reset();
-    document.getElementById('addAantal').value = "1";
+  document.getElementById('addForm').reset();
+  document.getElementById('addAantal').value = "1";
+  const p1 = document.getElementById('addAankoopPrijs');
+  const p2 = document.getElementById('addHuidigePrijs');
+  if (p1) p1.value = "";
+  if (p2) p2.value = "";
 }
 
-// Reset alles naar oorspronkelijke data (handig als het ooit fout loopt)
 function resetAll() {
-    if (!confirm("Alle lokale wijzigingen (voorraad, locaties & toevoegingen) wissen en terug naar de basislijst?")) return;
-    localStorage.removeItem(STORAGE_KEY);
-    initData();
-    fillVakFilter();
-    resetFilters();
+  if (!confirm("Alle lokale wijzigingen (voorraad, locaties & toevoegingen) wissen en terug naar de basislijst?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  initData();
+  fillVakFilter();
+  resetFilters();
 }
 
-// Init
 initData();
 fillVakFilter();
 renderTable();
@@ -1290,3 +1194,7 @@ renderTable();
 
 </body>
 </html>
+
+
+
+   

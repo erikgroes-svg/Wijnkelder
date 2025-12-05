@@ -1256,16 +1256,18 @@ function renderTable() {
       <td>${valueText}</td>
       <td>${w.Drinkvenster || ""}</td>
       <td>
-        <div class="inline-actions">
-          <button class="btn-small" onclick="takeBottle(${idx})">Fles genomen</button>
-          <button class="btn-small" onclick="editLocation(${idx})">Locatie wijzigen</button>
-          <button class="btn-small" onclick="editPrice(${idx})">Prijs instellen</button>
-          <button class="btn-small" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
-          <button class="btn-small" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
-          <button class="btn-small" onclick="searchPrice(${idx})">Zoek prijs</button>
-          <button class="btn-small" onclick="editType(${idx})">Type</button>
-        </div>
-      </td>
+  <div class="inline-actions">
+    <button class="btn-small" onclick="takeBottle(${idx})">Fles genomen</button>
+    <button class="btn-small" onclick="editLocation(${idx})">Locatie wijzigen</button>
+    <button class="btn-small" onclick="editPrice(${idx})">Prijs instellen</button>
+    <button class="btn-small" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
+    <button class="btn-small" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
+    <button class="btn-small" onclick="searchPrice(${idx})">Zoek prijs</button>
+    <button class="btn-small" onclick="editType(${idx})">Type</button>
+    <button class="btn-small" onclick="editWine(${idx})">Bewerken</button>
+    <button class="btn-small" onclick="deleteWine(${idx})">Verwijderen</button>
+  </div>
+</td>
     `;
 
     tbody.appendChild(tr);

@@ -1057,6 +1057,49 @@ function updateSummary() {
     if (price != null && !isNaN(price)) {
       totalValue += aantal * price;
     }
+  // Automatisch foodpairing schatten op basis van type + naam
+function estimateFoodpairingForWine(w) {
+  const name = (w.Wijn || "").toLowerCase();
+  const type = guessType(w.Wijn);
+
+  // Mousserend
+  if (type === "bubbels" || name.includes("champagne") || name.includes("cava")) {
+    return "Aperitief, oesters, zeevruchten, sushi, lichte hapjes";
+  }
+
+  // Witte frisse/aromatische wijnen
+  if (type === "wit") {
+    if (name.includes("sauvignon") || name.includes("assyrtiko") || name.includes("riesling")) {
+      return "Geitenkaas, salades, asperges, zeevruchten en lichte visgerechten";
+    }
+    if (name.includes("chardonnay")) {
+      return "Gevogelte, romige sauzen, rijke visgerechten en kreeft";
+    }
+    return "Visgerechten, schaal- en schelpdieren, salades en lichte witvleesgerechten";
+  }
+
+  // Rode wijnen – grote bewaarwijnen
+  if (type === "rood") {
+    if (name.includes("barolo") || name.includes("nebbiolo")) {
+      return "Rood vlees, wild, truffelgerechten en gerijpte harde kazen";
+    }
+    if (name.includes("amarone") || name.includes("valpolicella") || name.includes("ripasso")) {
+      return "Wild, stoofpotten, krachtige vleesgerechten en gerijpte kazen";
+    }
+    if (name.includes("pinot noir")) {
+      return "Eend, gevogelte, kalfsvlees en gerechten met paddenstoelen";
+    }
+    if (name.includes("ribera") || name.includes("rioja") || name.includes("bordeaux") || name.includes("cabernet") || name.includes("merlot")) {
+      return "Gegrild rood vlees, lamsvlees, stoofgerechten en harde kazen";
+    }
+    // overige rood
+    return "Gegrild vlees, stoofpotten, charcuterie en gerijpte kazen";
+  }
+
+  // Fallback
+  return "Algemene vlees- en pastagerechten, gegrilde groenten en kazen";
+}
+ 
   });
 
   const valueText = totalValue > 0 ? `€ ${totalValue.toFixed(0)}` : "—";
@@ -1315,6 +1358,42 @@ function autoFillAllDrinkWindows() {
     alert("Geen wijnen gevonden zonder drinkvenster (of zonder jaargang).");
   }
 }
+function autoFillFoodpairing(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const suggestion = estimateFoodpairingForWine(w);
+  if (!suggestion) {
+    alert("Geen automatische foodpairing beschikbaar.");
+    return;
+  }
+  if (w.Foodpairing && !confirm("Bestaande foodpairing overschrijven?\nHuidig: " + w.Foodpairing + "\nNieuw: " + suggestion)) {
+    return;
+  }
+  w.Foodpairing = suggestion;
+  saveData();
+  renderTable();
+}
+
+function autoFillAllFoodpairings() {
+  let changed = 0;
+  wines.forEach(w => {
+    const current = w.Foodpairing ? String(w.Foodpairing).trim() : "";
+    if (!current) {
+      const suggestion = estimateFoodpairingForWine(w);
+      if (suggestion) {
+        w.Foodpairing = suggestion;
+        changed++;
+      }
+    }
+  });
+  if (changed > 0) {
+    saveData();
+    renderTable();
+    alert(changed + " wijnen kregen een automatische foodpairing.");
+  } else {
+    alert("Geen wijnen gevonden zonder foodpairing.");
+  }
+}
 
 function setDishAndSuggest(text) {
   document.getElementById('dishInput').value = text;
@@ -1415,6 +1494,10 @@ function addWine(event) {
   if (!drink) {
     autoDV = estimateDrinkWindowForWine({ Wijn: wijn, Jaargang: jaargangNum });
   }
+  let autoFP = null;
+  if (!food) {
+    autoFP = estimateFoodpairingForWine({ Wijn: wijn });
+  }
 
   const newWine = {
     Vak: parseInt(vak, 10),
@@ -1425,7 +1508,7 @@ function addWine(event) {
     PrijsHuidig: !isNaN(huidigePrijs) ? huidigePrijs : null,
     Drinkvenster: drink || autoDV || null,
     Serveertemperatuur: serveer || null,
-    Foodpairing: food || null,
+     Foodpairing: food || autoFP || null,
     Notities: notes || null,
     _id: wines.length ? (Math.max(...wines.map(w => w._id || 0)) + 1) : 1
   };

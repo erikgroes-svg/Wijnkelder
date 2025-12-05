@@ -1061,10 +1061,14 @@ function initData() {
     wines = baseWines.slice();
   }
 
-  wines.forEach((w, idx) => {
-    if (w._id == null) w._id = idx;
-    if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
-  });
+ wines.forEach((w, idx) => {
+  if (w._id == null) w._id = idx;
+  if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
+  if (!w.Type) {
+    w.Type = guessType(w.Wijn);
+  }
+});
+
 }
 
 function saveData() {

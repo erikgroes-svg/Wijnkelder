@@ -1193,13 +1193,14 @@ function renderTable() {
       infoBadge += '<span class="tag">Geen drinkvenster</span>';
     }
 
-    tr.innerHTML = `
+        tr.innerHTML = `
       <td>${vakDisplay}</td>
       <td>
         <div><strong>${w.Wijn || ""}</strong></div>
         <div class="small">
           ${w.Foodpairing || ""}
           ${drinkBadge}
+          ${infoBadge}
         </div>
       </td>
       <td>${w.Jaargang || ""}</td>
@@ -1209,10 +1210,7 @@ function renderTable() {
       </td>
       <td>${priceText}</td>
       <td>${valueText}</td>
-      <td>
-        ${w.Drinkvenster || ""}
-        ${infoBadge}
-      </td>
+      <td>${w.Drinkvenster || ""}</td>
       <td>
         <div class="inline-actions">
           <button class="btn-small" onclick="takeBottle(${idx})">Fles genomen</button>
@@ -1224,6 +1222,7 @@ function renderTable() {
         </div>
       </td>
     `;
+
     tbody.appendChild(tr);
   });
 

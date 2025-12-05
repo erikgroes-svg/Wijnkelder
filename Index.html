@@ -157,6 +157,21 @@
       border-bottom: 1px solid #f0f0f4;
       vertical-align: top;
     }
+/* numerieke kolommen rechts uitlijnen */
+#wineTable td:nth-child(4),
+#wineTable td:nth-child(5),
+#wineTable td:nth-child(6),
+#wineTable th:nth-child(4),
+#wineTable th:nth-child(5),
+#wineTable th:nth-child(6) {
+  text-align: right;
+}
+
+/* rijen een tikje compacter */
+#wineTable td {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
 
     tr:last-child td {
       border-bottom: none;

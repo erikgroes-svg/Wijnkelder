@@ -1102,7 +1102,27 @@ function renderTable() {
         }
       }
       return true;
+    })
+    .sort((a, b) => {
+      const wA = a.w;
+      const wB = b.w;
+
+      // Vak sorteren (lege of NaN vakken helemaal achteraan)
+      const vakA = (!wA.Vak && wA.Vak !== 0) || Number.isNaN(wA.Vak) ? 9999 : Number(wA.Vak);
+      const vakB = (!wB.Vak && wB.Vak !== 0) || Number.isNaN(wB.Vak) ? 9999 : Number(wB.Vak);
+      if (vakA !== vakB) return vakA - vakB;
+
+      // Binnen hetzelfde vak: naam alfabetisch
+      const nameA = (wA.Wijn || "").toLowerCase();
+      const nameB = (wB.Wijn || "").toLowerCase();
+      if (nameA !== nameB) return nameA.localeCompare(nameB);
+
+      // Zelfde wijn: jaargang (nieuwste eerst)
+      const yA = parseInt(wA.Jaargang, 10) || 0;
+      const yB = parseInt(wB.Jaargang, 10) || 0;
+      return yB - yA;
     });
+
 
   rows.forEach(obj => {
     const w = obj.w;

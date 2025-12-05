@@ -4,7 +4,26 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Mijn Wijnkelder – Voorraad & Sommelier</title>
-<style>
+    .summary-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+    .summary-item {
+      background: #f2f2f7;
+      border-radius: 999px;
+      padding: 6px 12px;
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    .summary-item span.value {
+      font-weight: 600;
+    }
+
+    <style>
     body {
         font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         margin: 0;
@@ -308,26 +327,34 @@
     </div>
 
     <!-- Tabel + voorraad & locatie -->
-    <div class="card">
-        <div class="panel-title">Overzicht &amp; voorraad</div>
-        <div class="subtitle small">
-            Gebruik <strong>Fles genomen</strong> om de voorraad aan te passen. Met <strong>Locatie wijzigen</strong> kun je het vak van bestaande flessen corrigeren. Wijzigingen worden lokaal bewaard in je browser.
-        </div>
-        <table id="wineTable">
-            <thead>
-                <tr>
-                    <th>Vak</th>
-                    <th>Wijn</th>
-                    <th>Jaar</th>
-                    <th>Aantal</th>
-                    <th>Drinkvenster</th>
-                    <th>Acties</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+     <!-- Overzicht & voorraad -->
+  <div class="card">
+    <div class="panel-title">Overzicht &amp; voorraad</div>
+    <div class="subtitle small">
+      Gebruik <strong>Fles genomen</strong> om de voorraad aan te passen. Met <strong>Locatie wijzigen</strong> kun je het vak van bestaande flessen corrigeren. Met <strong>Prijs instellen</strong> bewaar je een (huidige) prijs per fles. Wijzigingen worden lokaal bewaard in je browser.
     </div>
 
+    <!-- Samenvattingsbalk -->
+    <div id="summaryBar" class="summary-bar">
+      <!-- wordt dynamisch ingevuld met JS -->
+    </div>
+
+    <table id="wineTable">
+      <thead>
+      <tr>
+        <th>Vak</th>
+        <th>Wijn</th>
+        <th>Jaar</th>
+        <th>Aantal</th>
+        <th>Prijs<br><span class="small">(€/fles)</span></th>
+        <th>Waarde<br><span class="small">(totaal)</span></th>
+        <th>Drinkvenster</th>
+        <th>Acties</th>
+      </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
     <!-- Sommelier – compact -->
     <div class="card">
         <div class="panel-title">Sommelier (compact)</div>
@@ -355,45 +382,41 @@
             Velden <strong>Vak</strong> en <strong>Wijn</strong> zijn verplicht. De locatie moet altijd ingevuld zijn zodat elke fles terug te vinden is.
         </div>
         <form id="addForm" onsubmit="addWine(event)">
-            <div class="grid-add">
-                <div>
-                    <label for="addVak">Vak *</label>
-                    <input id="addVak" type="number" min="0" step="1" required />
-                </div>
-                <div>
-                    <label for="addWijn">Wijn *</label>
-                    <input id="addWijn" type="text" required />
-                </div>
-                <div>
-                    <label for="addJaargang">Jaargang</label>
-                    <input id="addJaargang" type="number" min="1900" max="2100" />
-                </div>
-                <div>
-                    <label for="addAantal">Aantal</label>
-                    <input id="addAantal" type="number" min="1" step="1" value="1" />
-                </div>
-                <div>
-                    <label for="addDrinkvenster">Drinkvenster</label>
-                    <input id="addDrinkvenster" type="text" placeholder="Bijv. 2025–2028 of Nu drinken" />
-                </div>
-                <div>
-                    <label for="addServeer">Serveertemperatuur</label>
-                    <input id="addServeer" type="text" placeholder="Bijv. 8–10°C" />
-                </div>
-            </div>
-            <label for="addFood">Foodpairing</label>
-            <input id="addFood" type="text" placeholder="Bijv. geitenkaas, asperges, lichte vis" />
-            <label for="addNotes">Notities</label>
-            <textarea id="addNotes" placeholder="Bijv. frisse stijl, citrus, ideaal als aperitief."></textarea>
-
-            <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-                <button type="submit" class="btn-primary">Fles toevoegen</button>
-                <button type="button" class="btn-ghost" onclick="clearAddForm()">Formulier leegmaken</button>
-            </div>
-        </form>
-    </div>
-</div>
-
+               <div class="grid-add">
+        <div>
+          <label for="addVak">Vak *</label>
+          <input id="addVak" type="number" min="0" step="1" required />
+        </div>
+        <div>
+          <label for="addWijn">Wijn *</label>
+          <input id="addWijn" type="text" required />
+        </div>
+        <div>
+          <label for="addJaargang">Jaargang</label>
+          <input id="addJaargang" type="number" min="1900" max="2100" />
+        </div>
+        <div>
+          <label for="addAantal">Aantal</label>
+          <input id="addAantal" type="number" min="1" step="1" value="1" />
+        </div>
+        <div>
+          <label for="addAankoopPrijs">Aankoopprijs (€/fles)</label>
+          <input id="addAankoopPrijs" type="number" min="0" step="0.01" placeholder="Bijv. 15" />
+        </div>
+        <div>
+          <label for="addHuidigePrijs">Huidige prijs (€/fles)</label>
+          <input id="addHuidigePrijs" type="number" min="0" step="0.01" placeholder="Optioneel" />
+        </div>
+        <div>
+          <label for="addDrinkvenster">Drinkvenster</label>
+          <input id="addDrinkvenster" type="text" placeholder="Bijv. 2025–2028 of Nu drinken" />
+        </div>
+        <div>
+          <label for="addServeer">Serveertemperatuur</label>
+          <input id="addServeer" type="text" placeholder="Bijv. 8–10°C" />
+        </div>
+      </div>
+  
 <script>
 // Ingebedde wijnkelderdata (basis) – lege lijnen al gefilterd in de bron
 const baseWines = [
@@ -828,31 +851,140 @@ function setView(view) {
     document.getElementById('viewOnDrink').classList.toggle('active', view === 'onDrink');
     renderTable();
 }
+function updateSummary() {
+  const el = document.getElementById("summaryBar");
+  if (!el) return;
+
+  let totalBottles = 0;
+  let totalValue = 0;
+
+  wines.forEach(w => {
+    const aantal = Number(w.Aantal || 0);
+    if (!isNaN(aantal)) totalBottles += aantal;
+
+    const price = w.PrijsHuidig != null ? Number(w.PrijsHuidig)
+                 : w.PrijsAankoop != null ? Number(w.PrijsAankoop)
+                 : null;
+    if (price != null && !isNaN(price)) {
+      totalValue += aantal * price;
+    }
+  });
+
+  const valueText = totalValue > 0 ? `€ ${totalValue.toFixed(0)}` : "—";
+
+  el.innerHTML = `
+    <div class="summary-item">
+      <span>Totaal flessen</span>
+      <span class="value">${totalBottles}</span>
+    </div>
+    <div class="summary-item">
+      <span>Totale waarde (op basis van prijs/fles)</span>
+      <span class="value">${valueText}</span>
+    </div>
+  `;
+}
 
 function renderTable() {
-    const tbody = document.querySelector("#wineTable tbody");
-    tbody.innerHTML = "";
+   function renderTable() {
+  const tbody = document.querySelector("#wineTable tbody");
+  tbody.innerHTML = "";
 
-    const search = document.getElementById("searchInput").value.toLowerCase();
-    const vak = document.getElementById("vakFilter").value;
-    const activePill = document.querySelector(".pill.active[data-type]");
-    const typeFilter = activePill ? activePill.getAttribute("data-type") : null;
+  const search = document.getElementById("searchInput").value.toLowerCase();
+  const vak = document.getElementById("vakFilter").value;
+  const activePill = document.querySelector(".pill.active[data-type]");
+  const typeFilter = activePill ? activePill.getAttribute("data-type") : null;
 
-    const rows = wines
-        .map((w, idx) => { return { w, idx }; })
-        .filter(obj => {
-            const w = obj.w;
-            if (currentView === 'onDrink' && !isOnDrink(w.Drinkvenster)) return false;
+  const rows = wines
+    .map((w, idx) => { return { w, idx }; })
+    .filter(obj => {
+      const w = obj.w;
+      if (currentView === 'onDrink' && !isOnDrink(w.Drinkvenster)) return false;
+      if (vak !== "" && String(w.Vak) !== String(vak)) return false;
 
-            if (vak !== "" && String(w.Vak) !== String(vak)) return false;
+      if (search) {
+        const s = search;
+        const inName = (w.Wijn || "").toLowerCase().includes(s);
+        const inNotes = (w.Notities || "").toLowerCase().includes(s);
+        const inFood = (w.Foodpairing || "").toLowerCase().includes(s);
+        if (!inName && !inNotes && !inFood) return false;
+      }
 
-            if (search) {
-                const s = search;
-                const inName = (w.Wijn || "").toLowerCase().includes(s);
-                const inNotes = (w.Notities || "").toLowerCase().includes(s);
-                const inFood = (w.Foodpairing || "").toLowerCase().includes(s);
-                if (!inName && !inNotes && !inFood) return false;
-            }
+      if (typeFilter) {
+        const t = guessType(w.Wijn);
+        if (typeFilter === "dessert") {
+          if (!((w.Foodpairing || "").toLowerCase().includes("dessert") || (w.Notities || "").toLowerCase().includes("dessert"))) {
+            return false;
+          }
+        } else if (t !== typeFilter) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+  rows.forEach(obj => {
+    const w = obj.w;
+    const idx = obj.idx;
+    const tr = document.createElement("tr");
+    const onDrink = isOnDrink(w.Drinkvenster);
+    const locationMissing = (w.Vak === null || w.Vak === undefined || w.Vak === "");
+
+    let voorraadBadge = "";
+    if (w.Aantal <= 0) {
+      voorraadBadge = '<span class="tag tag-danger">Op</span>';
+    } else if (w.Aantal === 1) {
+      voorraadBadge = '<span class="tag tag-danger">Laatste fles</span>';
+    } else if (w.Aantal <= 3) {
+      voorraadBadge = '<span class="tag tag-ok">Lage voorraad</span>';
+    }
+
+    let drinkBadge = "";
+    if (onDrink) {
+      drinkBadge = '<span class="chip-badge">Nu op dronk</span>';
+    }
+
+    let vakDisplay = locationMissing ? '<span class="tag tag-danger">Geen vak!</span>' : (w.Vak ?? '');
+
+    const price = w.PrijsHuidig != null ? Number(w.PrijsHuidig)
+                 : w.PrijsAankoop != null ? Number(w.PrijsAankoop)
+                 : null;
+    const priceText = (price != null && !isNaN(price)) ? price.toFixed(2) : "—";
+
+    const aantal = Number(w.Aantal || 0);
+    const value = (price != null && !isNaN(price) && !isNaN(aantal)) ? (aantal * price) : null;
+    const valueText = value != null ? `€ ${value.toFixed(0)}` : "—";
+
+    tr.innerHTML = `
+      <td>${vakDisplay}</td>
+      <td>
+        <div><strong>${w.Wijn || ""}</strong></div>
+        <div class="small">
+          ${w.Foodpairing || ""}
+          ${drinkBadge}
+        </div>
+      </td>
+      <td>${w.Jaargang || ""}</td>
+      <td>
+        <div>${w.Aantal}</div>
+        <div>${voorraadBadge}</div>
+      </td>
+      <td>${priceText}</td>
+      <td>${valueText}</td>
+      <td>${w.Drinkvenster || ""}</td>
+      <td>
+        <div class="inline-actions">
+          <button class="btn-small" onclick="takeBottle(${idx})">Fles genomen</button>
+          <button class="btn-small" onclick="editLocation(${idx})">Locatie wijzigen</button>
+          <button class="btn-small" onclick="editPrice(${idx})">Prijs instellen</button>
+          <button class="btn-small" onclick="searchPrice(${idx})">Zoek prijs</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  updateSummary();
+}
 
             if (typeFilter) {
                 const t = guessType(w.Wijn);
@@ -954,6 +1086,33 @@ function takeBottle(idx) {
 }
 
 function editLocation(idx) {
+    function editPrice(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const currentPrice = w.PrijsHuidig != null ? w.PrijsHuidig : w.PrijsAankoop;
+  const input = prompt(
+    "Nieuwe prijs per fles (in €) voor:\n" + (w.Wijn || "onbekende wijn"),
+    currentPrice != null ? String(currentPrice) : ""
+  );
+  if (input === null) return;
+  const val = parseFloat(input.replace(",", "."));
+  if (isNaN(val) || val < 0) {
+    alert("Ongeldige prijs.");
+    return;
+  }
+  w.PrijsHuidig = val;
+  saveData();
+  renderTable();
+}
+
+function searchPrice(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const queryParts = [w.Wijn, w.Jaargang].filter(Boolean).join(" ");
+  const url = "https://www.google.com/search?q=" + encodeURIComponent(queryParts + " prijs");
+  window.open(url, "_blank");
+}
+
     const w = wines[idx];
     if (!w) return;
     const currentVak = (w.Vak !== null && w.Vak !== undefined) ? w.Vak : "";
@@ -1044,21 +1203,49 @@ function suggestWine() {
 }
 
 // Nieuwe fles toevoegen – met verplichte locatie
-function addWine(event) {
-    event.preventDefault();
-    const vak = document.getElementById('addVak').value.trim();
-    const wijn = document.getElementById('addWijn').value.trim();
-    const jaargang = document.getElementById('addJaargang').value.trim();
-    const aantalVal = document.getElementById('addAantal').value.trim();
-    const drink = document.getElementById('addDrinkvenster').value.trim();
-    const serveer = document.getElementById('addServeer').value.trim();
-    const food = document.getElementById('addFood').value.trim();
-    const notes = document.getElementById('addNotes').value.trim();
+ function addWine(event) {
+  event.preventDefault();
+  const vak = document.getElementById('addVak').value.trim();
+  const wijn = document.getElementById('addWijn').value.trim();
+  const jaargang = document.getElementById('addJaargang').value.trim();
+  const aantalVal = document.getElementById('addAantal').value.trim();
+  const aankoopPrijsVal = document.getElementById('addAankoopPrijs').value.trim();
+  const huidigePrijsVal = document.getElementById('addHuidigePrijs').value.trim();
+  const drink = document.getElementById('addDrinkvenster').value.trim();
+  const serveer = document.getElementById('addServeer').value.trim();
+  const food = document.getElementById('addFood').value.trim();
+  const notes = document.getElementById('addNotes').value.trim();
 
-    if (!vak || !wijn) {
-        alert("Vak en wijnnaam zijn verplicht. De locatie van de fles moet altijd ingevuld zijn.");
-        return;
-    }
+  if (!vak || !wijn) {
+    alert("Vak en wijnnaam zijn verplicht. De locatie van de fles moet altijd ingevuld zijn.");
+    return;
+  }
+
+  const aantal = aantalVal ? parseInt(aantalVal, 10) : 1;
+  const aankoopPrijs = aankoopPrijsVal ? parseFloat(aankoopPrijsVal.replace(",", ".")) : null;
+  const huidigePrijs = huidigePrijsVal ? parseFloat(huidigePrijsVal.replace(",", ".")) : null;
+
+  const newWine = {
+    Vak: parseInt(vak, 10),
+    Wijn: wijn,
+    Jaargang: jaargang ? parseInt(jaargang, 10) : null,
+    Aantal: isNaN(aantal) ? 1 : aantal,
+    PrijsAankoop: !isNaN(aankoopPrijs) ? aankoopPrijs : null,
+    PrijsHuidig: !isNaN(huidigePrijs) ? huidigePrijs : null,
+    Drinkvenster: drink || null,
+    Serveertemperatuur: serveer || null,
+    Foodpairing: food || null,
+    Notities: notes || null,
+    _id: wines.length ? (Math.max(...wines.map(w => w._id || 0)) + 1) : 1
+  };
+
+  wines.push(newWine);
+  saveData();
+  fillVakFilter();
+  renderTable();
+  clearAddForm();
+}
+
 
     const aantal = aantalVal ? parseInt(aantalVal, 10) : 1;
 

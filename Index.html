@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
- <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mijn Wijnkelder – Voorraad & Sommelier</title>
@@ -406,9 +405,6 @@
         padding: 6px 6px;
       }
     }
-
-  </style>
-</head>
 
   </style>
 </head>
@@ -937,8 +933,6 @@ function guessType(name) {
   if (n.includes("barolo") || n.includes("barbera") || n.includes("nebbiolo") || n.includes("rioja") || n.includes("malbec") || n.includes("cabernet") || n.includes("merlot") || n.includes("syrah") || n.includes("shiraz")) return "rood";
   return "onbekend";
 }
-}
-
 // Is wijn nu op dronk?
 function isOnDrink(drinkvenster) {
   if (!drinkvenster) return false;
@@ -1257,6 +1251,7 @@ function renderTable() {
           <button class="btn-small" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
           <button class="btn-small" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
           <button class="btn-small" onclick="searchPrice(${idx})">Zoek prijs</button>
+          <button class="btn-small" onclick="editType(${idx})">Type</button>
         </div>
       </td>
     `;

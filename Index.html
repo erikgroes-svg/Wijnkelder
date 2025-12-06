@@ -406,6 +406,58 @@
         padding: 6px 6px;
       }
     }
+/* Extra mobiele layout-tweaks voor iPhone */
+@media (max-width: 640px) {
+
+  /* Iets compactere header & cards */
+  header {
+    padding: 10px 12px;
+    font-size: 18px;
+  }
+
+  .container {
+    padding: 12px 10px 20px;
+  }
+
+  .card {
+    padding: 12px 12px 14px;
+  }
+
+  /* Bovenste knoppen (Drinkvenster / Foodpairing) full-width */
+  .card > div > .btn-ghost {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Tabel iets kleiner */
+  table {
+    font-size: 11px;
+  }
+
+  th, td {
+    padding: 6px 6px;
+  }
+
+  /* Kolommen verbergen op mobiel:
+     - 3 = Jaar
+     - 6 = Waarde (totaal)
+  */
+  #wineTable th:nth-child(3),
+  #wineTable td:nth-child(3),
+  #wineTable th:nth-child(6),
+  #wineTable td:nth-child(6) {
+    display: none;
+  }
+
+  /* Actie-knoppen iets luchtiger op mobiel */
+  .inline-actions {
+    gap: 2px;
+  }
+
+  .btn-small {
+    padding: 3px 6px;
+  }
+}
 
   </style>
 </head>

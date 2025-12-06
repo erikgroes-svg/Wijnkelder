@@ -406,13 +406,15 @@
         padding: 6px 6px;
       }
     }
-/* Extra mobiele layout-tweaks voor iPhone */
-@media (max-width: 640px) {
-
-  /* Iets compactere header & cards */
+/* Extra fine-tuning voor iPhone / kleine schermen */
+@media (max-width: 600px) {
   header {
-    padding: 10px 12px;
+    padding: 10px 14px;
     font-size: 18px;
+  }
+
+  header .subtitle-top {
+    font-size: 10px;
   }
 
   .container {
@@ -420,45 +422,60 @@
   }
 
   .card {
-    padding: 12px 12px 14px;
+    padding: 14px 12px 16px;
+    margin-bottom: 12px;
   }
 
-  /* Bovenste knoppen (Drinkvenster / Foodpairing) full-width */
-  .card > div > .btn-ghost {
+  .panel-title {
+    font-size: 16px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+
+  /* Zoekveld en filters onder elkaar met wat ruimte */
+  #searchInput {
+    margin-top: 6px;
+    margin-bottom: 6px;
+  }
+
+  .view-switch {
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
   }
 
-  /* Tabel iets kleiner */
-  table {
+  /* Pills iets compacter */
+  .pill-row {
+    gap: 6px;
+  }
+  .pill {
     font-size: 11px;
+    padding: 4px 9px;
   }
 
-  th, td {
-    padding: 6px 6px;
-  }
-
-  /* Kolommen verbergen op mobiel:
-     - 3 = Jaar
-     - 6 = Waarde (totaal)
-  */
-  #wineTable th:nth-child(3),
-  #wineTable td:nth-child(3),
-  #wineTable th:nth-child(6),
-  #wineTable td:nth-child(6) {
-    display: none;
-  }
-
-  /* Actie-knoppen iets luchtiger op mobiel */
+  /* Actie-knoppen per rij onder elkaar ipv alles op één lijn */
   .inline-actions {
-    gap: 2px;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .btn-small {
-    padding: 3px 6px;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Sommelier-knoppen ook mooi blokkerig */
+  .sommelier-row {
+    flex-direction: row;
+  }
+
+  .sommelier-chip {
+    flex: 1 1 calc(50% - 6px);
+    text-align: center;
   }
 }
-
   </style>
 </head>
 <body>

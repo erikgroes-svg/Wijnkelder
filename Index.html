@@ -720,6 +720,7 @@ async function importData(event) {
       _id: (w._id != null) ? w._id : (idx + 1),
       Type: w.Type || guessType(w.Wijn),
       Aantal: (w.Aantal == null || isNaN(w.Aantal)) ? 0 : w.Aantal
+      return normalizePrices(obj);
     }));
 
     wines = normalized;

@@ -22,8 +22,9 @@
     }
 
     * { box-sizing: border-box; }
+
     body {
-      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
       margin: 0;
       background: var(--bg);
       color: var(--text-main);
@@ -37,28 +38,22 @@
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid #e1e1e6;
-      color: var(--text-main);
       padding: 14px 28px;
       font-size: 22px;
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 10px;
       justify-content: space-between;
+      gap: 10px;
     }
 
-    header .title-left { display:flex; align-items:center; gap:10px; min-width:0; }
+    header .title-left { display: flex; align-items: center; gap: 10px; }
     header span.logo { font-size: 26px; }
     header .subtitle-top {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      font-size: 11px; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.08em;
       font-weight: 500;
-      margin-top: 2px;
     }
-
-    .header-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
 
     .container {
       max-width: 1120px;
@@ -68,6 +63,8 @@
 
     .panel-title { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
     .subtitle { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+    .small { font-size: 11px; color: var(--text-muted); }
+
     .card {
       background: var(--bg-card);
       border-radius: var(--radius-lg);
@@ -86,56 +83,51 @@
       outline: none;
       transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
       font-family: inherit;
-      background: #ffffff;
+      background: #fff;
       color: var(--text-main);
     }
+
     textarea { min-height: 60px; resize: vertical; }
-    input::placeholder, textarea::placeholder { color: #a0a0aa; }
+
     input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 1px rgba(15,98,254,0.18);
       background: #f8f9ff;
     }
-    label {
-      font-size: 12px;
-      display: block;
-      margin-top: 8px;
-      margin-bottom: 3px;
-      color: var(--text-muted);
-    }
 
-    /* TABEL: in een wrapper voor mobile scroll */
-    .table-wrap{
-      width:100%;
-      overflow:auto;
-      border-radius:12px;
-      border:1px solid #ececf2;
-      background:#fff;
-    }
+    label { font-size: 12px; display:block; margin-top: 8px; margin-bottom: 3px; color: var(--text-muted); }
+
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 10px;
       font-size: 13px;
-      min-width: 920px; /* maakt horizontaal scrollen mogelijk op iPhone */
-      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
     }
+
     th {
       background: #f2f2f7;
       text-align: left;
       padding: 8px 8px;
-      font-weight: 500;
+      font-weight: 600;
       white-space: nowrap;
       font-size: 12px;
       color: var(--text-muted);
       border-bottom: 1px solid #e0e0e6;
     }
+
     td {
       padding: 7px 8px;
       border-bottom: 1px solid #f0f0f4;
       vertical-align: top;
     }
-    /* numerieke kolommen rechts uitlijnen */
+
+    tbody tr:nth-child(even) { background: #fafafa; }
+    tbody tr:hover { background: #eef3ff; }
+
+    /* numerieke kolommen rechts */
     #wineTable td:nth-child(4),
     #wineTable td:nth-child(5),
     #wineTable td:nth-child(6),
@@ -143,33 +135,27 @@
     #wineTable th:nth-child(5),
     #wineTable th:nth-child(6) { text-align: right; }
 
-    /* rijen compacter */
-    #wineTable td { padding-top: 5px; padding-bottom: 5px; }
-
-    tr:last-child td { border-bottom: none; }
-    tbody tr:nth-child(even) { background: #fafafa; }
-    tbody tr:hover { background: #eef3ff; }
-
     .btn-primary, .btn-ghost {
       padding: 8px 14px;
       border-radius: var(--radius-pill);
       border: 1px solid transparent;
       cursor: pointer;
       font-size: 13px;
-      font-weight: 500;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
-      user-select:none;
-      white-space:nowrap;
+      white-space: nowrap;
     }
+
     .btn-primary {
       background: var(--accent);
-      color: #ffffff;
+      color: #fff;
       box-shadow: 0 8px 18px rgba(15,98,254,0.25);
     }
-    .btn-primary:hover { background: #0b55da; box-shadow: 0 10px 22px rgba(15,98,254,0.3); }
+    .btn-primary:hover { background: #0b55da; }
+
     .btn-ghost {
       background: #f2f2f7;
       color: var(--text-main);
@@ -177,16 +163,15 @@
     }
     .btn-ghost:hover { background: #e4e4f0; }
 
-    .pill-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+    .pill-row { display:flex; flex-wrap:wrap; gap:8px; margin-top: 8px; }
     .pill {
       padding: 5px 11px;
       border-radius: var(--radius-pill);
       border: 1px solid #d5d5dd;
       font-size: 12px;
       cursor: pointer;
-      background: #ffffff;
+      background: #fff;
       color: var(--text-muted);
-      transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
     }
     .pill.active { border-color: var(--accent); background: var(--accent-soft); color: #0b3c8c; }
 
@@ -195,14 +180,10 @@
       border-radius: var(--radius-pill);
       background: #f2f2f7;
       padding: 3px;
-      font-size: 13px;
-      margin-bottom: 6px;
       border: 1px solid #e0e0ea;
-      width:100%;
-      max-width:420px;
+      margin-bottom: 6px;
     }
     .view-switch button {
-      flex:1;
       border-radius: var(--radius-pill);
       border: none;
       padding: 5px 12px;
@@ -210,25 +191,26 @@
       cursor: pointer;
       color: var(--text-muted);
       font-size: 12px;
+      font-weight: 600;
     }
     .view-switch button.active {
-      background: #ffffff;
+      background: #fff;
       color: var(--text-main);
       box-shadow: 0 0 0 1px #e0e0ea;
     }
 
     .tag {
-      display: inline-block;
+      display:inline-block;
       padding: 2px 8px;
       border-radius: var(--radius-pill);
       font-size: 11px;
       background: #f2f2f7;
       margin-left: 4px;
       color: var(--text-muted);
+      line-height: 1.4;
     }
     .tag-danger { background: #ffe6e6; color: var(--danger); }
     .tag-ok { background: #e4f7ea; color: var(--success); }
-
     .chip-badge {
       font-size: 11px;
       padding: 2px 7px;
@@ -236,21 +218,21 @@
       background: #e1f0ff;
       margin-left: 4px;
       color: #0b3c8c;
+      font-weight: 700;
     }
-    .small { font-size: 11px; color: var(--text-muted); }
 
-    .inline-actions { display:flex; gap:4px; flex-wrap:wrap; }
+    .inline-actions { display:flex; gap: 6px; flex-wrap: wrap; }
     .btn-small {
-      padding: 3px 8px;
+      padding: 5px 10px;
       border-radius: var(--radius-pill);
       border: 1px solid #d5d5dd;
-      background: #ffffff;
-      font-size: 11px;
+      background: #fff;
+      font-size: 12px;
       cursor: pointer;
       color: var(--text-main);
-      transition: background 0.12s ease, border-color 0.12s ease;
+      font-weight: 600;
     }
-    .btn-small:hover { background: #eef3ff; border-color: var(--accent); }
+    .btn-small:hover { background:#eef3ff; border-color: var(--accent); }
 
     .sommelier-result {
       margin-top: 10px;
@@ -261,173 +243,92 @@
       font-size: 13px;
       line-height: 1.5;
     }
-    .sommelier-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+
+    .sommelier-row { display:flex; flex-wrap:wrap; gap: 6px; margin-top: 8px; }
     .sommelier-chip {
-      padding: 5px 10px;
+      padding: 6px 10px;
       border-radius: var(--radius-pill);
       background: #f2f2f7;
       border: 1px solid #dddded;
       font-size: 12px;
       cursor: pointer;
       color: var(--text-main);
-      transition: background 0.12s ease, border-color 0.12s ease;
+      font-weight: 600;
     }
-    .sommelier-chip:hover { background: #eef3ff; border-color: var(--accent); }
 
-    .grid-add { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:10px 12px; }
+    .grid-add { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 10px 12px; }
 
-    .summary-bar { display:flex; flex-wrap:wrap; gap:8px; margin: 6px 0 4px; font-size:13px; }
+    .summary-bar { display:flex; flex-wrap:wrap; gap: 8px; margin: 6px 0 4px; font-size: 13px; }
     .summary-item {
-      background:#f7f7fb;
+      background: #f7f7fb;
       border-radius: var(--radius-pill);
-      padding:5px 11px;
+      padding: 5px 11px;
       display:inline-flex;
-      align-items:baseline;
-      gap:6px;
-      border:1px solid #e2e2ee;
+      align-items: baseline;
+      gap: 6px;
+      border: 1px solid #e2e2ee;
     }
-    .summary-item span.value { font-weight:600; color: var(--text-main); }
+    .summary-item span.value { font-weight: 800; color: var(--text-main); }
 
-    @media (max-width: 899px) {
-      header { flex-direction: column; align-items: flex-start; padding: 12px 16px; }
-      .header-actions { width:100%; justify-content:flex-start; }
-      .container { padding: 16px 12px 24px; }
-    }
-
+    /* iPhone / small screens */
     @media (max-width: 600px) {
       header { padding: 10px 14px; font-size: 18px; }
-      header .subtitle-top { font-size: 10px; }
       .container { padding: 12px 10px 20px; }
       .card { padding: 14px 12px 16px; margin-bottom: 12px; }
-      .panel-title { font-size: 16px; }
-      .subtitle { font-size: 12px; }
 
-      #searchInput { margin-top: 6px; margin-bottom: 6px; }
-      .view-switch { width:100%; max-width:100%; }
+      table { display:block; overflow-x:auto; white-space: nowrap; }
+      .view-switch { width: 100%; justify-content: space-between; }
+      .pill { font-size: 11px; padding: 4px 9px; }
 
-      .pill-row { gap:6px; }
-      .pill { font-size:11px; padding:4px 9px; }
+      .inline-actions { flex-direction: column; }
+      .btn-small { width: 100%; text-align:center; }
 
-      .inline-actions { flex-direction: column; align-items: stretch; }
-      .btn-small { width: 100%; justify-content: center; text-align:center; }
-      .sommelier-chip { flex: 1 1 calc(50% - 6px); text-align:center; }
+      .sommelier-chip { flex: 1 1 calc(50% - 6px); text-align: center; }
     }
-/* --- Mobile: table -> cards --- */
-#wineCards { display: none; }
 
-@media (max-width: 768px) {
-  /* verberg tabel op mobiel */
-  #wineTable { display: none; }
-
-  /* toon kaarten */
-  #wineCards { display: block; }
-
-  .wine-card {
-    background: #fff;
-    border: 1px solid var(--border-subtle);
-    border-radius: 14px;
-    padding: 12px;
-    margin-top: 10px;
-    box-shadow: var(--shadow-soft);
-  }
-
-  .wine-card-top {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    align-items: flex-start;
-  }
-
-  .wine-title {
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 1.2;
-  }
-
-  .wine-meta {
-    margin-top: 6px;
-    font-size: 12px;
-    color: var(--text-muted);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-  }
-
-  .wine-meta .tag,
-  .wine-meta .chip-badge {
-    margin-left: 0;
-  }
-
-  .wine-kpis {
-    margin-top: 8px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    font-size: 12px;
-  }
-
-  .kpi {
-    background: #f7f7fb;
-    border: 1px solid #e2e2ee;
-    border-radius: 12px;
-    padding: 8px 10px;
-  }
-  .kpi .k { color: var(--text-muted); font-size: 11px; }
-  .kpi .v { font-weight: 700; color: var(--text-main); margin-top: 2px; }
-
-  .wine-actions {
-    margin-top: 10px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .wine-actions .btn-small {
-    width: 100%;
-    justify-content: center;
-    padding: 10px 10px;
-    font-size: 12px;
-  }
-
-  .btn-danger {
-    border-color: #f1c3c3;
-    background: #ffecec;
-    color: #a21515;
-  }
-}
-
+    /* Error banner for debugging */
+    #errorBanner {
+      display:none;
+      position: fixed;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      background: #1b1b1b;
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 12px;
+      z-index: 9999;
+      font-size: 12px;
+      line-height: 1.35;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      white-space: pre-wrap;
+    }
   </style>
 </head>
-
 <body>
+
+<div id="errorBanner"></div>
+
 <header>
   <div class="title-left">
     <span class="logo">🍷</span>
-    <div style="min-width:0;">
+    <div>
       Mijn Wijnkelder
       <div class="subtitle-top">Voorraad · Locaties · Sommelier</div>
     </div>
   </div>
-
-  <div class="header-actions">
-    <button class="btn-ghost" type="button" onclick="exportBackup()">Backup downloaden</button>
-    <button class="btn-ghost" type="button" onclick="importBackup()">Backup importeren</button>
-    <button class="btn-ghost" type="button" onclick="resetAll()">Reset lokale wijzigingen</button>
-  </div>
+  <button class="btn-ghost" onclick="resetAll()">Reset lokale wijzigingen</button>
 </header>
 
 <div class="container">
 
   <div class="card">
     <div class="panel-title">Zoeken &amp; filteren</div>
-    <div class="subtitle">
-      Bekijk alle wijnen of enkel degene die nu op dronk zijn. Filter per vak of type, en zoek op naam, notities of foodpairing.
-    </div>
+    <div class="subtitle">Bekijk alle wijnen of enkel degene die nu op dronk zijn. Filter per vak of type, en zoek op naam, notities of foodpairing.</div>
 
     <div class="view-switch">
-      <button id="viewAll" class="active" type="button" onclick="setView('all')">Alle wijnen</button>
-      <button id="viewOnDrink" type="button" onclick="setView('onDrink')">Nu op dronk</button>
+      <button id="viewAll" class="active" onclick="setView('all')">Alle wijnen</button>
+      <button id="viewOnDrink" onclick="setView('onDrink')">Nu op dronk</button>
     </div>
 
     <input id="searchInput" type="text" placeholder="Zoek op naam, druif, notities..." oninput="renderTable()" />
@@ -441,7 +342,6 @@
     <div class="pill-row">
       <div class="pill" onclick="quickFilter('wit')" data-type="wit">Wit</div>
       <div class="pill" onclick="quickFilter('rood')" data-type="rood">Rood</div>
-      <div class="pill" onclick="quickFilter('rose')" data-type="rose">Rosé</div>
       <div class="pill" onclick="quickFilter('bubbels')" data-type="bubbels">Mousserend</div>
       <div class="pill" onclick="quickFilter('dessert')" data-type="dessert">Dessert / zoet</div>
       <div class="pill" onclick="clearTypeFilter()">Type wissen</div>
@@ -451,7 +351,7 @@
   <div class="card">
     <div class="panel-title">Overzicht &amp; voorraad</div>
     <div class="subtitle small">
-      Wijzigingen worden lokaal bewaard in je browser (localStorage) en blijven behouden bij updates. Gebruik “Backup downloaden” als extra zekerheid.
+      Gebruik <strong>Fles genomen</strong> om de voorraad aan te passen. Met <strong>Locatie wijzigen</strong> kun je het vak corrigeren. Met <strong>Prijs instellen</strong> bewaar je een prijs per fles.
     </div>
 
     <div style="margin:8px 0 4px; display:flex; gap:8px; flex-wrap:wrap;">
@@ -461,41 +361,37 @@
 
     <div id="summaryBar" class="summary-bar"></div>
 
-    <div class="table-wrap">
-      <table id="wineTable">
-        <thead>
-          <tr>
-            <th>Vak</th>
-            <th>Wijn</th>
-            <th>Jaar</th>
-            <th>Aantal</th>
-            <th>Prijs<br><span class="small">(€/fles)</span></th>
-            <th>Waarde<br><span class="small">(totaal)</span></th>
-            <th>Drinkvenster</th>
-            <th>Acties</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-<div id="wineCards"></div>
-    </div>
-
-    <div class="small" style="margin-top:8px;">Op iPhone kan je de tabel horizontaal schuiven.</div>
+    <table id="wineTable">
+      <thead>
+        <tr>
+          <th>Vak</th>
+          <th>Wijn</th>
+          <th>Jaar</th>
+          <th>Aantal</th>
+          <th>Prijs<br><span class="small">(€/fles)</span></th>
+          <th>Waarde<br><span class="small">(totaal)</span></th>
+          <th>Drinkvenster</th>
+          <th>Acties</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <div class="card">
     <div class="panel-title">Sommelier (compact)</div>
-    <div class="subtitle small">
-      Snelle suggesties uit je eigen kelder. Kies een type gerecht of typ zelf iets in.
-    </div>
+    <div class="subtitle small">Snelle suggesties uit je eigen kelder. Kies een type gerecht of typ zelf iets in.</div>
+
     <input id="dishInput" type="text" placeholder="Bijv. kip in room-tomatensaus" />
+
     <div class="sommelier-row">
       <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('kip in room-tomatensaus')">Kip (roomsaus)</button>
       <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('côte à l’os op de grill')">Rund / grill</button>
       <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('gebakken vis')">Vis</button>
       <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('aperitiefhapjes')">Aperitief</button>
     </div>
-    <button class="btn-primary" style="margin-top:8px;" type="button" onclick="suggestWine()">
+
+    <button class="btn-primary" style="margin-top:8px;" onclick="suggestWine()">
       <span>Geef advies</span> <span>✨</span>
     </button>
 
@@ -504,9 +400,8 @@
 
   <div class="card">
     <div class="panel-title">Nieuwe fles toevoegen</div>
-    <div class="subtitle small">
-      Velden <strong>Vak</strong> en <strong>Wijn</strong> zijn verplicht. De locatie moet altijd ingevuld zijn zodat elke fles terug te vinden is.
-    </div>
+    <div class="subtitle small">Velden <strong>Vak</strong> en <strong>Wijn</strong> zijn verplicht.</div>
+
     <form id="addForm" onsubmit="addWine(event)">
       <div class="grid-add">
         <div>
@@ -565,68 +460,81 @@
       </div>
     </form>
   </div>
+
 </div>
 
 <script>
-/***********************
- * DATA & STORAGE
- ***********************/
+/* Show JS errors on screen (crucial for iPhone debugging) */
+(function () {
+  const banner = document.getElementById("errorBanner");
+  function show(msg) {
+    banner.style.display = "block";
+    banner.textContent = "FOUT in app:\n" + msg;
+  }
+  window.addEventListener("error", (e) => {
+    show((e.message || "Onbekende fout") + (e.lineno ? ("\nRegel: " + e.lineno) : ""));
+  });
+  window.addEventListener("unhandledrejection", (e) => {
+    show("Promise fout: " + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
+  });
+})();
+</script>
+
+<script>
+// Basisdata (embedded)
+const baseWines = [
+  { Vak: 1, Wijn: "Elena Walch Vigna Castel Ringberg Sauvignon", Jaargang: 2022, Aantal: 1, Drinkvenster: "2025–2028", Notities: "Frisse Sauvignon; 1 fles onlangs geopend", Serveertemperatuur: "8–10°C", Foodpairing: "Geitenkaas, salades, asperges, lichte vis", Kwaliteitscheck: "OK" },
+  { Vak: 1, Wijn: "Les Grazilles languedoc", Jaargang: 2022, Aantal: 3, Drinkvenster: null, Notities: null, Serveertemperatuur: "14–16°C", Foodpairing: "BBQ, lam, kruidige stoofpotten", Kwaliteitscheck: "OK" },
+  { Vak: 1, Wijn: "Château Roquefort Les Roches Blanches Sauvignon", Jaargang: 2023, Aantal: 2, Drinkvenster: "2024–2026", Notities: "Fris, nu drinken", Serveertemperatuur: "8–10°C", Foodpairing: "Geitenkaas, salades, asperges, lichte vis", Kwaliteitscheck: "OK" },
+  { Vak: 1, Wijn: "Morella mezzogiorno", Jaargang: 2022, Aantal: 2, Drinkvenster: null, Notities: null, Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 1, Wijn: "Roter veltliner reserve", Jaargang: 2020, Aantal: 4, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Aziatische keuken, varkensvlees, tempura", Kwaliteitscheck: "OK" },
+  { Vak: 1, Wijn: "Kiemberger mitterberg sauvignon", Jaargang: 2019, Aantal: 1, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Geitenkaas, salades, asperges, lichte vis", Kwaliteitscheck: "OK" },
+  { Vak: 1, Wijn: "Kerschbaum chardonnay reserve", Jaargang: 2020, Aantal: 5, Drinkvenster: null, Notities: null, Serveertemperatuur: "10–12°C", Foodpairing: "Gevogelte, romige sauzen, rijke visgerechten", Kwaliteitscheck: "OK" },
+  { Vak: 1, Wijn: "Estate Argyros Assyrtiko", Jaargang: 2022, Aantal: 5, Drinkvenster: "2024–2030", Notities: "Mineraal/zilt; top bij zeevruchten", Serveertemperatuur: "9–11°C", Foodpairing: "Oesters, zeevruchten, gegrilde vis", Kwaliteitscheck: "OK" },
+  { Vak: 1, Wijn: "champagne yves jacope brut", Jaargang: null, Aantal: 1, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Aperitief, sushi, zeevruchten, lichte hapjes", Kwaliteitscheck: "JAARGANG ONTBREEKT" },
+  { Vak: null, Wijn: "champagne pierre gimonnet gastronome", Jaargang: 2018, Aantal: 2, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Aperitief, sushi, zeevruchten, lichte hapjes", Kwaliteitscheck: "OK" },
+  { Vak: 2, Wijn: "Girlan Trattmann Pinot Noir Riserva", Jaargang: 2021, Aantal: 1, Drinkvenster: "2024–2032", Notities: "Elegante Pinot Noir", Serveertemperatuur: "14–16°C", Foodpairing: "Eend, kalf, paddenstoelen, gegrilde groenten", Kwaliteitscheck: "OK" },
+  { Vak: 2, Wijn: "Girlan Trattmann Pinot Noir Riserva", Jaargang: 2018, Aantal: 2, Drinkvenster: "2023–2030", Notities: "Reeds mooi op dronk", Serveertemperatuur: "14–16°C", Foodpairing: "Eend, kalf, paddenstoelen, gegrilde groenten", Kwaliteitscheck: "OK" },
+  { Vak: 2, Wijn: "Girlan Flora Pinot Noir Riserva", Jaargang: 2021, Aantal: 10, Drinkvenster: "2024–2032", Notities: "Finesse, Bourgogne-stijl", Serveertemperatuur: "14–16°C", Foodpairing: "Eend, kalf, paddenstoelen, gegrilde groenten", Kwaliteitscheck: "OK" },
+  { Vak: 2, Wijn: "Weingut Tesch “Patriot” (Blaufränkisch)", Jaargang: 2017, Aantal: 5, Drinkvenster: "2023–2032", Notities: null, Serveertemperatuur: "14–16°C", Foodpairing: "Wild, stoofpotten, gerijpte kazen", Kwaliteitscheck: "OK" },
+  { Vak: 2, Wijn: "champagne autreau blanc de blancs brut", Jaargang: null, Aantal: 10, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Aperitief, sushi, zeevruchten, lichte hapjes", Kwaliteitscheck: "JAARGANG ONTBREEKT" },
+  { Vak: null, Wijn: "champagne de venoge", Jaargang: null, Aantal: 2, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Aperitief, sushi, zeevruchten, lichte hapjes", Kwaliteitscheck: "JAARGANG ONTBREEKT" },
+  { Vak: 3, Wijn: "Marion Teroldego", Jaargang: 2016, Aantal: 1, Drinkvenster: "2022–2030", Notities: "Krachtig rood", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 3, Wijn: "Fantini Edizione Cinque Autoctoni “22”", Jaargang: 2022, Aantal: 2, Drinkvenster: "2024–2034", Notities: "Zuid-Italië; iconische blend", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 3, Wijn: "Marion Calto", Jaargang: 2018, Aantal: 12, Drinkvenster: "2024–2032", Notities: "Vol en elegant", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 3, Wijn: "Brigaldara Amarone della Valpolicella “Cavolo”", Jaargang: 2017, Aantal: 7, Drinkvenster: "2025–2038", Notities: "Middellang bewaar", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 3, Wijn: "Lupo Meraviglia Tre di Tre Rosso", Jaargang: 2022, Aantal: 7, Drinkvenster: "2024–2028", Notities: "Drinkwijn", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 4, Wijn: "Brigaldara Amarone della Valpolicella “Case Vecie”", Jaargang: 2018, Aantal: 18, Drinkvenster: "2026–2040", Notities: "Topbewaar Amarone", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 4, Wijn: "Brigaldara Amarone della Valpolicella “Cavolo”", Jaargang: 2015, Aantal: 2, Drinkvenster: "2024–2035", Notities: "Op dronk", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 4, Wijn: "Dal Forno Romano Valpolicella Superiore Monte Lodoletta", Jaargang: 2018, Aantal: 6, Drinkvenster: "2028–2045", Notities: "Iconisch; lang bewaren", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 4, Wijn: "Biscardo Amarone della Valpolicella Classico", Jaargang: 2020, Aantal: 3, Drinkvenster: "2025–2033", Notities: "Middellang bewaar", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 4, Wijn: "Antiche Terre Venete Amarone “Baorna”", Jaargang: 2021, Aantal: 6, Drinkvenster: "2024–2032", Notities: "Toegankelijke Amarone", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 5, Wijn: "Flor de Pingus", Jaargang: 2021, Aantal: 12, Drinkvenster: "2025–2038", Notities: "Top Ribera del Duero", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 6, Wijn: "Barolo Monfalletto (Cordero di Montezemolo)", Jaargang: 2020, Aantal: 12, Drinkvenster: "2027–2042", Notities: "Lang bewaren", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 6, Wijn: "Cumot Nebbiolo d’Alba Superiore", Jaargang: 2015, Aantal: 4, Drinkvenster: "2023–2030", Notities: "Eerder drinkbaar", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 6, Wijn: "Rocche dei Manzoni “La Cresta” Barbera d’Alba", Jaargang: 2019, Aantal: 8, Drinkvenster: "2023–2031", Notities: "Drinkklaar", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
+  { Vak: 6, Wijn: "Cordero di Montezemolo Barbera d’Alba Superiore “Funtanì”", Jaargang: 2020, Aantal: 12, Drinkvenster: "2024–2032", Notities: "Soepel rood", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" }
+];
+
+let wines = [];
+let currentView = "all";
+
+/* Storage migration: never “lose” data when key changes */
 const STORAGE_KEYS = [
   "wijnkelderData_v7_fp",
+  "wijnkelderData_v7",
   "wijnkelderData_v6",
   "wijnkelderData_v5",
   "wijnkelderData"
 ];
 const STORAGE_KEY = STORAGE_KEYS[0];
 
-
-// BASISDATA: NaN vervangen door null
-const baseWines = [
-  {"Vak":1,"Wijn":"Elena Walch Vigna Castel Ringberg Sauvignon","Jaargang":2022,"Aantal":1,"Drinkvenster":"2025–2028","Notities":"Frisse Sauvignon; 1 fles onlangs geopend","Serveertemperatuur":"8–10°C","Foodpairing":"Geitenkaas, salades, asperges, lichte vis","Kwaliteitscheck":"OK"},
-  {"Vak":1,"Wijn":"Les Grazilles languedoc","Jaargang":2022,"Aantal":3,"Drinkvenster":null,"Notities":null,"Serveertemperatuur":"14–16°C","Foodpairing":"BBQ, lam, kruidige stoofpotten","Kwaliteitscheck":"OK"},
-  {"Vak":1,"Wijn":"Château Roquefort Les Roches Blanches Sauvignon","Jaargang":2023,"Aantal":2,"Drinkvenster":"2024–2026","Notities":"Fris, nu drinken","Serveertemperatuur":"8–10°C","Foodpairing":"Geitenkaas, salades, asperges, lichte vis","Kwaliteitscheck":"OK"},
-  {"Vak":1,"Wijn":"Morella mezzogiorno","Jaargang":2022,"Aantal":2,"Drinkvenster":null,"Notities":null,"Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":1,"Wijn":"Roter veltliner reserve","Jaargang":2020,"Aantal":4,"Drinkvenster":null,"Notities":null,"Serveertemperatuur":"8–10°C","Foodpairing":"Aziatische keuken, varkensvlees, tempura","Kwaliteitscheck":"OK"},
-  {"Vak":1,"Wijn":"Kiemberger mitterberg sauvignon","Jaargang":2019,"Aantal":1,"Drinkvenster":null,"Notities":null,"Serveertemperatuur":"8–10°C","Foodpairing":"Geitenkaas, salades, asperges, lichte vis","Kwaliteitscheck":"OK"},
-  {"Vak":1,"Wijn":"Kerschbaum chardonnay reserve","Jaargang":2020,"Aantal":5,"Drinkvenster":null,"Notities":null,"Serveertemperatuur":"10–12°C","Foodpairing":"Gevogelte, romige sauzen, rijke visgerechten","Kwaliteitscheck":"OK"},
-  {"Vak":1,"Wijn":"Estate Argyros Assyrtiko","Jaargang":2022,"Aantal":5,"Drinkvenster":"2024–2030","Notities":"Mineraal/zilt; top bij zeevruchten","Serveertemperatuur":"9–11°C","Foodpairing":"Oesters, zeevruchten, gegrilde vis","Kwaliteitscheck":"OK"},
-  {"Vak":1,"Wijn":"champagne yves jacope brut","Jaargang":null,"Aantal":1,"Drinkvenster":null,"Notities":null,"Serveertemperatuur":"8–10°C","Foodpairing":"Aperitief, sushi, zeevruchten, lichte hapjes","Kwaliteitscheck":"JAARGANG ONTBREEKT"},
-  {"Vak":null,"Wijn":"champagne pierre gimonnet gastronome","Jaargang":2018,"Aantal":2,"Drinkvenster":null,"Notities":null,"Serveertemperatuur":"8–10°C","Foodpairing":"Aperitief, sushi, zeevruchten, lichte hapjes","Kwaliteitscheck":"OK"},
-  {"Vak":2,"Wijn":"Girlan Trattmann Pinot Noir Riserva","Jaargang":2021,"Aantal":1,"Drinkvenster":"2024–2032","Notities":"Elegante Pinot Noir","Serveertemperatuur":"14–16°C","Foodpairing":"Eend, kalf, paddenstoelen, gegrilde groenten","Kwaliteitscheck":"OK"},
-  {"Vak":2,"Wijn":"Girlan Trattmann Pinot Noir Riserva","Jaargang":2018,"Aantal":2,"Drinkvenster":"2023–2030","Notities":"Reeds mooi op dronk","Serveertemperatuur":"14–16°C","Foodpairing":"Eend, kalf, paddenstoelen, gegrilde groenten","Kwaliteitscheck":"OK"},
-  {"Vak":2,"Wijn":"Girlan Flora Pinot Noir Riserva","Jaargang":2021,"Aantal":10,"Drinkvenster":"2024–2032","Notities":"Finesse, Bourgogne-stijl","Serveertemperatuur":"14–16°C","Foodpairing":"Eend, kalf, paddenstoelen, gegrilde groenten","Kwaliteitscheck":"OK"},
-  {"Vak":2,"Wijn":"Weingut Tesch “Patriot” (Blaufränkisch)","Jaargang":2017,"Aantal":5,"Drinkvenster":"2023–2032","Notities":null,"Serveertemperatuur":"14–16°C","Foodpairing":"Wild, stoofpotten, gerijpte kazen","Kwaliteitscheck":"OK"},
-  {"Vak":2,"Wijn":"champagne autreau blanc de blancs brut","Jaargang":null,"Aantal":10,"Drinkvenster":null,"Notities":null,"Serveertemperatuur":"8–10°C","Foodpairing":"Aperitief, sushi, zeevruchten, lichte hapjes","Kwaliteitscheck":"JAARGANG ONTBREEKT"},
-  {"Vak":null,"Wijn":"champagne de venoge","Jaargang":null,"Aantal":2,"Drinkvenster":null,"Notities":null,"Serveertemperatuur":"8–10°C","Foodpairing":"Aperitief, sushi, zeevruchten, lichte hapjes","Kwaliteitscheck":"JAARGANG ONTBREEKT"},
-  {"Vak":3,"Wijn":"Marion Teroldego","Jaargang":2016,"Aantal":1,"Drinkvenster":"2022–2030","Notities":"Krachtig rood","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":3,"Wijn":"Fantini Edizione Cinque Autoctoni “22”","Jaargang":2022,"Aantal":2,"Drinkvenster":"2024–2034","Notities":"Zuid-Italië; iconische blend","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":3,"Wijn":"Marion Calto","Jaargang":2018,"Aantal":12,"Drinkvenster":"2024–2032","Notities":"Vol en elegant","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":3,"Wijn":"Brigaldara Amarone della Valpolicella “Cavolo”","Jaargang":2017,"Aantal":7,"Drinkvenster":"2025–2038","Notities":"Middellang bewaar","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":3,"Wijn":"Lupo Meraviglia Tre di Tre Rosso","Jaargang":2022,"Aantal":7,"Drinkvenster":"2024–2028","Notities":"Drinkwijn","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":4,"Wijn":"Brigaldara Amarone della Valpolicella “Case Vecie”","Jaargang":2018,"Aantal":18,"Drinkvenster":"2026–2040","Notities":"Topbewaar Amarone","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":4,"Wijn":"Brigaldara Amarone della Valpolicella “Cavolo”","Jaargang":2015,"Aantal":2,"Drinkvenster":"2024–2035","Notities":"Op dronk","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":4,"Wijn":"Dal Forno Romano Valpolicella Superiore Monte Lodoletta","Jaargang":2018,"Aantal":6,"Drinkvenster":"2028–2045","Notities":"Iconisch; lang bewaren","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":4,"Wijn":"Biscardo Amarone della Valpolicella Classico","Jaargang":2020,"Aantal":3,"Drinkvenster":"2025–2033","Notities":"Middellang bewaar","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":4,"Wijn":"Antiche Terre Venete Amarone “Baorna”","Jaargang":2021,"Aantal":6,"Drinkvenster":"2024–2032","Notities":"Toegankelijke Amarone","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":5,"Wijn":"Flor de Pingus","Jaargang":2021,"Aantal":12,"Drinkvenster":"2025–2038","Notities":"Top Ribera del Duero","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":6,"Wijn":"Barolo Monfalletto (Cordero di Montezemolo)","Jaargang":2020,"Aantal":12,"Drinkvenster":"2027–2042","Notities":"Lang bewaren","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":6,"Wijn":"Cumot Nebbiolo d’Alba Superiore","Jaargang":2015,"Aantal":4,"Drinkvenster":"2023–2030","Notities":"Eerder drinkbaar","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":6,"Wijn":"Rocche dei Manzoni “La Cresta” Barbera d’Alba","Jaargang":2019,"Aantal":8,"Drinkvenster":"2023–2031","Notities":"Drinkklaar","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"},
-  {"Vak":6,"Wijn":"Cordero di Montezemolo Barbera d’Alba Superiore “Funtanì”","Jaargang":2020,"Aantal":12,"Drinkvenster":"2024–2032","Notities":"Soepel rood","Serveertemperatuur":"N.t.b.","Foodpairing":"N.t.b.","Kwaliteitscheck":"OK"}
-];
-
-let wines = [];
-let currentView = 'all';
-
-/***********************
- * HELPERS
- ***********************/
 function guessType(name) {
-  if (!name) return 'onbekend';
+  if (!name) return "onbekend";
   const n = name.toLowerCase();
-  if (n.includes("rosé") || n.includes(" rose ") || n.includes(" rosé ")) return "rose";
+  if (n.includes("rosé") || n.includes(" rose ")) return "rose";
   if (n.includes("champagne") || n.includes("cava") || n.includes("prosecco") || n.includes("crémant")) return "bubbels";
-  if (n.includes("riesling") || n.includes("sauvignon") || n.includes("chardonnay") || n.includes("pinot grigio") || n.includes("veltliner") || n.includes("viognier") || n.includes("assyrtiko")) return "wit";
+  if (n.includes("riesling") || n.includes("sauvignon") || n.includes("chardonnay") || n.includes("pinot grigio") || n.includes("veltliner") || n.includes("viognier")) return "wit";
   if (n.includes("barolo") || n.includes("barbera") || n.includes("nebbiolo") || n.includes("rioja") || n.includes("malbec") || n.includes("cabernet") || n.includes("merlot") || n.includes("syrah") || n.includes("shiraz") || n.includes("amarone") || n.includes("valpolicella")) return "rood";
   return "onbekend";
 }
@@ -658,26 +566,23 @@ function estimateDrinkWindowForWine(w) {
   const y = parseInt(w.Jaargang, 10);
   if (!y || isNaN(y)) return null;
 
-  const type = (w.Type && w.Type !== "onbekend") ? w.Type : guessType(w.Wijn);
+  const type = guessType(w.Wijn);
   const name = (w.Wijn || "").toLowerCase();
   let start, end;
 
-  if (type === 'wit' || type === 'rose') {
-    start = Math.max(y + 1, nowYear);
-    end = start + 4;
-  } else if (type === 'bubbels') {
-    if (name.includes("champagne")) { start = Math.max(y + 2, nowYear); end = start + 8; }
+  if (type === "wit") { start = Math.max(y + 1, nowYear); end = start + 4; }
+  else if (type === "bubbels") {
+    if (name.includes("champagne") || name.includes("gimonnet") || name.includes("de venoge")) { start = Math.max(y + 2, nowYear); end = start + 8; }
     else { start = Math.max(y, nowYear); end = start + 5; }
-  } else if (type === 'rood') {
-    if (name.includes("barolo") || name.includes("amarone") || name.includes("dal forno") || name.includes("pingus")) {
+  } else if (type === "rood") {
+    if (name.includes("barolo") || name.includes("amarone") || name.includes("valpolicella") || name.includes("pingus") || name.includes("dal forno") || name.includes("ribera")) {
       start = Math.max(y + 5, nowYear); end = start + 15;
     } else if (name.includes("riserva") || name.includes("superiore")) {
       start = Math.max(y + 3, nowYear); end = start + 10;
-    } else { start = Math.max(y + 2, nowYear); end = start + 6; }
-  } else {
-    start = Math.max(y + 1, nowYear);
-    end = start + 5;
-  }
+    } else {
+      start = Math.max(y + 2, nowYear); end = start + 6;
+    }
+  } else { start = Math.max(y + 1, nowYear); end = start + 5; }
 
   if (end < start) end = start + 1;
   return `${start}–${end}`;
@@ -685,58 +590,27 @@ function estimateDrinkWindowForWine(w) {
 
 function estimateFoodpairingForWine(w) {
   const name = (w.Wijn || "").toLowerCase();
-  const type = (w.Type && w.Type !== "onbekend") ? w.Type : guessType(w.Wijn);
+  const type = guessType(w.Wijn);
 
   if (type === "bubbels" || name.includes("champagne") || name.includes("cava")) {
     return "Aperitief, oesters, zeevruchten, sushi en lichte hapjes";
   }
-  if (type === "wit" || type === "rose") {
-    if (name.includes("sauvignon") || name.includes("assyrtiko") || name.includes("riesling")) {
-      return "Geitenkaas, salades, asperges, zeevruchten en lichte visgerechten";
-    }
-    if (name.includes("chardonnay")) {
-      return "Gevogelte, romige sauzen, rijke visgerechten en kreeft";
-    }
+  if (type === "wit") {
+    if (name.includes("sauvignon") || name.includes("assyrtiko") || name.includes("riesling")) return "Geitenkaas, salades, asperges, zeevruchten en lichte visgerechten";
+    if (name.includes("chardonnay")) return "Gevogelte, romige sauzen, rijke visgerechten en kreeft";
     return "Visgerechten, schaal- en schelpdieren, salades en lichte witvleesgerechten";
   }
   if (type === "rood") {
-    if (name.includes("barolo") || name.includes("nebbiolo")) {
-      return "Rood vlees, wild, truffelgerechten en gerijpte harde kazen";
-    }
-    if (name.includes("amarone") || name.includes("valpolicella") || name.includes("ripasso")) {
-      return "Wild, stoofpotten, krachtige vleesgerechten en gerijpte kazen";
-    }
-    if (name.includes("pinot noir")) {
-      return "Eend, gevogelte, kalfsvlees en gerechten met paddenstoelen";
-    }
+    if (name.includes("barolo") || name.includes("nebbiolo")) return "Rood vlees, wild, truffelgerechten en gerijpte harde kazen";
+    if (name.includes("amarone") || name.includes("valpolicella") || name.includes("ripasso")) return "Wild, stoofpotten, krachtige vleesgerechten en gerijpte kazen";
+    if (name.includes("pinot noir")) return "Eend, gevogelte, kalfsvlees en gerechten met paddenstoelen";
     return "Gegrild vlees, stoofpotten, charcuterie en gerijpte kazen";
   }
   return "Algemene vlees- en pastagerechten, gegrilde groenten en kazen";
 }
 
-function formatLastDrunk(last) {
-  if (!last) return "";
-  const d = new Date(last);
-  if (isNaN(d.getTime())) return "";
-  return d.toLocaleDateString('nl-BE');
-}
-
-function normalizeWine(w, idx) {
-  const out = { ...w };
-  if (out._id == null) out._id = idx;
-  if (out.Aantal == null || isNaN(out.Aantal)) out.Aantal = 0;
-  if (!out.Type) out.Type = guessType(out.Wijn);
-  if (out.Jaargang === undefined) out.Jaargang = null;
-  if (out.Vak === undefined) out.Vak = null;
-  return out;
-}
-
-/***********************
- * INIT / SAVE
- ***********************/
 function initData() {
   let loaded = null;
-
   for (const key of STORAGE_KEYS) {
     const raw = localStorage.getItem(key);
     if (!raw) continue;
@@ -744,17 +618,16 @@ function initData() {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length) {
         loaded = parsed;
-        // migreer naar nieuwste key
         if (key !== STORAGE_KEY) localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
         break;
       }
     } catch (e) {}
   }
 
-  wines = loaded ? loaded : baseWines.map(w => ({...w}));
+  wines = loaded ? loaded : baseWines.map(w => ({ ...w }));
 
   wines.forEach((w, idx) => {
-    if (w._id == null) w._id = idx;
+    if (w._id == null) w._id = idx + 1;
     if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
     if (!w.Type) w.Type = guessType(w.Wijn);
   });
@@ -767,9 +640,10 @@ function saveData() {
 function fillVakFilter() {
   const filter = document.getElementById("vakFilter");
   filter.innerHTML = '<option value="">— Filter op vak —</option>';
+
   const uniqueVakken = [...new Set(wines.map(w => w.Vak))]
     .filter(v => v !== null && v !== undefined && v !== "" && !Number.isNaN(v))
-    .sort((a,b) => Number(a) - Number(b));
+    .sort((a, b) => Number(a) - Number(b));
 
   uniqueVakken.forEach(v => {
     const opt = document.createElement("option");
@@ -781,8 +655,8 @@ function fillVakFilter() {
 
 function setView(view) {
   currentView = view;
-  document.getElementById('viewAll').classList.toggle('active', view === 'all');
-  document.getElementById('viewOnDrink').classList.toggle('active', view === 'onDrink');
+  document.getElementById("viewAll").classList.toggle("active", view === "all");
+  document.getElementById("viewOnDrink").classList.toggle("active", view === "onDrink");
   renderTable();
 }
 
@@ -797,25 +671,25 @@ function updateSummary() {
     const aantal = Number(w.Aantal || 0);
     if (!isNaN(aantal)) totalBottles += aantal;
 
-    const price = (w.PrijsHuidig != null && !isNaN(Number(w.PrijsHuidig))) ? Number(w.PrijsHuidig)
-                 : (w.PrijsAankoop != null && !isNaN(Number(w.PrijsAankoop))) ? Number(w.PrijsAankoop)
-                 : null;
-    if (price != null) totalValue += aantal * price;
+    const price = w.PrijsHuidig != null ? Number(w.PrijsHuidig)
+      : w.PrijsAankoop != null ? Number(w.PrijsAankoop)
+      : null;
+
+    if (price != null && !isNaN(price)) totalValue += aantal * price;
   });
 
   const valueText = totalValue > 0 ? `€ ${totalValue.toFixed(0)}` : "—";
 
   el.innerHTML = `
-    <div class="summary-item"><span>Totaal flessen</span><span class="value">${totalBottles}</span></div>
-    <div class="summary-item"><span>Totale waarde</span><span class="value">${valueText}</span></div>
+    <div class="summary-item"><span>Totaal flessen</span> <span class="value">${totalBottles}</span></div>
+    <div class="summary-item"><span>Totale waarde</span> <span class="value">${valueText}</span></div>
   `;
 }
 
 function renderTable() {
   const tbody = document.querySelector("#wineTable tbody");
+  if (!tbody) return;
   tbody.innerHTML = "";
-  const cards = document.getElementById("wineCards");
-  if (cards) cards.innerHTML = "";
 
   const search = (document.getElementById("searchInput").value || "").toLowerCase();
   const vak = document.getElementById("vakFilter").value;
@@ -824,8 +698,8 @@ function renderTable() {
 
   const rows = wines
     .map((w, idx) => ({ w, idx }))
-    .filter(({w}) => {
-      if (currentView === 'onDrink' && !isOnDrink(w.Drinkvenster)) return false;
+    .filter(({ w }) => {
+      if (currentView === "onDrink" && !isOnDrink(w.Drinkvenster)) return false;
       if (vak !== "" && String(w.Vak) !== String(vak)) return false;
 
       if (search) {
@@ -840,14 +714,15 @@ function renderTable() {
         if (typeFilter === "dessert") {
           const fp = (w.Foodpairing || "").toLowerCase();
           const nt = (w.Notities || "").toLowerCase();
-          if (!(fp.includes("dessert") || nt.includes("dessert") || fp.includes("zoet") || nt.includes("zoet"))) return false;
+          if (!(fp.includes("dessert") || nt.includes("dessert"))) return false;
         } else if (t !== typeFilter) return false;
       }
+
       return true;
     })
     .sort((a, b) => {
-      const vakA = (a.w.Vak === null || a.w.Vak === undefined || a.w.Vak === "" || Number.isNaN(a.w.Vak)) ? 9999 : Number(a.w.Vak);
-      const vakB = (b.w.Vak === null || b.w.Vak === undefined || b.w.Vak === "" || Number.isNaN(b.w.Vak)) ? 9999 : Number(b.w.Vak);
+      const vakA = (a.w.Vak == null || Number.isNaN(a.w.Vak)) ? 9999 : Number(a.w.Vak);
+      const vakB = (b.w.Vak == null || Number.isNaN(b.w.Vak)) ? 9999 : Number(b.w.Vak);
       if (vakA !== vakB) return vakA - vakB;
 
       const nameA = (a.w.Wijn || "").toLowerCase();
@@ -859,11 +734,12 @@ function renderTable() {
       return yB - yA;
     });
 
-  rows.forEach(({w, idx}) => {
+  rows.forEach(({ w, idx }) => {
     const tr = document.createElement("tr");
     const onDrink = isOnDrink(w.Drinkvenster);
 
-    const locationMissing = w.Vak === null || w.Vak === undefined || w.Vak === "" || Number.isNaN(w.Vak);
+    const locationMissing = (w.Vak === null || w.Vak === undefined || w.Vak === "" || Number.isNaN(w.Vak));
+    const vakDisplay = locationMissing ? '<span class="tag tag-danger">Geen vak!</span>' : (w.Vak ?? "");
 
     let voorraadBadge = "";
     if ((w.Aantal || 0) <= 0) voorraadBadge = '<span class="tag tag-danger">Op</span>';
@@ -871,31 +747,27 @@ function renderTable() {
     else if (w.Aantal <= 3) voorraadBadge = '<span class="tag tag-ok">Lage voorraad</span>';
 
     let drinkBadge = "";
-    if (onDrink && currentView === 'all') drinkBadge = '<span class="chip-badge">Nu op dronk</span>';
+    if (onDrink && currentView === "all") drinkBadge = '<span class="chip-badge">Nu op dronk</span>';
 
-    const vakDisplay = locationMissing ? '<span class="tag tag-danger">Geen vak!</span>' : (w.Vak ?? '');
+    const price = w.PrijsHuidig != null ? Number(w.PrijsHuidig)
+      : w.PrijsAankoop != null ? Number(w.PrijsAankoop)
+      : null;
 
-    const price = (w.PrijsHuidig != null && !isNaN(Number(w.PrijsHuidig))) ? Number(w.PrijsHuidig)
-                : (w.PrijsAankoop != null && !isNaN(Number(w.PrijsAankoop))) ? Number(w.PrijsAankoop)
-                : null;
-    const priceText = (price != null) ? price.toFixed(2) : "—";
-
+    const priceText = (price != null && !isNaN(price)) ? price.toFixed(2) : "—";
     const aantal = Number(w.Aantal || 0);
-    const value = (price != null && !isNaN(aantal)) ? (aantal * price) : null;
-    const valueText = (value != null) ? `€ ${value.toFixed(0)}` : "—";
+    const value = (price != null && !isNaN(price) && !isNaN(aantal)) ? (aantal * price) : null;
+    const valueText = value != null ? `€ ${value.toFixed(0)}` : "—";
 
     let infoBadge = "";
-    if (price == null) infoBadge += '<span class="tag">Geen prijs</span>';
+    if (price == null || isNaN(price)) infoBadge += '<span class="tag">Geen prijs</span>';
     if (!w.Drinkvenster) infoBadge += '<span class="tag">Geen drinkvenster</span>';
 
-    let typeLabel = "";
     const type = w.Type || guessType(w.Wijn);
-    if (type === "wit") typeLabel = "Wit";
-    else if (type === "rood") typeLabel = "Rood";
-    else if (type === "bubbels") typeLabel = "Mousserend";
-    else if (type === "rose") typeLabel = "Rosé";
-
-    const last = w.LastDrunk ? `<span class="tag">Laatst: ${formatLastDrunk(w.LastDrunk)}</span>` : "";
+    const typeLabel = (type === "wit") ? "Wit"
+      : (type === "rood") ? "Rood"
+      : (type === "bubbels") ? "Mousserend"
+      : (type === "rose") ? "Rosé"
+      : "";
 
     tr.innerHTML = `
       <td>${vakDisplay}</td>
@@ -903,15 +775,14 @@ function renderTable() {
         <div><strong>${w.Wijn || ""}</strong></div>
         <div class="small">
           ${typeLabel ? `<span class="tag">${typeLabel}</span>` : ""}
-          ${drinkBadge}
-          ${infoBadge}
-          ${last}
+          <div style="margin-top:4px;">
+            ${drinkBadge} ${infoBadge}
+          </div>
         </div>
-        ${w.Foodpairing ? `<div class="small" style="margin-top:4px;">${w.Foodpairing}</div>` : ""}
       </td>
       <td>${w.Jaargang || ""}</td>
       <td>
-        <div>${w.Aantal || 0}</div>
+        <div>${w.Aantal ?? 0}</div>
         <div>${voorraadBadge}</div>
       </td>
       <td>${priceText}</td>
@@ -919,77 +790,24 @@ function renderTable() {
       <td>${w.Drinkvenster || ""}</td>
       <td>
         <div class="inline-actions">
-          <button class="btn-small" type="button" onclick="takeBottle(${idx})">Fles genomen</button>
-          <button class="btn-small" type="button" onclick="editLocation(${idx})">Locatie wijzigen</button>
-          <button class="btn-small" type="button" onclick="editPrice(${idx})">Prijs instellen</button>
-          <button class="btn-small" type="button" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
-          <button class="btn-small" type="button" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
-          <button class="btn-small" type="button" onclick="searchPrice(${idx})">Zoek prijs</button>
-          <button class="btn-small" type="button" onclick="editType(${idx})">Type</button>
-          <button class="btn-small" type="button" onclick="editWine(${idx})">Bewerken</button>
-          <button class="btn-small" type="button" onclick="deleteWine(${idx})">Verwijderen</button>
+          <button class="btn-small" onclick="takeBottle(${idx})">Fles genomen</button>
+          <button class="btn-small" onclick="editLocation(${idx})">Locatie</button>
+          <button class="btn-small" onclick="editPrice(${idx})">Prijs</button>
+          <button class="btn-small" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
+          <button class="btn-small" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
+          <button class="btn-small" onclick="editType(${idx})">Type</button>
+          <button class="btn-small" onclick="editWine(${idx})">Bewerken</button>
+          <button class="btn-small" onclick="deleteWine(${idx})">Verwijderen</button>
         </div>
       </td>
     `;
     tbody.appendChild(tr);
   });
-    // --- Mobile cards ---
-    if (cards) {
-      const card = document.createElement("div");
-      card.className = "wine-card";
-
-      card.innerHTML = `
-        <div class="wine-card-top">
-          <div>
-            <div class="wine-title">${w.Wijn || ""} ${w.Jaargang ? `(${w.Jaargang})` : ""}</div>
-            <div class="wine-meta">
-              ${typeLabel ? `<span class="tag">${typeLabel}</span>` : ""}
-              ${w.Vak != null && w.Vak !== "" && !Number.isNaN(w.Vak)
-                ? `<span class="tag">Vak ${w.Vak}</span>`
-                : `<span class="tag tag-danger">Geen vak</span>`}
-              ${drinkBadge}
-              ${voorraadBadge}
-              ${infoBadge}
-            </div>
-          </div>
-        </div>
-
-        <div class="wine-kpis">
-          <div class="kpi">
-            <div class="k">Aantal</div>
-            <div class="v">${w.Aantal ?? 0}</div>
-          </div>
-          <div class="kpi">
-            <div class="k">Waarde</div>
-            <div class="v">${valueText}</div>
-          </div>
-          <div class="kpi">
-            <div class="k">Prijs/fles</div>
-            <div class="v">${priceText === "—" ? "—" : `€ ${priceText}`}</div>
-          </div>
-          <div class="kpi">
-            <div class="k">Drinkvenster</div>
-            <div class="v">${w.Drinkvenster || "—"}</div>
-          </div>
-        </div>
-
-        <div class="wine-actions">
-          <button class="btn-small" onclick="takeBottle(${idx})">Fles genomen</button>
-          <button class="btn-small" onclick="editWine(${idx})">Bewerken</button>
-          <button class="btn-small" onclick="editLocation(${idx})">Locatie</button>
-          <button class="btn-small btn-danger" onclick="deleteWine(${idx})">Verwijderen</button>
-        </div>
-      `;
-
-      cards.appendChild(card);
-    }
 
   updateSummary();
 }
 
-/***********************
- * FILTERS
- ***********************/
+/* Filters */
 function quickFilter(type) {
   document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
   const selected = Array.from(document.querySelectorAll(".pill")).find(p => p.getAttribute("data-type") === type);
@@ -1004,18 +822,16 @@ function resetFilters() {
   document.getElementById("searchInput").value = "";
   document.getElementById("vakFilter").value = "";
   document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
-  setView('all');
+  setView("all");
+  renderTable();
 }
 
-/***********************
- * ACTIONS
- ***********************/
+/* Acties */
 function takeBottle(idx) {
   const w = wines[idx];
   if (!w) return;
-  if (!w.Aantal || w.Aantal <= 0) { alert("Er zijn geen flessen meer in voorraad van deze wijn."); return; }
+  if (!w.Aantal || w.Aantal <= 0) { alert("Er zijn geen flessen meer in voorraad."); return; }
   if (!confirm("Bevestig: 1 fles genomen van\n" + (w.Wijn || "onbekende wijn") + " (vak " + (w.Vak ?? "?") + ")")) return;
-
   w.Aantal = (w.Aantal || 0) - 1;
   w.LastDrunk = new Date().toISOString();
   saveData();
@@ -1025,202 +841,44 @@ function takeBottle(idx) {
 function editLocation(idx) {
   const w = wines[idx];
   if (!w) return;
-  const currentVak = (w.Vak !== null && w.Vak !== undefined && !Number.isNaN(w.Vak)) ? w.Vak : "";
-  const newVak = prompt("Nieuwe vaklocatie voor:\n" + (w.Wijn || "onbekende wijn"), currentVak);
+  const currentVak = (w.Vak != null && !Number.isNaN(w.Vak)) ? w.Vak : "";
+  const newVak = prompt("Nieuwe vaklocatie:", currentVak);
   if (newVak === null) return;
   if (String(newVak).trim() === "") { alert("Vak mag niet leeg zijn."); return; }
-  const vakNum = parseInt(newVak, 10);
+  const vakNum = parseInt(String(newVak).trim(), 10);
   w.Vak = isNaN(vakNum) ? String(newVak).trim() : vakNum;
-  saveData();
-  fillVakFilter();
-  renderTable();
+  saveData(); fillVakFilter(); renderTable();
 }
 
 function editPrice(idx) {
   const w = wines[idx];
   if (!w) return;
-  const currentPrice = (w.PrijsHuidig != null) ? w.PrijsHuidig : w.PrijsAankoop;
-  const input = prompt("Nieuwe prijs per fles (in €) voor:\n" + (w.Wijn || "onbekende wijn"), currentPrice != null ? String(currentPrice) : "");
+  const currentPrice = w.PrijsHuidig != null ? w.PrijsHuidig : w.PrijsAankoop;
+  const input = prompt("Nieuwe prijs per fles (in €):", currentPrice != null ? String(currentPrice) : "");
   if (input === null) return;
   const val = parseFloat(String(input).replace(",", "."));
   if (isNaN(val) || val < 0) { alert("Ongeldige prijs."); return; }
   w.PrijsHuidig = val;
-  saveData();
-  renderTable();
+  saveData(); renderTable();
 }
 
-function editType(idx){
+function editType(idx) {
   const w = wines[idx];
   if (!w) return;
   const current = w.Type || guessType(w.Wijn) || "";
-  const input = prompt("Type (wit/rood/rosé/mousserend):", current);
+  const input = prompt("Type: wit, rood, rosé, mousserend", current);
   if (input === null) return;
+
   const val = input.trim().toLowerCase();
-
   let normalized = null;
-  if (val === "wit") normalized = "wit";
-  else if (val === "rood") normalized = "rood";
-  else if (val === "rosé" || val === "rose") normalized = "rose";
-  else if (val === "mousserend" || val === "bubbels") normalized = "bubbels";
+  if (val === "wit" || val === "white") normalized = "wit";
+  else if (val === "rood" || val === "red") normalized = "rood";
+  else if (val === "rose" || val === "rosé") normalized = "rose";
+  else if (val === "mousserend" || val === "bubbels" || val === "sparkling") normalized = "bubbels";
 
-  if (!normalized) { alert("Onbekend type. Gebruik: wit, rood, rosé of mousserend."); return; }
+  if (!normalized) { alert("Onbekend type."); return; }
   w.Type = normalized;
-  saveData();
-  renderTable();
-}
-
-function searchPrice(idx) {
-  const w = wines[idx];
-  if (!w) return;
-  const queryParts = [w.Wijn, w.Jaargang].filter(Boolean).join(" ");
-  const url = "https://www.google.com/search?q=" + encodeURIComponent(queryParts + " prijs");
-  window.open(url, "_blank");
-}
-
-function editWine(idx) {
-  const w = wines[idx];
-  if (!w) return;
-
-  const newName = prompt("Nieuwe naam (leeg = ongewijzigd):", w.Wijn || "");
-  if (newName === null) return;
-  if (newName.trim() !== "") w.Wijn = newName.trim();
-
-  const newYear = prompt("Nieuwe jaargang (leeg = ongewijzigd):", w.Jaargang != null ? String(w.Jaargang) : "");
-  if (newYear === null) return;
-  if (newYear.trim() !== "") {
-    const yr = parseInt(newYear.trim(), 10);
-    if (!isNaN(yr)) w.Jaargang = yr;
-  }
-
-  const newVak = prompt("Nieuw vak (leeg = ongewijzigd):", (w.Vak != null && !Number.isNaN(w.Vak)) ? String(w.Vak) : "");
-  if (newVak === null) return;
-  if (newVak.trim() !== "") {
-    const vakNum = parseInt(newVak.trim(), 10);
-    w.Vak = isNaN(vakNum) ? newVak.trim() : vakNum;
-  }
-
-  const newQty = prompt("Nieuw aantal (leeg = ongewijzigd):", w.Aantal != null ? String(w.Aantal) : "");
-  if (newQty === null) return;
-  if (newQty.trim() !== "") {
-    const q = parseInt(newQty.trim(), 10);
-    if (!isNaN(q) && q >= 0) w.Aantal = q;
-  }
-
-  const newDV = prompt("Nieuw drinkvenster (leeg = ongewijzigd):", w.Drinkvenster || "");
-  if (newDV === null) return;
-  if (newDV.trim() !== "") w.Drinkvenster = newDV.trim();
-
-  const newFP = prompt("Nieuwe foodpairing (leeg = ongewijzigd):", w.Foodpairing || "");
-  if (newFP === null) return;
-  if (newFP.trim() !== "") w.Foodpairing = newFP.trim();
-
-  const newNotes = prompt("Nieuwe notities (leeg = ongewijzigd):", w.Notities || "");
-  if (newNotes === null) return;
-  if (newNotes.trim() !== "") w.Notities = newNotes.trim();
-
-  if (!w.Type) w.Type = guessType(w.Wijn);
-
-  saveData();
-  fillVakFilter();
-  renderTable();
-}
-
-function deleteWine(idx) {
-  const w = wines[idx];
-  if (!w) return;
-
-  const ok = confirm(
-    "Ben je zeker dat je deze wijn volledig wilt verwijderen?\n\n" +
-    (w.Wijn || "Onbekende wijn") +
-    (w.Vak != null ? " (vak " + w.Vak + ")" : "")
-  );
-  if (!ok) return;
-
-  wines.splice(idx, 1);
-  saveData();
-  fillVakFilter();
-  renderTable();
-}
-function editWine(idx) {
-  const w = wines[idx];
-  if (!w) return;
-
-  const newName = prompt("Nieuwe naam (leeg = ongewijzigd):", w.Wijn || "");
-  if (newName === null) return;
-  if (newName.trim() !== "") w.Wijn = newName.trim();
-
-  const newYear = prompt("Nieuwe jaargang (leeg = ongewijzigd):", w.Jaargang != null ? String(w.Jaargang) : "");
-  if (newYear === null) return;
-  if (newYear.trim() !== "") {
-    const yr = parseInt(newYear.trim(), 10);
-    if (!isNaN(yr)) w.Jaargang = yr;
-  }
-
-  const newVak = prompt("Nieuw vak (leeg = ongewijzigd):", (w.Vak != null && !Number.isNaN(w.Vak)) ? String(w.Vak) : "");
-  if (newVak === null) return;
-  if (newVak.trim() !== "") {
-    const vakNum = parseInt(newVak.trim(), 10);
-    w.Vak = isNaN(vakNum) ? newVak.trim() : vakNum;
-  }
-
-  const newQty = prompt("Nieuw aantal (leeg = ongewijzigd):", w.Aantal != null ? String(w.Aantal) : "");
-  if (newQty === null) return;
-  if (newQty.trim() !== "") {
-    const q = parseInt(newQty.trim(), 10);
-    if (!isNaN(q) && q >= 0) w.Aantal = q;
-  }
-
-  const newDV = prompt("Nieuw drinkvenster (leeg = ongewijzigd):", w.Drinkvenster || "");
-  if (newDV === null) return;
-  if (newDV.trim() !== "") w.Drinkvenster = newDV.trim();
-
-  const newFP = prompt("Nieuwe foodpairing (leeg = ongewijzigd):", w.Foodpairing || "");
-  if (newFP === null) return;
-  if (newFP.trim() !== "") w.Foodpairing = newFP.trim();
-
-  const newNotes = prompt("Nieuwe notities (leeg = ongewijzigd):", w.Notities || "");
-  if (newNotes === null) return;
-  if (newNotes.trim() !== "") w.Notities = newNotes.trim();
-
-  if (!w.Type) w.Type = guessType(w.Wijn);
-
-  saveData();
-  fillVakFilter();
-  renderTable();
-}
-
-function deleteWine(idx) {
-  const w = wines[idx];
-  if (!w) return;
-
-  const ok = confirm(
-    "Ben je zeker dat je deze wijn volledig wilt verwijderen?\n\n" +
-    (w.Wijn || "Onbekende wijn") +
-    (w.Vak != null ? " (vak " + w.Vak + ")" : "")
-  );
-  if (!ok) return;
-
-  wines.splice(idx, 1);
-  saveData();
-  fillVakFilter();
-  renderTable();
-}
-
-function deleteWine(idx) {
-  const w = wines[idx];
-  if (!w) return;
-
-  const ok = confirm(
-    "Ben je zeker dat je deze wijn volledig wilt verwijderen?\n\n" +
-    (w.Wijn || "Onbekende wijn") +
-    (w.Vak != null ? " (vak " + w.Vak + ")" : "")
-  );
-  if (!ok) return;
-
-  wines.splice(idx, 1);
-  saveData();
-  fillVakFilter();
-  renderTable();
+  saveData(); renderTable();
 }
 
 function autoFillDrinkWindow(idx) {
@@ -1228,10 +886,9 @@ function autoFillDrinkWindow(idx) {
   if (!w) return;
   const suggestion = estimateDrinkWindowForWine(w);
   if (!suggestion) { alert("Geen automatisch drinkvenster mogelijk (jaargang ontbreekt)."); return; }
-  if (w.Drinkvenster && !confirm("Bestaand drinkvenster overschrijven?\nHuidig: " + w.Drinkvenster + "\nNieuw: " + suggestion)) return;
+  if (w.Drinkvenster && !confirm("Overschrijven?\nHuidig: " + w.Drinkvenster + "\nNieuw: " + suggestion)) return;
   w.Drinkvenster = suggestion;
-  saveData();
-  renderTable();
+  saveData(); renderTable();
 }
 
 function autoFillAllDrinkWindows() {
@@ -1243,8 +900,8 @@ function autoFillAllDrinkWindows() {
       if (suggestion) { w.Drinkvenster = suggestion; changed++; }
     }
   });
-  if (changed) { saveData(); renderTable(); alert(changed + " wijnen kregen een automatisch drinkvenster."); }
-  else alert("Geen wijnen gevonden zonder drinkvenster (of zonder jaargang).");
+  saveData(); renderTable();
+  alert(changed > 0 ? (changed + " wijnen kregen een drinkvenster.") : "Geen wijnen zonder drinkvenster gevonden.");
 }
 
 function autoFillFoodpairing(idx) {
@@ -1252,10 +909,9 @@ function autoFillFoodpairing(idx) {
   if (!w) return;
   const suggestion = estimateFoodpairingForWine(w);
   if (!suggestion) { alert("Geen automatische foodpairing beschikbaar."); return; }
-  if (w.Foodpairing && !confirm("Bestaande foodpairing overschrijven?\nHuidig: " + w.Foodpairing + "\nNieuw: " + suggestion)) return;
+  if (w.Foodpairing && !confirm("Overschrijven?\nHuidig: " + w.Foodpairing + "\nNieuw: " + suggestion)) return;
   w.Foodpairing = suggestion;
-  saveData();
-  renderTable();
+  saveData(); renderTable();
 }
 
 function autoFillAllFoodpairings() {
@@ -1267,16 +923,76 @@ function autoFillAllFoodpairings() {
       if (suggestion) { w.Foodpairing = suggestion; changed++; }
     }
   });
-  if (changed) { saveData(); renderTable(); alert(changed + " wijnen kregen een automatische foodpairing."); }
-  else alert("Geen wijnen gevonden zonder foodpairing.");
+  saveData(); renderTable();
+  alert(changed > 0 ? (changed + " wijnen kregen foodpairing.") : "Geen wijnen zonder foodpairing gevonden.");
 }
 
-/***********************
- * SOMMELIER
- ***********************/
+function editWine(idx) {
+  const w = wines[idx];
+  if (!w) return;
+
+  const newName = prompt("Nieuwe naam (leeg = ongewijzigd):", w.Wijn || "");
+  if (newName === null) return;
+  if (newName.trim() !== "") w.Wijn = newName.trim();
+
+  const newYear = prompt("Nieuwe jaargang (leeg = ongewijzigd):", w.Jaargang != null ? String(w.Jaargang) : "");
+  if (newYear === null) return;
+  if (newYear.trim() !== "") {
+    const yr = parseInt(newYear.trim(), 10);
+    if (!isNaN(yr)) w.Jaargang = yr;
+  }
+
+  const newVak = prompt("Nieuw vak (leeg = ongewijzigd):", (w.Vak != null && !Number.isNaN(w.Vak)) ? String(w.Vak) : "");
+  if (newVak === null) return;
+  if (newVak.trim() !== "") {
+    const vakNum = parseInt(newVak.trim(), 10);
+    w.Vak = isNaN(vakNum) ? newVak.trim() : vakNum;
+  }
+
+  const newQty = prompt("Nieuw aantal (leeg = ongewijzigd):", w.Aantal != null ? String(w.Aantal) : "");
+  if (newQty === null) return;
+  if (newQty.trim() !== "") {
+    const q = parseInt(newQty.trim(), 10);
+    if (!isNaN(q) && q >= 0) w.Aantal = q;
+  }
+
+  const newDV = prompt("Nieuw drinkvenster (leeg = ongewijzigd):", w.Drinkvenster || "");
+  if (newDV === null) return;
+  if (newDV.trim() !== "") w.Drinkvenster = newDV.trim();
+
+  const newFP = prompt("Nieuwe foodpairing (leeg = ongewijzigd):", w.Foodpairing || "");
+  if (newFP === null) return;
+  if (newFP.trim() !== "") w.Foodpairing = newFP.trim();
+
+  const newNotes = prompt("Nieuwe notities (leeg = ongewijzigd):", w.Notities || "");
+  if (newNotes === null) return;
+  if (newNotes.trim() !== "") w.Notities = newNotes.trim();
+
+  if (!w.Type) w.Type = guessType(w.Wijn);
+
+  saveData(); fillVakFilter(); renderTable();
+}
+
+function deleteWine(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const ok = confirm("Ben je zeker dat je deze wijn volledig wilt verwijderen?\n\n" + (w.Wijn || "Onbekende wijn"));
+  if (!ok) return;
+  wines.splice(idx, 1);
+  saveData(); fillVakFilter(); renderTable();
+}
+
+/* Sommelier */
 function setDishAndSuggest(text) {
-  document.getElementById('dishInput').value = text;
+  document.getElementById("dishInput").value = text;
   suggestWine();
+}
+
+function formatLastDrunk(last) {
+  if (!last) return "";
+  const d = new Date(last);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("nl-BE");
 }
 
 function suggestWine() {
@@ -1290,37 +1006,35 @@ function suggestWine() {
   }
 
   let candidates = wines.filter(w => (w.Aantal || 0) > 0);
-  if (!candidates.length) {
+
+  if (dish.includes("kip") || dish.includes("poulet") || dish.includes("gevogelte")) {
+    candidates = candidates.filter(w => guessType(w.Wijn) === "wit" || (w.Foodpairing || "").toLowerCase().includes("kip"));
+  } else if (dish.includes("rund") || dish.includes("steak") || dish.includes("côte") || dish.includes("os")) {
+    candidates = candidates.filter(w => guessType(w.Wijn) === "rood");
+  } else if (dish.includes("vis") || dish.includes("zee") || dish.includes("oester") || dish.includes("scampi") || dish.includes("gamba")) {
+    candidates = candidates.filter(w => guessType(w.Wijn) === "wit" || guessType(w.Wijn) === "bubbels");
+  } else if (dish.includes("aperitief") || dish.includes("aperitif")) {
+    candidates = candidates.filter(w => guessType(w.Wijn) === "bubbels" || (w.Foodpairing || "").toLowerCase().includes("aperitief"));
+  }
+
+  if (candidates.length === 0) candidates = wines.filter(w => (w.Aantal || 0) > 0);
+  if (candidates.length === 0) {
     result.innerHTML = "<div class='sommelier-result'>Er zijn geen flessen meer in voorraad.</div>";
     return;
   }
-
-  const wantFish = dish.includes("vis") || dish.includes("zee") || dish.includes("scampi") || dish.includes("gamba") || dish.includes("oester");
-  const wantChicken = dish.includes("kip") || dish.includes("poulet") || dish.includes("gevogelte");
-  const wantBeef = dish.includes("rund") || dish.includes("steak") || dish.includes("côte") || dish.includes("os");
-  const wantApero = dish.includes("aperitief") || dish.includes("aperitif") || dish.includes("hapjes");
-
-  if (wantChicken) candidates = candidates.filter(w => (w.Foodpairing||"").toLowerCase().includes("gevogelte") || (w.Foodpairing||"").toLowerCase().includes("kip") || (w.Type||guessType(w.Wijn)) === "wit");
-  else if (wantBeef) candidates = candidates.filter(w => (w.Type||guessType(w.Wijn)) === "rood");
-  else if (wantFish) candidates = candidates.filter(w => (w.Type||guessType(w.Wijn)) === "wit" || (w.Type||guessType(w.Wijn)) === "bubbels");
-  else if (wantApero) candidates = candidates.filter(w => (w.Type||guessType(w.Wijn)) === "bubbels" || (w.Foodpairing||"").toLowerCase().includes("aperitief"));
-
-  if (!candidates.length) candidates = wines.filter(w => (w.Aantal || 0) > 0);
 
   const matchWine = candidates.find(w => isOnDrink(w.Drinkvenster)) || candidates[0];
 
   const weetje = matchWine.Notities || "Geen extra notities, maar dit is een interessante fles uit je kelder.";
   const drink = matchWine.Drinkvenster ? `Drinkvenster: ${matchWine.Drinkvenster}.` : "";
   const serveer = matchWine.Serveertemperatuur ? `Serveer rond ${matchWine.Serveertemperatuur}.` : "";
-  const vakInfo = (matchWine.Vak !== null && matchWine.Vak !== undefined && matchWine.Vak !== "" && !Number.isNaN(matchWine.Vak))
-    ? `De fles ligt in vak ${matchWine.Vak}.`
-    : "Locatie: vak nog niet ingevuld – graag aanvullen in het kelderoverzicht.";
+  const vakInfo = matchWine.Vak ? `De fles ligt in vak ${matchWine.Vak}.` : "Locatie: vak nog niet ingevuld.";
   const lastDrunkText = matchWine.LastDrunk ? `Laatst gedronken op ${formatLastDrunk(matchWine.LastDrunk)}.` : "";
 
   result.innerHTML = `
     <div class="sommelier-result">
       <strong>Advies:</strong> ${matchWine.Wijn} (jaargang ${matchWine.Jaargang || "n.v.t."})<br>
-      ${(matchWine.Vak != null && !Number.isNaN(matchWine.Vak)) ? `<span class="tag">Vak ${matchWine.Vak}</span>` : `<span class="tag tag-danger">Geen vak ingevuld</span>`}
+      ${matchWine.Vak ? `<span class="tag">Vak ${matchWine.Vak}</span>` : `<span class="tag tag-danger">Geen vak</span>`}
       <br><br>
       <strong>Weetje:</strong> ${weetje}<br>
       ${drink} ${serveer} ${lastDrunkText}<br><br>
@@ -1329,121 +1043,65 @@ function suggestWine() {
   `;
 }
 
-/***********************
- * ADD WINE
- ***********************/
+/* Add wine */
 function addWine(event) {
   event.preventDefault();
-  const vak = document.getElementById('addVak').value.trim();
-  const wijn = document.getElementById('addWijn').value.trim();
-  const jaargang = document.getElementById('addJaargang').value.trim();
-  const aantalVal = document.getElementById('addAantal').value.trim();
-  const aankoopPrijsVal = document.getElementById('addAankoopPrijs').value.trim();
-  const huidigePrijsVal = document.getElementById('addHuidigePrijs').value.trim();
-  const drink = document.getElementById('addDrinkvenster').value.trim();
-  const serveer = document.getElementById('addServeer').value.trim();
-  const food = document.getElementById('addFood').value.trim();
-  const notes = document.getElementById('addNotes').value.trim();
-  const typeVal = document.getElementById('addType').value;
+  const vak = document.getElementById("addVak").value.trim();
+  const wijn = document.getElementById("addWijn").value.trim();
+  const jaargang = document.getElementById("addJaargang").value.trim();
+  const aantalVal = document.getElementById("addAantal").value.trim();
+  const aankoopPrijsVal = document.getElementById("addAankoopPrijs").value.trim();
+  const huidigePrijsVal = document.getElementById("addHuidigePrijs").value.trim();
+  const drink = document.getElementById("addDrinkvenster").value.trim();
+  const serveer = document.getElementById("addServeer").value.trim();
+  const food = document.getElementById("addFood").value.trim();
+  const notes = document.getElementById("addNotes").value.trim();
+  const typeVal = document.getElementById("addType").value;
 
   if (!vak || !wijn) { alert("Vak en wijnnaam zijn verplicht."); return; }
 
-  const vakNum = parseInt(vak, 10);
-  if (isNaN(vakNum)) { alert("Vak moet een nummer zijn."); return; }
-
-  const jaargangNum = jaargang ? parseInt(jaargang, 10) : null;
-  if (jaargang && (isNaN(jaargangNum) || jaargangNum < 1900 || jaargangNum > 2100)) { alert("Ongeldige jaargang."); return; }
-
   const aantal = aantalVal ? parseInt(aantalVal, 10) : 1;
-  if (isNaN(aantal) || aantal < 1) { alert("Aantal moet minstens 1 zijn."); return; }
-
   const aankoopPrijs = aankoopPrijsVal ? parseFloat(aankoopPrijsVal.replace(",", ".")) : null;
   const huidigePrijs = huidigePrijsVal ? parseFloat(huidigePrijsVal.replace(",", ".")) : null;
+  const jaargangNum = jaargang ? parseInt(jaargang, 10) : null;
 
-  const tmp = { Wijn: wijn, Jaargang: jaargangNum, Type: typeVal || guessType(wijn) };
-  const autoDV = drink ? null : estimateDrinkWindowForWine(tmp);
-  const autoFP = food ? null : estimateFoodpairingForWine(tmp);
+  const autoDV = drink ? null : estimateDrinkWindowForWine({ Wijn: wijn, Jaargang: jaargangNum });
+  const autoFP = food ? null : estimateFoodpairingForWine({ Wijn: wijn });
 
-  const newWine = normalizeWine({
-    Vak: vakNum,
+  const newWine = {
+    Vak: parseInt(vak, 10),
     Wijn: wijn,
     Type: typeVal || guessType(wijn),
     Jaargang: jaargangNum,
-    Aantal: aantal,
-    PrijsAankoop: (aankoopPrijs != null && !isNaN(aankoopPrijs)) ? aankoopPrijs : null,
-    PrijsHuidig: (huidigePrijs != null && !isNaN(huidigePrijs)) ? huidigePrijs : null,
+    Aantal: (!isNaN(aantal) && aantal >= 0) ? aantal : 1,
+    PrijsAankoop: (!isNaN(aankoopPrijs) ? aankoopPrijs : null),
+    PrijsHuidig: (!isNaN(huidigePrijs) ? huidigePrijs : null),
     Drinkvenster: drink || autoDV || null,
     Serveertemperatuur: serveer || null,
     Foodpairing: food || autoFP || null,
     Notities: notes || null,
     _id: wines.length ? (Math.max(...wines.map(w => w._id || 0)) + 1) : 1
-  }, wines.length);
+  };
 
   wines.push(newWine);
-  saveData();
-  fillVakFilter();
-  renderTable();
+  saveData(); fillVakFilter(); renderTable();
   clearAddForm();
 }
 
 function clearAddForm() {
-  document.getElementById('addForm').reset();
-  document.getElementById('addAantal').value = "1";
-  document.getElementById('addAankoopPrijs').value = "";
-  document.getElementById('addHuidigePrijs').value = "";
-}
-
-/***********************
- * BACKUP / IMPORT / RESET
- ***********************/
-function exportBackup(){
-  const blob = new Blob([JSON.stringify(wines, null, 2)], { type:"application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "wijnkelder-backup.json";
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importBackup(){
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "application/json";
-  input.onchange = () => {
-    const file = input.files && input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const imported = JSON.parse(e.target.result);
-        if (!Array.isArray(imported)) throw new Error("JSON is geen lijst.");
-        wines = imported.map((w, idx) => normalizeWine(w, idx));
-        saveData();
-        fillVakFilter();
-        renderTable();
-        alert("Backup geïmporteerd.");
-      } catch (err) {
-        alert("Import mislukt: " + err.message);
-      }
-    };
-    reader.readAsText(file);
-  };
-  input.click();
+  document.getElementById("addForm").reset();
+  document.getElementById("addAantal").value = "1";
 }
 
 function resetAll() {
-  if (!confirm("Alle lokale wijzigingen wissen en terug naar de basislijst?")) return;
+  if (!confirm("Alle lokale wijzigingen wissen en terug naar basislijst?")) return;
   localStorage.removeItem(STORAGE_KEY);
   initData();
   fillVakFilter();
   resetFilters();
-  renderTable();
 }
 
-/***********************
- * BOOT
- ***********************/
+/* Init */
 initData();
 fillVakFilter();
 renderTable();
@@ -1456,5 +1114,6 @@ if ("serviceWorker" in navigator) {
     .catch(err => console.error("SW error:", err));
 }
 </script>
+
 </body>
 </html>

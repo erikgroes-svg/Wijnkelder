@@ -1099,53 +1099,57 @@ function renderTable() {
       const dvText = w.Drinkvenster ? `Drinkvenster: ${w.Drinkvenster}` : "Geen drinkvenster";
       const priceInfo = (price != null && !isNaN(price)) ? `€ ${price.toFixed(2)}/fles` : "Geen prijs";
 
-      const card = document.createElement("div");
-      card.className = "wine-card";
-      const showFooterLine = (w.Drinkvenster || (price != null && !isNaN(price)));
-      card.innerHTML = `
-        <div class="wine-top">
-          <div class="wine-left">
-            <div class="wine-title">${w.Wijn || ""}</div>
-            <div class="wine-meta">${typeLabel ? typeLabel + " · " : ""}${yearText} · ${vakText}</div>
-            <div class="wine-badges">
-              ${onDrink ? `<span class="chip-badge">Nu op dronk</span>` : ""}
-              ${voorraadBadge || ""}
-              ${(price == null || isNaN(price)) ? `<span class="tag">Geen prijs</span>` : ""}
-              ${(!w.Drinkvenster) ? `<span class="tag">Geen drinkvenster</span>` : ""}
-            </div>
-          </div>
+     const card = document.createElement("div");
+card.className = "wine-card";
 
-          <div class="wine-right">
-            <div class="qty">${w.Aantal ?? 0}</div>
-          </div>
-        </div>
+const showFooterLine = (w.Drinkvenster || (price != null && !isNaN(price)));
 
-        <div class="actions-primary">
-          <button class="btn-action" onclick="takeBottle(${idx})">Fles genomen</button>
-          <button class="btn-action" onclick="editLocation(${idx})">Locatie</button>
+card.innerHTML = `
+  <div class="wine-top">
+    <div class="wine-left">
+      <div class="wine-title">${w.Wijn || ""}</div>
+      <div class="wine-meta">${typeLabel ? typeLabel + " · " : ""}${yearText} · ${vakText}</div>
+      <div class="wine-badges">
+        ${onDrink ? `<span class="chip-badge">Nu op dronk</span>` : ""}
+        ${voorraadBadge || ""}
+        ${(price == null || isNaN(price)) ? `<span class="tag">Geen prijs</span>` : ""}
+        ${(!w.Drinkvenster) ? `<span class="tag">Geen drinkvenster</span>` : ""}
+      </div>
+    </div>
 
-          <details class="more-actions">
-            <summary>Meer…</summary>
-            <div class="more-grid">
-              <button class="btn-action" onclick="editPrice(${idx})">Prijs</button>
-              <button class="btn-action" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
-              <button class="btn-action" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
-              <button class="btn-action" onclick="editType(${idx})">Type</button>
-              <button class="btn-action" onclick="editWine(${idx})">Bewerken</button>
-              <button class="btn-action" onclick="deleteWine(${idx})" style="border-color: rgba(209,39,39,.35); color: var(--danger);">Verwijderen</button>
-            </div>
-          </details>
-        </div>
-
-${showFooterLine ? `
-  <div class="small wine-footer">
-    ${w.Drinkvenster ? `Drinkvenster: ${w.Drinkvenster}` : ""}
-    ${(w.Drinkvenster && price != null && !isNaN(price)) ? " · " : ""}
-    ${(price != null && !isNaN(price)) ? `€ ${price.toFixed(2)}/fles` : ""}
+    <div class="wine-right">
+      <div class="qty">${w.Aantal ?? 0}</div>
+    </div>
   </div>
-` : ""}
 
-      cards.appendChild(card);
+  <div class="actions-primary">
+    <button class="btn-action" onclick="takeBottle(${idx})">Fles genomen</button>
+    <button class="btn-action" onclick="editLocation(${idx})">Locatie</button>
+
+    <details class="more-actions">
+      <summary>Meer…</summary>
+      <div class="more-grid">
+        <button class="btn-action" onclick="editPrice(${idx})">Prijs</button>
+        <button class="btn-action" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
+        <button class="btn-action" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
+        <button class="btn-action" onclick="editType(${idx})">Type</button>
+        <button class="btn-action" onclick="editWine(${idx})">Bewerken</button>
+        <button class="btn-action" onclick="deleteWine(${idx})" style="border-color: rgba(209,39,39,.35); color: var(--danger);">Verwijderen</button>
+      </div>
+    </details>
+  </div>
+
+  ${showFooterLine ? `
+    <div class="small wine-footer">
+      ${w.Drinkvenster ? `Drinkvenster: ${w.Drinkvenster}` : ""}
+      ${(w.Drinkvenster && price != null && !isNaN(price)) ? " · " : ""}
+      ${(price != null && !isNaN(price)) ? `€ ${price.toFixed(2)}/fles` : ""}
+    </div>
+  ` : ""}
+`;
+
+cards.appendChild(card);
+
     }
   });
 

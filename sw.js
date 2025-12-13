@@ -1,7 +1,10 @@
-self.addEventListener("install", () => {
-  console.log("SW install (uitgeschakeld)");
+// sw.js (geen cache, enkel logging)
+self.addEventListener("install", (event) => {
+  console.log("SW install (geen cache)");
+  self.skipWaiting(); // meteen nieuwe SW gebruiken
 });
 
-self.addEventListener("activate", () => {
-  console.log("SW actief (maar geen cache)");
+self.addEventListener("activate", (event) => {
+  console.log("SW actief (geen cache)");
+  event.waitUntil(self.clients.claim()); // meteen controle over open tabs
 });

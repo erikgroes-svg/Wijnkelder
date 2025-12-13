@@ -728,8 +728,8 @@ async function idbClear() {
   });
 }
 
-function saveData() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(wines));
+async function saveData() {
+  await idbPutAll(wines);
 }
 
 function fillVakFilter() {
@@ -1197,9 +1197,12 @@ function resetAll() {
 }
 
 /* Init */
-initData();
-fillVakFilter();
-renderTable();
+(async function boot() {
+  await initData();
+  fillVakFilter();
+  renderTable();
+})();
+
 </script>
 
 <script>

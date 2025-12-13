@@ -943,11 +943,14 @@ async function initData() {
   // 4) In-memory + normalisatie
   wines = dbWines;
 
-  wines.forEach((w, idx) => {
-    if (w._id == null) w._id = idx + 1;
-    if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
-    if (!w.Type) w.Type = guessType(w.Wijn);
-  });
+ wines.forEach((w, idx) => {
+  if (w._id == null) w._id = idx + 1;
+  if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
+  if (!w.Type) w.Type = guessType(w.Wijn);
+
+  normalizePrices(w);
+});
+
 }
 
 function openDB() {

@@ -286,6 +286,16 @@
   .wine-badges { margin-top: 8px; }
   .actions-primary { margin-top: 10px; }
 }
+@media (max-width: 768px) {
+  header {
+    padding: 10px 12px;
+    padding-top: calc(10px + env(safe-area-inset-top));
+  }
+
+  header span.logo { font-size: 22px; }
+  header .btn-ghost { padding: 8px 10px; font-size: 12px; }
+}
+
    @media (max-width: 768px) {
   .btn-action {
     padding: 10px 12px;

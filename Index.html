@@ -296,38 +296,37 @@
   header .btn-ghost { padding: 8px 10px; font-size: 12px; }
 }
 
-   @media (max-width: 768px) {
-  .btn-action {
+  @media (max-width: 768px) {
+  .btn-action{
     padding: 10px 12px;
-    border-radius: 14px;         /* minder “pil” */
+    border-radius: 14px;
     border: 1px solid rgba(0,0,0,.10);
     background: #fff;
     font-size: 13px;
     font-weight: 700;
   }
-@media (max-width: 768px) {
-  .qty {
-    min-width: 40px;
-    height: 40px;
-    border-radius: 12px;
-    font-size: 15px;
-  }
-}
 
-  .btn-action.primary {
+  .btn-action.primary{
     background: var(--accent);
     border-color: transparent;
     color: #fff;
     box-shadow: 0 10px 22px rgba(15,98,254,0.22);
   }
 
-  .btn-action.secondary {
+  .btn-action.secondary{
     background: #f2f2f7;
   }
 
-  details.more-actions > summary {
+  details.more-actions > summary{
     border-radius: 14px;
     background: #f2f2f7;
+  }
+
+  .qty{
+    min-width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 15px;
   }
 }
 
@@ -1102,7 +1101,7 @@ function renderTable() {
 
       const card = document.createElement("div");
       card.className = "wine-card";
-
+      const showFooterLine = (w.Drinkvenster || (price != null && !isNaN(price)));
       card.innerHTML = `
         <div class="wine-top">
           <div class="wine-left">
@@ -1138,10 +1137,6 @@ function renderTable() {
           </details>
         </div>
 
-const showFooterLine = (w.Drinkvenster || (price != null && !isNaN(price)));
-
-...
-
 ${showFooterLine ? `
   <div class="small wine-footer">
     ${w.Drinkvenster ? `Drinkvenster: ${w.Drinkvenster}` : ""}
@@ -1149,7 +1144,6 @@ ${showFooterLine ? `
     ${(price != null && !isNaN(price)) ? `€ ${price.toFixed(2)}/fles` : ""}
   </div>
 ` : ""}
-
 
       cards.appendChild(card);
     }
@@ -1446,7 +1440,9 @@ function clearAddForm() {
 
 function resetAll() {
   if (!confirm("Alle lokale wijzigingen wissen en terug naar basislijst?")) return;
-  localStorage.removeItem(STORAGE_KEY);
+  // legacy keys opruimen (veilig)
+LEGACY_STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
+
   initData();
   fillVakFilter();
   resetFilters();

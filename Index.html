@@ -519,15 +519,19 @@ const baseWines = [
 let wines = [];
 let currentView = "all";
 
-/* Storage migration: never “lose” data when key changes */
-const STORAGE_KEYS = [
+/* IndexedDB = stabiel op iPhone/PWA */
+const DB_NAME = "wijnkelderDB";
+const DB_VERSION = 1;
+const STORE_NAME = "wines";
+
+/* Legacy keys blijven nuttig: éénmalige import uit localStorage */
+const LEGACY_STORAGE_KEYS = [
   "wijnkelderData_v7_fp",
   "wijnkelderData_v7",
   "wijnkelderData_v6",
   "wijnkelderData_v5",
   "wijnkelderData"
 ];
-const STORAGE_KEY = STORAGE_KEYS[0];
 
 function guessType(name) {
   if (!name) return "onbekend";
@@ -630,6 +634,61 @@ function initData() {
     if (w._id == null) w._id = idx + 1;
     if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
     if (!w.Type) w.Type = guessType(w.Wijn);
+  });
+}
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+
+    req.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: "_id" });
+      }
+    };
+
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbGetAll() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbPutAll(items) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+
+    const clearReq = store.clear();
+    clearReq.onerror = () => reject(clearReq.error);
+
+    clearReq.onsuccess = () => {
+      (items || []).forEach(item => store.put(item));
+    };
+
+    tx.oncomplete = () => resolve(true);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function idbClear() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.clear();
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
   });
 }
 

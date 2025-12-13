@@ -765,19 +765,23 @@ async function importData(event) {
 </script>
 
 <script>
-// Basisdata (embedded)
-const baseWines = [];
+/* =========================
+   Basisdata & state
+========================= */
+const baseWines = [];     // of vul hier later je echte data in
 let wines = [];
-
-</script>
 let currentView = "all";
 
-/* IndexedDB = stabiel op iPhone/PWA */
+/* =========================
+   IndexedDB
+========================= */
 const DB_NAME = "wijnkelderDB";
 const DB_VERSION = 1;
 const STORE_NAME = "wines";
 
-/* Legacy keys blijven nuttig: éénmalige import uit localStorage */
+/* =========================
+   Legacy keys (localStorage migratie)
+========================= */
 const LEGACY_STORAGE_KEYS = [
   "wijnkelderData_v7_fp",
   "wijnkelderData_v7",
@@ -785,6 +789,29 @@ const LEGACY_STORAGE_KEYS = [
   "wijnkelderData_v5",
   "wijnkelderData"
 ];
+
+/* =========================
+   Helpers
+========================= */
+function normalizePrices(w) {
+  // Als reeds aanwezig: ok
+  if (w.PrijsHuidig != null || w.PrijsAankoop != null) return w;
+
+  const candidates = [
+    w.Prijs, w.prijs,
+    w.Aankoopprijs, w.aankoopprijs,
+    w.AankoopPrijs, w.aankoopPrijs,
+    w.PrijsPerFles, w.prijsPerFles,
+    w.price, w.Price
+  ];
+
+  const raw = candidates.find(v => v != null && String(v).trim() !== "");
+  if (raw == null) return w;
+
+  const val = parseFloat(String(raw).replace(",", "."));
+  if (!isNaN(val) && val >= 0) w.PrijsAankoop = val;
+  return w;
+}
 
 function guessType(name) {
   if (!name) return "onbekend";
@@ -866,68 +893,9 @@ function estimateFoodpairingForWine(w) {
   return "Algemene vlees- en pastagerechten, gegrilde groenten en kazen";
 }
 
-async function initData() {
-  // 1) Eerst DB proberen
-  let dbWines = [];
-  try {
-    dbWines = await idbGetAll();
-  } catch (e) {
-    console.warn("IndexedDB read failed:", e);
-  }
-
-  // 2) Als DB leeg is: migreren uit localStorage (oude keys)
-  if (!dbWines || dbWines.length === 0) {
-    let legacyRaw = null;
-
-    for (const k of LEGACY_STORAGE_KEYS) {
-      const v = localStorage.getItem(k);
-      if (v) { legacyRaw = v; break; }
-    }
-
-    if (legacyRaw) {
-      try {
-        const legacyWines = JSON.parse(legacyRaw) || [];
-
-        // normaliseren + unieke _id
-        const migrated = legacyWines.map((w, idx) => ({
-          ...w,
-          _id: (w._id != null) ? w._id : (idx + 1)
-        }));
-
-        await idbPutAll(migrated);
-
-        // legacy keys opruimen zodat er geen “dubbele waarheid” bestaat
-        LEGACY_STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
-
-        dbWines = migrated;
-        console.log("Migratie localStorage → IndexedDB uitgevoerd");
-      } catch (e) {
-        console.warn("Legacy parse failed:", e);
-      }
-    }
-  }
-
-  // 3) Nog steeds leeg? seed baseWines
-  if (!dbWines || dbWines.length === 0) {
-    const seeded = baseWines.map((w, idx) => ({ ...w, _id: idx + 1 }));
-    await idbPutAll(seeded);
-    dbWines = seeded;
-    console.log("BaseWines → IndexedDB seeded");
-  }
-
-  // 4) In-memory + normalisatie
-  wines = dbWines;
-
- wines.forEach((w, idx) => {
-  if (w._id == null) w._id = idx + 1;
-  if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
-  if (!w.Type) w.Type = guessType(w.Wijn);
-
-  normalizePrices(w);
-});
-
-}
-
+/* =========================
+   IndexedDB functies
+========================= */
 function openDB() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
@@ -973,234 +941,62 @@ async function idbPutAll(items) {
   });
 }
 
-async function idbClear() {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE_NAME, "readwrite");
-    const store = tx.objectStore(STORE_NAME);
-    const req = store.clear();
-    req.onsuccess = () => resolve(true);
-    req.onerror = () => reject(req.error);
-  });
-}
-
 async function saveData() {
   await idbPutAll(wines);
 }
 
-function fillVakFilter() {
-  const filter = document.getElementById("vakFilter");
-  filter.innerHTML = '<option value="">— Filter op vak —</option>';
+/* =========================
+   Init data (migratie + seed)
+========================= */
+async function initData() {
+  let dbWines = [];
+  try {
+    dbWines = await idbGetAll();
+  } catch (e) {
+    console.warn("IndexedDB read failed:", e);
+  }
 
-  const uniqueVakken = [...new Set(wines.map(w => w.Vak))]
-    .filter(v => v !== null && v !== undefined && v !== "" && !Number.isNaN(v))
-    .sort((a, b) => Number(a) - Number(b));
+  if (!dbWines || dbWines.length === 0) {
+    let legacyRaw = null;
+    for (const k of LEGACY_STORAGE_KEYS) {
+      const v = localStorage.getItem(k);
+      if (v) { legacyRaw = v; break; }
+    }
 
-  uniqueVakken.forEach(v => {
-    const opt = document.createElement("option");
-    opt.value = v;
-    opt.textContent = "Vak " + v;
-    filter.appendChild(opt);
+    if (legacyRaw) {
+      try {
+        const legacyWines = JSON.parse(legacyRaw) || [];
+        const migrated = legacyWines.map((w, idx) => ({
+          ...w,
+          _id: (w._id != null) ? w._id : (idx + 1)
+        }));
+
+        await idbPutAll(migrated);
+        LEGACY_STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
+        dbWines = migrated;
+      } catch (e) {
+        console.warn("Legacy parse failed:", e);
+      }
+    }
+  }
+
+  if (!dbWines || dbWines.length === 0) {
+    const seeded = baseWines.map((w, idx) => ({ ...w, _id: idx + 1 }));
+    await idbPutAll(seeded);
+    dbWines = seeded;
+  }
+
+  wines = dbWines;
+
+  wines.forEach((w, idx) => {
+    if (w._id == null) w._id = idx + 1;
+    if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
+    if (!w.Type) w.Type = guessType(w.Wijn);
+    normalizePrices(w);
   });
 }
+</script>
 
-function setView(view) {
-  currentView = view;
-  document.getElementById("viewAll").classList.toggle("active", view === "all");
-  document.getElementById("viewOnDrink").classList.toggle("active", view === "onDrink");
-  renderTable();
-}
-
-function updateSummary() {
-  const el = document.getElementById("summaryBar");
-  if (!el) return;
-
-  let totalBottles = 0;
-  let totalValue = 0;
-
-  wines.forEach(w => {
-    const aantal = Number(w.Aantal || 0);
-    if (!isNaN(aantal)) totalBottles += aantal;
-
-    const price = w.PrijsHuidig != null ? Number(w.PrijsHuidig)
-      : w.PrijsAankoop != null ? Number(w.PrijsAankoop)
-      : null;
-
-    if (price != null && !isNaN(price)) totalValue += aantal * price;
-  });
-
-  const valueText = totalValue > 0 ? `€ ${totalValue.toFixed(0)}` : "—";
-
-  el.innerHTML = `
-    <div class="summary-item"><span>Totaal flessen</span> <span class="value">${totalBottles}</span></div>
-    <div class="summary-item"><span>Totale waarde</span> <span class="value">${valueText}</span></div>
-  `;
-}
-
-function renderTable() {
-  const tbody = document.querySelector("#wineTable tbody");
-  if (!tbody) return;
-  tbody.innerHTML = "";
-  const cards = document.getElementById("wineCards");
-  if (cards) cards.innerHTML = "";
-
-  const search = (document.getElementById("searchInput").value || "").toLowerCase();
-  const vak = document.getElementById("vakFilter").value;
-  const activePill = document.querySelector(".pill.active[data-type]");
-  const typeFilter = activePill ? activePill.getAttribute("data-type") : null;
-
-  const rows = wines
-    .map((w, idx) => ({ w, idx }))
-    .filter(({ w }) => {
-      if (currentView === "onDrink" && !isOnDrink(w.Drinkvenster)) return false;
-      if (vak !== "" && String(w.Vak) !== String(vak)) return false;
-
-      if (search) {
-        const inName = (w.Wijn || "").toLowerCase().includes(search);
-        const inNotes = (w.Notities || "").toLowerCase().includes(search);
-        const inFood = (w.Foodpairing || "").toLowerCase().includes(search);
-        if (!inName && !inNotes && !inFood) return false;
-      }
-
-      if (typeFilter) {
-        const t = w.Type || guessType(w.Wijn);
-        if (typeFilter === "dessert") {
-          const fp = (w.Foodpairing || "").toLowerCase();
-          const nt = (w.Notities || "").toLowerCase();
-          if (!(fp.includes("dessert") || nt.includes("dessert"))) return false;
-        } else if (t !== typeFilter) return false;
-      }
-
-      return true;
-    })
-    .sort((a, b) => {
-      const vakA = (a.w.Vak == null || Number.isNaN(a.w.Vak)) ? 9999 : Number(a.w.Vak);
-      const vakB = (b.w.Vak == null || Number.isNaN(b.w.Vak)) ? 9999 : Number(b.w.Vak);
-      if (vakA !== vakB) return vakA - vakB;
-
-      const nameA = (a.w.Wijn || "").toLowerCase();
-      const nameB = (b.w.Wijn || "").toLowerCase();
-      if (nameA !== nameB) return nameA.localeCompare(nameB);
-
-      const yA = parseInt(a.w.Jaargang, 10) || 0;
-      const yB = parseInt(b.w.Jaargang, 10) || 0;
-      return yB - yA;
-    });
-
-  rows.forEach(({ w, idx }) => {
-    const tr = document.createElement("tr");
-    const onDrink = isOnDrink(w.Drinkvenster);
-
-    const locationMissing = (w.Vak === null || w.Vak === undefined || w.Vak === "" || Number.isNaN(w.Vak));
-    const vakDisplay = locationMissing ? '<span class="tag tag-danger">Geen vak!</span>' : (w.Vak ?? "");
-
-    let voorraadBadge = "";
-    if ((w.Aantal || 0) <= 0) voorraadBadge = '<span class="tag tag-danger">Op</span>';
-    else if (w.Aantal === 1) voorraadBadge = '<span class="tag tag-danger">Laatste fles</span>';
-    else if (w.Aantal <= 3) voorraadBadge = '<span class="tag tag-ok">Lage voorraad</span>';
-
-    let drinkBadge = "";
-    if (onDrink && currentView === "all") drinkBadge = '<span class="chip-badge">Nu op dronk</span>';
-
-    const price = w.PrijsHuidig != null ? Number(w.PrijsHuidig)
-      : w.PrijsAankoop != null ? Number(w.PrijsAankoop)
-      : null;
-
-    const priceText = (price != null && !isNaN(price)) ? price.toFixed(2) : "—";
-    const aantal = Number(w.Aantal || 0);
-    const value = (price != null && !isNaN(price) && !isNaN(aantal)) ? (aantal * price) : null;
-    const valueText = value != null ? `€ ${value.toFixed(0)}` : "—";
-
-    let infoBadge = "";
-    if (price == null || isNaN(price)) infoBadge += '<span class="tag">Geen prijs</span>';
-    if (!w.Drinkvenster) infoBadge += '<span class="tag">Geen drinkvenster</span>';
-
-    const type = w.Type || guessType(w.Wijn);
-    const typeLabel = (type === "wit") ? "Wit"
-      : (type === "rood") ? "Rood"
-      : (type === "bubbels") ? "Mousserend"
-      : (type === "rose") ? "Rosé"
-      : "";
-
-    tr.innerHTML = `
-      <td>${vakDisplay}</td>
-      <td>
-        <div><strong>${w.Wijn || ""}</strong></div>
-        <div class="small">
-          ${typeLabel ? `<span class="tag">${typeLabel}</span>` : ""}
-          <div style="margin-top:4px;">
-            ${drinkBadge} ${infoBadge}
-          </div>
-        </div>
-      </td>
-      <td>${w.Jaargang || ""}</td>
-      <td>
-        <div>${w.Aantal ?? 0}</div>
-        <div>${voorraadBadge}</div>
-      </td>
-      <td>${priceText}</td>
-      <td>${valueText}</td>
-      <td>${w.Drinkvenster || ""}</td>
-      <td>
-        <div class="inline-actions">
-          <button class="btn-small" onclick="takeBottle(${idx})">Fles genomen</button>
-          <button class="btn-small" onclick="editLocation(${idx})">Locatie</button>
-          <button class="btn-small" onclick="editPrice(${idx})">Prijs</button>
-          <button class="btn-small" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
-          <button class="btn-small" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
-          <button class="btn-small" onclick="editType(${idx})">Type</button>
-          <button class="btn-small" onclick="editWine(${idx})">Bewerken</button>
-          <button class="btn-small" onclick="deleteWine(${idx})">Verwijderen</button>
-        </div>
-      </td>
-    `;
-    tbody.appendChild(tr);
-       // Mobile cards rendering (iPhone)
-    if (cards) {
-      const vakText = locationMissing ? "Geen vak" : `Vak ${w.Vak}`;
-      const yearText = w.Jaargang ? String(w.Jaargang) : "Jaargang n.v.t.";
-      const dvText = w.Drinkvenster ? `Drinkvenster: ${w.Drinkvenster}` : "Geen drinkvenster";
-      const priceInfo = (price != null && !isNaN(price)) ? `€ ${price.toFixed(2)}/fles` : "Geen prijs";
-
-     const card = document.createElement("div");
-card.className = "wine-card";
-
-const showFooterLine = (w.Drinkvenster || (price != null && !isNaN(price)));
-
-card.innerHTML = `
-  <div class="wine-top">
-    <div class="wine-left">
-      <div class="wine-title">${w.Wijn || ""}</div>
-      <div class="wine-meta">${typeLabel ? typeLabel + " · " : ""}${yearText} · ${vakText}</div>
-      <div class="wine-badges">
-        ${onDrink ? `<span class="chip-badge">Nu op dronk</span>` : ""}
-        ${voorraadBadge || ""}
-        ${(price == null || isNaN(price)) ? `<span class="tag">Geen prijs</span>` : ""}
-        ${(!w.Drinkvenster) ? `<span class="tag">Geen drinkvenster</span>` : ""}
-      </div>
-    </div>
-
-    <div class="wine-right">
-      <div class="qty">${w.Aantal ?? 0}</div>
-    </div>
-  </div>
-
-  <div class="actions-primary">
-    <button class="btn-action" onclick="takeBottle(${idx})">Fles genomen</button>
-    <button class="btn-action" onclick="editLocation(${idx})">Locatie</button>
-
-    <details class="more-actions">
-      <summary>Meer…</summary>
-      <div class="more-grid">
-        <button class="btn-action" onclick="editPrice(${idx})">Prijs</button>
-        <button class="btn-action" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
-        <button class="btn-action" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
-        <button class="btn-action" onclick="editType(${idx})">Type</button>
-        <button class="btn-action" onclick="editWine(${idx})">Bewerken</button>
-        <button class="btn-action" onclick="deleteWine(${idx})" style="border-color: rgba(209,39,39,.35); color: var(--danger);">Verwijderen</button>
-      </div>
-    </details>
-  </div>
 
   ${showFooterLine ? `
     <div class="small wine-footer">

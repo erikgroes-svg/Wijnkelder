@@ -312,6 +312,91 @@
       .btn-small { width: 100%; justify-content: center; text-align:center; }
       .sommelier-chip { flex: 1 1 calc(50% - 6px); text-align:center; }
     }
+/* --- Mobile: table -> cards --- */
+#wineCards { display: none; }
+
+@media (max-width: 768px) {
+  /* verberg tabel op mobiel */
+  #wineTable { display: none; }
+
+  /* toon kaarten */
+  #wineCards { display: block; }
+
+  .wine-card {
+    background: #fff;
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 12px;
+    margin-top: 10px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .wine-card-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .wine-title {
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+
+  .wine-meta {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .wine-meta .tag,
+  .wine-meta .chip-badge {
+    margin-left: 0;
+  }
+
+  .wine-kpis {
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    font-size: 12px;
+  }
+
+  .kpi {
+    background: #f7f7fb;
+    border: 1px solid #e2e2ee;
+    border-radius: 12px;
+    padding: 8px 10px;
+  }
+  .kpi .k { color: var(--text-muted); font-size: 11px; }
+  .kpi .v { font-weight: 700; color: var(--text-main); margin-top: 2px; }
+
+  .wine-actions {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .wine-actions .btn-small {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 10px;
+    font-size: 12px;
+  }
+
+  .btn-danger {
+    border-color: #f1c3c3;
+    background: #ffecec;
+    color: #a21515;
+  }
+}
+
   </style>
 </head>
 
@@ -392,6 +477,7 @@
         </thead>
         <tbody></tbody>
       </table>
+<div id="wineCards"></div>
     </div>
 
     <div class="small" style="margin-top:8px;">Op iPhone kan je de tabel horizontaal schuiven.</div>
@@ -721,6 +807,8 @@ function updateSummary() {
 function renderTable() {
   const tbody = document.querySelector("#wineTable tbody");
   tbody.innerHTML = "";
+  const cards = document.getElementById("wineCards");
+  if (cards) cards.innerHTML = "";
 
   const search = (document.getElementById("searchInput").value || "").toLowerCase();
   const vak = document.getElementById("vakFilter").value;
@@ -838,6 +926,56 @@ function renderTable() {
     `;
     tbody.appendChild(tr);
   });
+    // --- Mobile cards ---
+    if (cards) {
+      const card = document.createElement("div");
+      card.className = "wine-card";
+
+      card.innerHTML = `
+        <div class="wine-card-top">
+          <div>
+            <div class="wine-title">${w.Wijn || ""} ${w.Jaargang ? `(${w.Jaargang})` : ""}</div>
+            <div class="wine-meta">
+              ${typeLabel ? `<span class="tag">${typeLabel}</span>` : ""}
+              ${w.Vak != null && w.Vak !== "" && !Number.isNaN(w.Vak)
+                ? `<span class="tag">Vak ${w.Vak}</span>`
+                : `<span class="tag tag-danger">Geen vak</span>`}
+              ${drinkBadge}
+              ${voorraadBadge}
+              ${infoBadge}
+            </div>
+          </div>
+        </div>
+
+        <div class="wine-kpis">
+          <div class="kpi">
+            <div class="k">Aantal</div>
+            <div class="v">${w.Aantal ?? 0}</div>
+          </div>
+          <div class="kpi">
+            <div class="k">Waarde</div>
+            <div class="v">${valueText}</div>
+          </div>
+          <div class="kpi">
+            <div class="k">Prijs/fles</div>
+            <div class="v">${priceText === "—" ? "—" : `€ ${priceText}`}</div>
+          </div>
+          <div class="kpi">
+            <div class="k">Drinkvenster</div>
+            <div class="v">${w.Drinkvenster || "—"}</div>
+          </div>
+        </div>
+
+        <div class="wine-actions">
+          <button class="btn-small" onclick="takeBottle(${idx})">Fles genomen</button>
+          <button class="btn-small" onclick="editWine(${idx})">Bewerken</button>
+          <button class="btn-small" onclick="editLocation(${idx})">Locatie</button>
+          <button class="btn-small btn-danger" onclick="deleteWine(${idx})">Verwijderen</button>
+        </div>
+      `;
+
+      cards.appendChild(card);
+    }
 
   updateSummary();
 }
@@ -936,38 +1074,44 @@ function editWine(idx) {
   const w = wines[idx];
   if (!w) return;
 
-  const newName = prompt("Wijnnaam:", w.Wijn || "");
+  const newName = prompt("Nieuwe naam (leeg = ongewijzigd):", w.Wijn || "");
   if (newName === null) return;
-  const nameTrim = String(newName).trim();
-  if (!nameTrim) { alert("Wijnnaam mag niet leeg zijn."); return; }
+  if (newName.trim() !== "") w.Wijn = newName.trim();
 
-  const newYear = prompt("Jaargang (leeg = geen):", (w.Jaargang ?? ""));
+  const newYear = prompt("Nieuwe jaargang (leeg = ongewijzigd):", w.Jaargang != null ? String(w.Jaargang) : "");
   if (newYear === null) return;
-  const yearNum = String(newYear).trim() === "" ? null : parseInt(newYear, 10);
-  if (String(newYear).trim() !== "" && (isNaN(yearNum) || yearNum < 1900 || yearNum > 2100)) { alert("Ongeldige jaargang."); return; }
+  if (newYear.trim() !== "") {
+    const yr = parseInt(newYear.trim(), 10);
+    if (!isNaN(yr)) w.Jaargang = yr;
+  }
 
-  const newAantal = prompt("Aantal flessen:", (w.Aantal ?? 0));
-  if (newAantal === null) return;
-  const aantalNum = parseInt(newAantal, 10);
-  if (isNaN(aantalNum) || aantalNum < 0) { alert("Ongeldig aantal."); return; }
+  const newVak = prompt("Nieuw vak (leeg = ongewijzigd):", (w.Vak != null && !Number.isNaN(w.Vak)) ? String(w.Vak) : "");
+  if (newVak === null) return;
+  if (newVak.trim() !== "") {
+    const vakNum = parseInt(newVak.trim(), 10);
+    w.Vak = isNaN(vakNum) ? newVak.trim() : vakNum;
+  }
 
-  const newDV = prompt("Drinkvenster (leeg = geen):", (w.Drinkvenster ?? ""));
+  const newQty = prompt("Nieuw aantal (leeg = ongewijzigd):", w.Aantal != null ? String(w.Aantal) : "");
+  if (newQty === null) return;
+  if (newQty.trim() !== "") {
+    const q = parseInt(newQty.trim(), 10);
+    if (!isNaN(q) && q >= 0) w.Aantal = q;
+  }
+
+  const newDV = prompt("Nieuw drinkvenster (leeg = ongewijzigd):", w.Drinkvenster || "");
   if (newDV === null) return;
+  if (newDV.trim() !== "") w.Drinkvenster = newDV.trim();
 
-  const newFP = prompt("Foodpairing (leeg = geen):", (w.Foodpairing ?? ""));
+  const newFP = prompt("Nieuwe foodpairing (leeg = ongewijzigd):", w.Foodpairing || "");
   if (newFP === null) return;
+  if (newFP.trim() !== "") w.Foodpairing = newFP.trim();
 
-  const newNotes = prompt("Notities (leeg = geen):", (w.Notities ?? ""));
+  const newNotes = prompt("Nieuwe notities (leeg = ongewijzigd):", w.Notities || "");
   if (newNotes === null) return;
+  if (newNotes.trim() !== "") w.Notities = newNotes.trim();
 
-  w.Wijn = nameTrim;
-  w.Jaargang = yearNum;
-  w.Aantal = aantalNum;
-  w.Drinkvenster = String(newDV).trim() ? String(newDV).trim() : null;
-  w.Foodpairing = String(newFP).trim() ? String(newFP).trim() : null;
-  w.Notities = String(newNotes).trim() ? String(newNotes).trim() : null;
-
-  if (!w.Type || w.Type === "onbekend") w.Type = guessType(w.Wijn);
+  if (!w.Type) w.Type = guessType(w.Wijn);
 
   saveData();
   fillVakFilter();
@@ -977,7 +1121,76 @@ function editWine(idx) {
 function deleteWine(idx) {
   const w = wines[idx];
   if (!w) return;
-  const ok = confirm("Ben je zeker dat je deze wijn volledig wilt verwijderen?\n\n" + (w.Wijn || "Onbekende wijn"));
+
+  const ok = confirm(
+    "Ben je zeker dat je deze wijn volledig wilt verwijderen?\n\n" +
+    (w.Wijn || "Onbekende wijn") +
+    (w.Vak != null ? " (vak " + w.Vak + ")" : "")
+  );
+  if (!ok) return;
+
+  wines.splice(idx, 1);
+  saveData();
+  fillVakFilter();
+  renderTable();
+}
+function editWine(idx) {
+  const w = wines[idx];
+  if (!w) return;
+
+  const newName = prompt("Nieuwe naam (leeg = ongewijzigd):", w.Wijn || "");
+  if (newName === null) return;
+  if (newName.trim() !== "") w.Wijn = newName.trim();
+
+  const newYear = prompt("Nieuwe jaargang (leeg = ongewijzigd):", w.Jaargang != null ? String(w.Jaargang) : "");
+  if (newYear === null) return;
+  if (newYear.trim() !== "") {
+    const yr = parseInt(newYear.trim(), 10);
+    if (!isNaN(yr)) w.Jaargang = yr;
+  }
+
+  const newVak = prompt("Nieuw vak (leeg = ongewijzigd):", (w.Vak != null && !Number.isNaN(w.Vak)) ? String(w.Vak) : "");
+  if (newVak === null) return;
+  if (newVak.trim() !== "") {
+    const vakNum = parseInt(newVak.trim(), 10);
+    w.Vak = isNaN(vakNum) ? newVak.trim() : vakNum;
+  }
+
+  const newQty = prompt("Nieuw aantal (leeg = ongewijzigd):", w.Aantal != null ? String(w.Aantal) : "");
+  if (newQty === null) return;
+  if (newQty.trim() !== "") {
+    const q = parseInt(newQty.trim(), 10);
+    if (!isNaN(q) && q >= 0) w.Aantal = q;
+  }
+
+  const newDV = prompt("Nieuw drinkvenster (leeg = ongewijzigd):", w.Drinkvenster || "");
+  if (newDV === null) return;
+  if (newDV.trim() !== "") w.Drinkvenster = newDV.trim();
+
+  const newFP = prompt("Nieuwe foodpairing (leeg = ongewijzigd):", w.Foodpairing || "");
+  if (newFP === null) return;
+  if (newFP.trim() !== "") w.Foodpairing = newFP.trim();
+
+  const newNotes = prompt("Nieuwe notities (leeg = ongewijzigd):", w.Notities || "");
+  if (newNotes === null) return;
+  if (newNotes.trim() !== "") w.Notities = newNotes.trim();
+
+  if (!w.Type) w.Type = guessType(w.Wijn);
+
+  saveData();
+  fillVakFilter();
+  renderTable();
+}
+
+function deleteWine(idx) {
+  const w = wines[idx];
+  if (!w) return;
+
+  const ok = confirm(
+    "Ben je zeker dat je deze wijn volledig wilt verwijderen?\n\n" +
+    (w.Wijn || "Onbekende wijn") +
+    (w.Vak != null ? " (vak " + w.Vak + ")" : "")
+  );
   if (!ok) return;
 
   wines.splice(idx, 1);

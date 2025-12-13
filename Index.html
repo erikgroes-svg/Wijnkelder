@@ -1084,10 +1084,18 @@ function renderTable() {
           </details>
         </div>
 
-        <div class="small" style="margin-top:10px; color: var(--text-muted);">
-          ${dvText} · ${priceInfo}
-        </div>
-      `;
+const showFooterLine = (w.Drinkvenster || (price != null && !isNaN(price)));
+
+...
+
+${showFooterLine ? `
+  <div class="small wine-footer">
+    ${w.Drinkvenster ? `Drinkvenster: ${w.Drinkvenster}` : ""}
+    ${(w.Drinkvenster && price != null && !isNaN(price)) ? " · " : ""}
+    ${(price != null && !isNaN(price)) ? `€ ${price.toFixed(2)}/fles` : ""}
+  </div>
+` : ""}
+
 
       cards.appendChild(card);
     }

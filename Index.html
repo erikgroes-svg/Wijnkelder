@@ -613,22 +613,57 @@ function estimateFoodpairingForWine(w) {
   return "Algemene vlees- en pastagerechten, gegrilde groenten en kazen";
 }
 
-function initData() {
-  let loaded = null;
-  for (const key of STORAGE_KEYS) {
-    const raw = localStorage.getItem(key);
-    if (!raw) continue;
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length) {
-        loaded = parsed;
-        if (key !== STORAGE_KEY) localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
-        break;
-      }
-    } catch (e) {}
+async function initData() {
+  // 1) Eerst DB proberen
+  let dbWines = [];
+  try {
+    dbWines = await idbGetAll();
+  } catch (e) {
+    console.warn("IndexedDB read failed:", e);
   }
 
-  wines = loaded ? loaded : baseWines.map(w => ({ ...w }));
+  // 2) Als DB leeg is: migreren uit localStorage (oude keys)
+  if (!dbWines || dbWines.length === 0) {
+    let legacyRaw = null;
+
+    for (const k of LEGACY_STORAGE_KEYS) {
+      const v = localStorage.getItem(k);
+      if (v) { legacyRaw = v; break; }
+    }
+
+    if (legacyRaw) {
+      try {
+        const legacyWines = JSON.parse(legacyRaw) || [];
+
+        // normaliseren + unieke _id
+        const migrated = legacyWines.map((w, idx) => ({
+          ...w,
+          _id: (w._id != null) ? w._id : (idx + 1)
+        }));
+
+        await idbPutAll(migrated);
+
+        // legacy keys opruimen zodat er geen “dubbele waarheid” bestaat
+        LEGACY_STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
+
+        dbWines = migrated;
+        console.log("Migratie localStorage → IndexedDB uitgevoerd");
+      } catch (e) {
+        console.warn("Legacy parse failed:", e);
+      }
+    }
+  }
+
+  // 3) Nog steeds leeg? seed baseWines
+  if (!dbWines || dbWines.length === 0) {
+    const seeded = baseWines.map((w, idx) => ({ ...w, _id: idx + 1 }));
+    await idbPutAll(seeded);
+    dbWines = seeded;
+    console.log("BaseWines → IndexedDB seeded");
+  }
+
+  // 4) In-memory + normalisatie
+  wines = dbWines;
 
   wines.forEach((w, idx) => {
     if (w._id == null) w._id = idx + 1;
@@ -636,6 +671,7 @@ function initData() {
     if (!w.Type) w.Type = guessType(w.Wijn);
   });
 }
+
 function openDB() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);

@@ -571,22 +571,14 @@
 /***********************
  * DATA & STORAGE
  ***********************/
-const STORAGE_KEY = "wijnkelderData";            // vaste sleutel (niet meer wijzigen)
-const LEGACY_KEYS = ["wijnkelderData_v7_fp"];    // jouw oude key(s)
+const STORAGE_KEYS = [
+  "wijnkelderData_v7_fp",
+  "wijnkelderData_v6",
+  "wijnkelderData_v5",
+  "wijnkelderData"
+];
+const STORAGE_KEY = STORAGE_KEYS[0];
 
-function loadFromAnyKey() {
-  const current = localStorage.getItem(STORAGE_KEY);
-  if (current) return current;
-
-  for (const k of LEGACY_KEYS) {
-    const v = localStorage.getItem(k);
-    if (v) {
-      localStorage.setItem(STORAGE_KEY, v); // migreer naar vaste key
-      return v;
-    }
-  }
-  return null;
-}
 
 // BASISDATA: NaN vervangen door null
 const baseWines = [
@@ -743,14 +735,29 @@ function normalizeWine(w, idx) {
  * INIT / SAVE
  ***********************/
 function initData() {
-  const stored = loadFromAnyKey();
-  if (stored) {
-    try { wines = JSON.parse(stored).map((w, idx) => normalizeWine(w, idx)); }
-    catch (e) { wines = baseWines.slice().map((w, idx) => normalizeWine(w, idx)); }
-  } else {
-    wines = baseWines.slice().map((w, idx) => normalizeWine(w, idx));
+  let loaded = null;
+
+  for (const key of STORAGE_KEYS) {
+    const raw = localStorage.getItem(key);
+    if (!raw) continue;
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length) {
+        loaded = parsed;
+        // migreer naar nieuwste key
+        if (key !== STORAGE_KEY) localStorage.setItem(STORAGE_KEY, JSON.stringify(parsed));
+        break;
+      }
+    } catch (e) {}
   }
-  saveData(); // garandeer vaste key
+
+  wines = loaded ? loaded : baseWines.map(w => ({...w}));
+
+  wines.forEach((w, idx) => {
+    if (w._id == null) w._id = idx;
+    if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
+    if (!w.Type) w.Type = guessType(w.Wijn);
+  });
 }
 
 function saveData() {
@@ -1177,6 +1184,23 @@ function editWine(idx) {
 
   if (!w.Type) w.Type = guessType(w.Wijn);
 
+  saveData();
+  fillVakFilter();
+  renderTable();
+}
+
+function deleteWine(idx) {
+  const w = wines[idx];
+  if (!w) return;
+
+  const ok = confirm(
+    "Ben je zeker dat je deze wijn volledig wilt verwijderen?\n\n" +
+    (w.Wijn || "Onbekende wijn") +
+    (w.Vak != null ? " (vak " + w.Vak + ")" : "")
+  );
+  if (!ok) return;
+
+  wines.splice(idx, 1);
   saveData();
   fillVakFilter();
   renderTable();

@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8" />
   <link rel="manifest" href="/manifest.json" />
-
   <meta name="theme-color" content="#ffffff" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 
@@ -136,6 +135,7 @@
     tbody tr:nth-child(even) { background: #fafafa; }
     tbody tr:hover { background: #eef3ff; }
 
+    /* numerieke kolommen rechts */
     #wineTable td:nth-child(4),
     #wineTable td:nth-child(5),
     #wineTable td:nth-child(6),
@@ -278,7 +278,7 @@
     }
     .summary-item span.value { font-weight: 800; color: var(--text-main); }
 
-    /* Mobile: cards i.p.v. tabel */
+    /* Mobile-first: cards i.p.v. tabel */
     .wine-cards { display: none; }
 
     @media (max-width: 768px) {
@@ -288,11 +288,13 @@
       }
       header span.logo { font-size: 22px; }
       header .subtitle-top { display:none; }
-
-      #wineTable { display: none; }
-      .wine-cards { display: block; }
+      header .btn-ghost { padding: 8px 10px; font-size: 12px; }
 
       .card .subtitle.small { display: none; }
+
+      /* verberg de tabel volledig op mobiel */
+      #wineTable { display: none; }
+      .wine-cards { display: block; }
 
       .wine-card {
         background: var(--bg-card);
@@ -310,10 +312,18 @@
         align-items: flex-start;
       }
 
-      .wine-left { min-width: 0; }
-      .wine-title { font-size: 16px; font-weight: 700; line-height: 1.2; margin: 0; }
+      .wine-title {
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.2;
+        margin: 0;
+      }
 
-      .wine-meta { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+      .wine-meta {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 4px;
+      }
 
       .wine-badges {
         display: flex;
@@ -343,7 +353,7 @@
         margin-top: 12px;
       }
 
-      .btn-action {
+      .btn-action{
         padding: 10px 12px;
         border-radius: 999px;
         border: 1px solid #d5d5dd;
@@ -354,7 +364,7 @@
       }
 
       details.more-actions { margin-top: 10px; }
-      details.more-actions > summary {
+      details.more-actions > summary{
         list-style: none;
         cursor: pointer;
         display: inline-flex;
@@ -379,6 +389,7 @@
       .wine-footer { margin-top: 10px; color: var(--text-muted); }
     }
 
+    /* Error banner for debugging */
     #errorBanner {
       display:none;
       position: fixed;
@@ -397,1077 +408,1052 @@
     }
   </style>
 </head>
-
 <body>
-  <div id="errorBanner"></div>
 
-  <header>
-    <div class="title-left">
-      <span class="logo">🍷</span>
-      <div>
-        Mijn Wijnkelder
-        <div class="subtitle-top">Voorraad · Locaties · Sommelier</div>
-      </div>
+<div id="errorBanner"></div>
+
+<header>
+  <div class="title-left">
+    <span class="logo">🍷</span>
+    <div>
+      Mijn Wijnkelder
+      <div class="subtitle-top">Voorraad · Locaties · Sommelier</div>
     </div>
-    <button class="btn-ghost" type="button" onclick="resetAll()">Reset lokale wijzigingen</button>
-  </header>
+  </div>
+  <button class="btn-ghost" onclick="resetAll()">Reset lokale wijzigingen</button>
+</header>
 
-  <div class="container">
+<div class="container">
 
-    <div class="card">
-      <div class="panel-title">Zoeken &amp; filteren</div>
-      <div class="subtitle">Bekijk alle wijnen of enkel degene die nu op dronk zijn. Filter per vak of type, en zoek op naam, notities of foodpairing.</div>
+  <div class="card">
+    <div class="panel-title">Zoeken &amp; filteren</div>
+    <div class="subtitle">Bekijk alle wijnen of enkel degene die nu op dronk zijn. Filter per vak of type, en zoek op naam, notities of foodpairing.</div>
 
-      <div class="view-switch">
-        <button id="viewAll" class="active" type="button" onclick="setView('all')">Alle wijnen</button>
-        <button id="viewOnDrink" type="button" onclick="setView('onDrink')">Nu op dronk</button>
-      </div>
-
-      <input id="searchInput" type="text" placeholder="Zoek op naam, druif, notities..." />
-
-      <div style="margin-top:10px;">
-        <select id="vakFilter">
-          <option value="">— Filter op vak —</option>
-        </select>
-      </div>
-
-      <div class="pill-row">
-        <div class="pill" onclick="quickFilter('wit')" data-type="wit">Wit</div>
-        <div class="pill" onclick="quickFilter('rood')" data-type="rood">Rood</div>
-        <div class="pill" onclick="quickFilter('bubbels')" data-type="bubbels">Mousserend</div>
-        <div class="pill" onclick="quickFilter('dessert')" data-type="dessert">Dessert / zoet</div>
-        <div class="pill" onclick="clearTypeFilter()">Type wissen</div>
-      </div>
+    <div class="view-switch">
+      <button id="viewAll" class="active" type="button" onclick="setView('all')">Alle wijnen</button>
+      <button id="viewOnDrink" type="button" onclick="setView('onDrink')">Nu op dronk</button>
     </div>
 
-    <div class="card">
-      <div class="panel-title">Overzicht &amp; voorraad</div>
-      <div class="subtitle small">
-        Gebruik <strong>Fles genomen</strong> om de voorraad aan te passen. Met <strong>Locatie</strong> kun je het vak corrigeren. Met <strong>Prijs</strong> bewaar je een prijs per fles.
-      </div>
+    <input id="searchInput" type="text" placeholder="Zoek op naam, druif, notities..." oninput="renderTable()" />
 
-      <div style="margin:8px 0 4px; display:flex; gap:8px; flex-wrap:wrap;">
-        <button type="button" class="btn-ghost" onclick="autoFillAllDrinkWindows()">Drinkvenster aanvullen</button>
-        <button type="button" class="btn-ghost" onclick="autoFillAllFoodpairings()">Foodpairing aanvullen</button>
-        <button type="button" class="btn-ghost" onclick="exportData()">Export (JSON)</button>
-        <button type="button" class="btn-ghost" onclick="triggerImport()">Import (JSON)</button>
-        <input id="importFile" type="file" accept="application/json" style="display:none" />
-      </div>
-
-      <div id="summaryBar" class="summary-bar"></div>
-      <div id="wineCards" class="wine-cards"></div>
-
-      <table id="wineTable">
-        <thead>
-          <tr>
-            <th>Vak</th>
-            <th>Wijn</th>
-            <th>Jaar</th>
-            <th>Aantal</th>
-            <th>Prijs<br><span class="small">(€/fles)</span></th>
-            <th>Waarde<br><span class="small">(totaal)</span></th>
-            <th>Drinkvenster</th>
-            <th>Acties</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div style="margin-top:10px;">
+      <select id="vakFilter" onchange="renderTable()">
+        <option value="">— Filter op vak —</option>
+      </select>
     </div>
 
-    <div class="card">
-      <div class="panel-title">Sommelier (compact)</div>
-      <div class="subtitle small">Snelle suggesties uit je eigen kelder. Kies een type gerecht of typ zelf iets in.</div>
-
-      <input id="dishInput" type="text" placeholder="Bijv. kip in room-tomatensaus" />
-
-      <div class="sommelier-row">
-        <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('kip in room-tomatensaus')">Kip (roomsaus)</button>
-        <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('côte à l’os op de grill')">Rund / grill</button>
-        <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('gebakken vis')">Vis</button>
-        <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('aperitiefhapjes')">Aperitief</button>
-      </div>
-
-      <button class="btn-primary" style="margin-top:8px;" type="button" onclick="suggestWine()">
-        <span>Geef advies</span> <span>✨</span>
-      </button>
-
-      <div id="sommelierResult"></div>
+    <div class="pill-row">
+      <div class="pill" onclick="quickFilter('wit')" data-type="wit">Wit</div>
+      <div class="pill" onclick="quickFilter('rood')" data-type="rood">Rood</div>
+      <div class="pill" onclick="quickFilter('bubbels')" data-type="bubbels">Mousserend</div>
+      <div class="pill" onclick="quickFilter('dessert')" data-type="dessert">Dessert / zoet</div>
+      <div class="pill" onclick="clearTypeFilter()">Type wissen</div>
     </div>
-
-    <div class="card">
-      <div class="panel-title">Nieuwe fles toevoegen</div>
-      <div class="subtitle small">Velden <strong>Vak</strong> en <strong>Wijn</strong> zijn verplicht.</div>
-
-      <form id="addForm">
-        <div class="grid-add">
-          <div>
-            <label for="addVak">Vak *</label>
-            <input id="addVak" type="number" min="0" step="1" required />
-          </div>
-          <div>
-            <label for="addWijn">Wijn *</label>
-            <input id="addWijn" type="text" required />
-          </div>
-          <div>
-            <label for="addJaargang">Jaargang</label>
-            <input id="addJaargang" type="number" min="1900" max="2100" />
-          </div>
-          <div>
-            <label for="addType">Type</label>
-            <select id="addType">
-              <option value="">Automatisch bepalen</option>
-              <option value="wit">Wit</option>
-              <option value="rood">Rood</option>
-              <option value="rose">Rosé</option>
-              <option value="bubbels">Mousserend</option>
-            </select>
-          </div>
-          <div>
-            <label for="addAantal">Aantal</label>
-            <input id="addAantal" type="number" min="1" step="1" value="1" />
-          </div>
-          <div>
-            <label for="addAankoopPrijs">Aankoopprijs (€/fles)</label>
-            <input id="addAankoopPrijs" type="number" min="0" step="0.01" placeholder="Bijv. 15" />
-          </div>
-          <div>
-            <label for="addHuidigePrijs">Huidige prijs (€/fles)</label>
-            <input id="addHuidigePrijs" type="number" min="0" step="0.01" placeholder="Optioneel" />
-          </div>
-          <div>
-            <label for="addDrinkvenster">Drinkvenster</label>
-            <input id="addDrinkvenster" type="text" placeholder="Bijv. 2025–2028 of Nu drinken" />
-          </div>
-          <div>
-            <label for="addServeer">Serveertemperatuur</label>
-            <input id="addServeer" type="text" placeholder="Bijv. 8–10°C" />
-          </div>
-        </div>
-
-        <label for="addFood">Foodpairing</label>
-        <input id="addFood" type="text" placeholder="Bijv. geitenkaas, asperges, lichte vis" />
-
-        <label for="addNotes">Notities</label>
-        <textarea id="addNotes" placeholder="Bijv. frisse stijl, citrus, ideaal als aperitief."></textarea>
-
-        <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-          <button type="submit" class="btn-primary">Fles toevoegen</button>
-          <button type="button" class="btn-ghost" onclick="clearAddForm()">Formulier leegmaken</button>
-        </div>
-      </form>
-    </div>
-
   </div>
 
-  <script>
-    /***********************
-     * Error banner (iPhone)
-     ***********************/
-    (function () {
-      const banner = document.getElementById("errorBanner");
-      function show(msg) {
-        banner.style.display = "block";
-        banner.textContent = "FOUT in app:\n" + msg;
-      }
-      window.addEventListener("error", (e) => {
-        show((e.message || "Onbekende fout") + (e.lineno ? ("\nRegel: " + e.lineno) : ""));
-      });
-      window.addEventListener("unhandledrejection", (e) => {
-        show("Promise fout: " + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
-      });
-    })();
-
-    /***********************
-     * Data & settings
-     ***********************/
-    const baseWines = [
-      // Voorbeeld:
-      // { Vak: 1, Wijn: "Chardonnay Example", Jaargang: 2022, Aantal: 2, Type: "wit" }
-    ];
-
-    let wines = [];
-    let currentView = "all";
-
-    const DB_NAME = "wijnkelderDB";
-    const DB_VERSION = 1;
-    const STORE_NAME = "wines";
-
-    const LEGACY_STORAGE_KEYS = [
-      "wijnkelderData_v7_fp",
-      "wijnkelderData_v7",
-      "wijnkelderData_v6",
-      "wijnkelderData_v5",
-      "wijnkelderData"
-    ];
-
-    /***********************
-     * Helpers
-     ***********************/
-    function guessType(name) {
-      if (!name) return "onbekend";
-      const n = name.toLowerCase();
-      if (n.includes("rosé") || n.includes(" rose ")) return "rose";
-      if (n.includes("champagne") || n.includes("cava") || n.includes("prosecco") || n.includes("crémant")) return "bubbels";
-      if (n.includes("riesling") || n.includes("sauvignon") || n.includes("chardonnay") || n.includes("pinot grigio") || n.includes("veltliner") || n.includes("viognier")) return "wit";
-      if (n.includes("barolo") || n.includes("barbera") || n.includes("nebbiolo") || n.includes("rioja") || n.includes("malbec") || n.includes("cabernet") || n.includes("merlot") || n.includes("syrah") || n.includes("shiraz") || n.includes("amarone") || n.includes("valpolicella")) return "rood";
-      return "onbekend";
-    }
-
-    function normalizePrices(w) {
-      if (w.PrijsHuidig != null || w.PrijsAankoop != null) return w;
-
-      const candidates = [
-        w.Prijs, w.prijs,
-        w.Aankoopprijs, w.aankoopprijs,
-        w.AankoopPrijs, w.aankoopPrijs,
-        w.PrijsPerFles, w.prijsPerFles,
-        w.price, w.Price
-      ];
-
-      const raw = candidates.find(v => v != null && String(v).trim() !== "");
-      if (raw == null) return w;
-
-      const val = parseFloat(String(raw).replace(",", "."));
-      if (!isNaN(val) && val >= 0) w.PrijsAankoop = val;
-      return w;
-    }
-
-    function isOnDrink(drinkvenster) {
-      if (!drinkvenster) return false;
-      const txt = String(drinkvenster).toLowerCase();
-      const year = new Date().getFullYear();
-
-      if (txt.includes("nu drinken") || txt.includes("nu op dronk") || txt.trim() === "nu") return true;
-
-      const rangeMatch = txt.match(/(\d{4})\D+(\d{4})/);
-      if (rangeMatch) {
-        const start = parseInt(rangeMatch[1], 10);
-        const end = parseInt(rangeMatch[2], 10);
-        return year >= start && year <= end;
-      }
-
-      const singleMatch = txt.match(/(\d{4})/);
-      if (singleMatch) {
-        const y = parseInt(singleMatch[1], 10);
-        return Math.abs(year - y) <= 1;
-      }
-      return false;
-    }
-
-    function estimateDrinkWindowForWine(w) {
-      const nowYear = new Date().getFullYear();
-      const y = parseInt(w.Jaargang, 10);
-      if (!y || isNaN(y)) return null;
-
-      const type = guessType(w.Wijn);
-      const name = (w.Wijn || "").toLowerCase();
-      let start, end;
-
-      if (type === "wit") { start = Math.max(y + 1, nowYear); end = start + 4; }
-      else if (type === "bubbels") {
-        if (name.includes("champagne") || name.includes("gimonnet") || name.includes("de venoge")) { start = Math.max(y + 2, nowYear); end = start + 8; }
-        else { start = Math.max(y, nowYear); end = start + 5; }
-      } else if (type === "rood") {
-        if (name.includes("barolo") || name.includes("amarone") || name.includes("valpolicella") || name.includes("pingus") || name.includes("dal forno") || name.includes("ribera")) {
-          start = Math.max(y + 5, nowYear); end = start + 15;
-        } else if (name.includes("riserva") || name.includes("superiore")) {
-          start = Math.max(y + 3, nowYear); end = start + 10;
-        } else {
-          start = Math.max(y + 2, nowYear); end = start + 6;
-        }
-      } else { start = Math.max(y + 1, nowYear); end = start + 5; }
-
-      if (end < start) end = start + 1;
-      return `${start}–${end}`;
-    }
-
-    function estimateFoodpairingForWine(w) {
-      const name = (w.Wijn || "").toLowerCase();
-      const type = guessType(w.Wijn);
-
-      if (type === "bubbels" || name.includes("champagne") || name.includes("cava")) {
-        return "Aperitief, oesters, zeevruchten, sushi en lichte hapjes";
-      }
-      if (type === "wit") {
-        if (name.includes("sauvignon") || name.includes("assyrtiko") || name.includes("riesling")) return "Geitenkaas, salades, asperges, zeevruchten en lichte visgerechten";
-        if (name.includes("chardonnay")) return "Gevogelte, romige sauzen, rijke visgerechten en kreeft";
-        return "Visgerechten, schaal- en schelpdieren, salades en lichte witvleesgerechten";
-      }
-      if (type === "rood") {
-        if (name.includes("barolo") || name.includes("nebbiolo")) return "Rood vlees, wild, truffelgerechten en gerijpte harde kazen";
-        if (name.includes("amarone") || name.includes("valpolicella") || name.includes("ripasso")) return "Wild, stoofpotten, krachtige vleesgerechten en gerijpte kazen";
-        if (name.includes("pinot noir")) return "Eend, gevogelte, kalfsvlees en gerechten met paddenstoelen";
-        return "Gegrild vlees, stoofpotten, charcuterie en gerijpte kazen";
-      }
-      return "Algemene vlees- en pastagerechten, gegrilde groenten en kazen";
-    }
-
-    function formatLastDrunk(last) {
-      if (!last) return "";
-      const d = new Date(last);
-      if (isNaN(d.getTime())) return "";
-      return d.toLocaleDateString("nl-BE");
-    }
-
-    /***********************
-     * IndexedDB
-     ***********************/
-    function openDB() {
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open(DB_NAME, DB_VERSION);
-
-        req.onupgradeneeded = (event) => {
-          const db = event.target.result;
-          if (!db.objectStoreNames.contains(STORE_NAME)) {
-            db.createObjectStore(STORE_NAME, { keyPath: "_id" });
-          }
-        };
-
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-      });
-    }
-
-    async function idbGetAll() {
-      const db = await openDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, "readonly");
-        const store = tx.objectStore(STORE_NAME);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = () => reject(req.error);
-      });
-    }
-
-    async function idbPutAll(items) {
-      const db = await openDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(STORE_NAME, "readwrite");
-        const store = tx.objectStore(STORE_NAME);
-
-        const clearReq = store.clear();
-        clearReq.onerror = () => reject(clearReq.error);
-
-        clearReq.onsuccess = () => {
-          (items || []).forEach(item => store.put(item));
-        };
-
-        tx.oncomplete = () => resolve(true);
-        tx.onerror = () => reject(tx.error);
-      });
-    }
-
-    async function saveData() {
-      await idbPutAll(wines);
-    }
-
-    async function initData() {
-      let dbWines = [];
-      try {
-        dbWines = await idbGetAll();
-      } catch (e) {
-        console.warn("IndexedDB read failed:", e);
-      }
-
-      // Migratie uit localStorage indien DB leeg
-      if (!dbWines || dbWines.length === 0) {
-        let legacyRaw = null;
-        for (const k of LEGACY_STORAGE_KEYS) {
-          const v = localStorage.getItem(k);
-          if (v) { legacyRaw = v; break; }
-        }
-
-        if (legacyRaw) {
-          try {
-            const legacyWines = JSON.parse(legacyRaw) || [];
-            const migrated = legacyWines.map((w, idx) => ({
-              ...w,
-              _id: (w._id != null) ? w._id : (idx + 1)
-            }));
-
-            await idbPutAll(migrated);
-            LEGACY_STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
-            dbWines = migrated;
-          } catch (e) {
-            console.warn("Legacy parse failed:", e);
-          }
-        }
-      }
-
-      // Seed als nog steeds leeg
-      if (!dbWines || dbWines.length === 0) {
-        const seeded = baseWines.map((w, idx) => ({ ...w, _id: idx + 1 }));
-        await idbPutAll(seeded);
-        dbWines = seeded;
-      }
-
-      wines = dbWines;
-
-      wines.forEach((w, idx) => {
-        if (w._id == null) w._id = idx + 1;
-        if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
-        if (!w.Type) w.Type = guessType(w.Wijn);
-        normalizePrices(w);
-      });
-    }
-
-    /***********************
-     * UI: filters & summary
-     ***********************/
-    function setView(view) {
-      currentView = view;
-      document.getElementById("viewAll").classList.toggle("active", view === "all");
-      document.getElementById("viewOnDrink").classList.toggle("active", view === "onDrink");
-      renderTable();
-    }
-
-    function quickFilter(type) {
-      document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
-      const selected = Array.from(document.querySelectorAll(".pill")).find(p => p.getAttribute("data-type") === type);
-      if (selected) selected.classList.add("active");
-      renderTable();
-    }
-
-    function clearTypeFilter() {
-      document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
-      renderTable();
-    }
-
-    function resetFilters() {
-      document.getElementById("searchInput").value = "";
-      document.getElementById("vakFilter").value = "";
-      clearTypeFilter();
-      setView("all");
-    }
-
-    function fillVakFilter() {
-      const filter = document.getElementById("vakFilter");
-      filter.innerHTML = '<option value="">— Filter op vak —</option>';
-
-      const uniqueVakken = [...new Set(wines.map(w => w.Vak))]
-        .filter(v => v !== null && v !== undefined && v !== "" && !Number.isNaN(v))
-        .sort((a, b) => Number(a) - Number(b));
-
-      uniqueVakken.forEach(v => {
-        const opt = document.createElement("option");
-        opt.value = v;
-        opt.textContent = "Vak " + v;
-        filter.appendChild(opt);
-      });
-    }
-
-    function updateSummary() {
-      const el = document.getElementById("summaryBar");
-      if (!el) return;
-
-      let totalBottles = 0;
-      let totalValue = 0;
-
-      wines.forEach(w => {
-        const aantal = Number(w.Aantal || 0);
-        if (!isNaN(aantal)) totalBottles += aantal;
-
-        const price = (w.PrijsHuidig != null) ? Number(w.PrijsHuidig)
-          : (w.PrijsAankoop != null) ? Number(w.PrijsAankoop)
-          : null;
-
-        if (price != null && !isNaN(price)) totalValue += aantal * price;
-      });
-
-      const valueText = totalValue > 0 ? `€ ${totalValue.toFixed(0)}` : "—";
-
-      el.innerHTML = `
-        <div class="summary-item"><span>Totaal flessen</span> <span class="value">${totalBottles}</span></div>
-        <div class="summary-item"><span>Totale waarde</span> <span class="value">${valueText}</span></div>
-      `;
-    }
-
-    /***********************
-     * Render table + cards
-     ***********************/
-    function renderTable() {
-      const tbody = document.querySelector("#wineTable tbody");
-      const cards = document.getElementById("wineCards");
-      if (!tbody || !cards) return;
-
-      tbody.innerHTML = "";
-      cards.innerHTML = "";
-
-      const search = (document.getElementById("searchInput").value || "").toLowerCase();
-      const vak = document.getElementById("vakFilter").value;
-      const activePill = document.querySelector(".pill.active[data-type]");
-      const typeFilter = activePill ? activePill.getAttribute("data-type") : null;
-
-      const rows = wines
-        .map((w, idx) => ({ w, idx }))
-        .filter(({ w }) => {
-          if (currentView === "onDrink" && !isOnDrink(w.Drinkvenster)) return false;
-          if (vak !== "" && String(w.Vak) !== String(vak)) return false;
-
-          if (search) {
-            const inName = (w.Wijn || "").toLowerCase().includes(search);
-            const inNotes = (w.Notities || "").toLowerCase().includes(search);
-            const inFood = (w.Foodpairing || "").toLowerCase().includes(search);
-            if (!inName && !inNotes && !inFood) return false;
-          }
-
-          if (typeFilter) {
-            const t = w.Type || guessType(w.Wijn);
-            if (typeFilter === "dessert") {
-              const fp = (w.Foodpairing || "").toLowerCase();
-              const nt = (w.Notities || "").toLowerCase();
-              if (!(fp.includes("dessert") || nt.includes("dessert") || fp.includes("zoet") || nt.includes("zoet"))) return false;
-            } else if (t !== typeFilter) return false;
-          }
-
-          return true;
-        })
-        .sort((a, b) => {
-          const vakA = (a.w.Vak == null || Number.isNaN(a.w.Vak)) ? 9999 : Number(a.w.Vak);
-          const vakB = (b.w.Vak == null || Number.isNaN(b.w.Vak)) ? 9999 : Number(b.w.Vak);
-          if (vakA !== vakB) return vakA - vakB;
-
-          const nameA = (a.w.Wijn || "").toLowerCase();
-          const nameB = (b.w.Wijn || "").toLowerCase();
-          if (nameA !== nameB) return nameA.localeCompare(nameB);
-
-          const yA = parseInt(a.w.Jaargang, 10) || 0;
-          const yB = parseInt(b.w.Jaargang, 10) || 0;
-          return yB - yA;
-        });
-
-      rows.forEach(({ w, idx }) => {
-        const onDrink = isOnDrink(w.Drinkvenster);
-        const locationMissing = (w.Vak === null || w.Vak === undefined || w.Vak === "" || Number.isNaN(w.Vak));
-        const vakDisplay = locationMissing ? '<span class="tag tag-danger">Geen vak!</span>' : (w.Vak ?? "");
-
-        let voorraadBadge = "";
-        if ((w.Aantal || 0) <= 0) voorraadBadge = '<span class="tag tag-danger">Op</span>';
-        else if (w.Aantal === 1) voorraadBadge = '<span class="tag tag-danger">Laatste fles</span>';
-        else if (w.Aantal <= 3) voorraadBadge = '<span class="tag tag-ok">Lage voorraad</span>';
-
-        let drinkBadge = "";
-        if (onDrink && currentView === "all") drinkBadge = '<span class="chip-badge">Nu op dronk</span>';
-
-        const price = (w.PrijsHuidig != null) ? Number(w.PrijsHuidig)
-          : (w.PrijsAankoop != null) ? Number(w.PrijsAankoop)
-          : null;
-
-        const priceText = (price != null && !isNaN(price)) ? price.toFixed(2) : "—";
-        const aantal = Number(w.Aantal || 0);
-        const value = (price != null && !isNaN(price) && !isNaN(aantal)) ? (aantal * price) : null;
-        const valueText = (value != null) ? `€ ${value.toFixed(0)}` : "—";
-
-        let infoBadge = "";
-        if (price == null || isNaN(price)) infoBadge += '<span class="tag">Geen prijs</span>';
-        if (!w.Drinkvenster) infoBadge += '<span class="tag">Geen drinkvenster</span>';
-
-        const type = w.Type || guessType(w.Wijn);
-        const typeLabel = (type === "wit") ? "Wit"
-          : (type === "rood") ? "Rood"
-          : (type === "bubbels") ? "Mousserend"
-          : (type === "rose") ? "Rosé"
-          : "";
-
-        // Tabelrij
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${vakDisplay}</td>
-          <td>
-            <div><strong>${escapeHtml(w.Wijn || "")}</strong></div>
-            <div class="small">
-              ${typeLabel ? `<span class="tag">${typeLabel}</span>` : ""}
-              <div style="margin-top:4px;">
-                ${drinkBadge} ${infoBadge}
-              </div>
-            </div>
-          </td>
-          <td>${w.Jaargang || ""}</td>
-          <td>
-            <div>${w.Aantal ?? 0}</div>
-            <div>${voorraadBadge}</div>
-          </td>
-          <td>${priceText}</td>
-          <td>${valueText}</td>
-          <td>${escapeHtml(w.Drinkvenster || "")}</td>
-          <td>
-            <div class="inline-actions">
-              <button class="btn-small" type="button" onclick="takeBottle(${idx})">Fles genomen</button>
-              <button class="btn-small" type="button" onclick="editLocation(${idx})">Locatie</button>
-              <button class="btn-small" type="button" onclick="editPrice(${idx})">Prijs</button>
-              <button class="btn-small" type="button" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
-              <button class="btn-small" type="button" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
-              <button class="btn-small" type="button" onclick="editType(${idx})">Type</button>
-              <button class="btn-small" type="button" onclick="editWine(${idx})">Bewerken</button>
-              <button class="btn-small" type="button" onclick="deleteWine(${idx})">Verwijderen</button>
-            </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-
-        // Mobile card
-        const yearText = w.Jaargang ? String(w.Jaargang) : "Jaargang n.v.t.";
-        const vakText = locationMissing ? "Geen vak" : `Vak ${w.Vak}`;
-        const showFooterLine = Boolean(w.Drinkvenster || (price != null && !isNaN(price)));
-
-        const card = document.createElement("div");
-        card.className = "wine-card";
-        card.innerHTML = `
-          <div class="wine-top">
-            <div class="wine-left">
-              <div class="wine-title">${escapeHtml(w.Wijn || "")}</div>
-              <div class="wine-meta">${typeLabel ? typeLabel + " · " : ""}${escapeHtml(yearText)} · ${escapeHtml(vakText)}</div>
-              <div class="wine-badges">
-                ${onDrink ? `<span class="chip-badge">Nu op dronk</span>` : ""}
-                ${voorraadBadge || ""}
-                ${(price == null || isNaN(price)) ? `<span class="tag">Geen prijs</span>` : ""}
-                ${(!w.Drinkvenster) ? `<span class="tag">Geen drinkvenster</span>` : ""}
-              </div>
-            </div>
-            <div class="wine-right">
-              <div class="qty">${w.Aantal ?? 0}</div>
-            </div>
-          </div>
-
-          <div class="actions-primary">
-            <button class="btn-action" type="button" onclick="takeBottle(${idx})">Fles genomen</button>
-            <button class="btn-action" type="button" onclick="editLocation(${idx})">Locatie</button>
-
-            <details class="more-actions">
-              <summary>Meer…</summary>
-              <div class="more-grid">
-                <button class="btn-action" type="button" onclick="editPrice(${idx})">Prijs</button>
-                <button class="btn-action" type="button" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
-                <button class="btn-action" type="button" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
-                <button class="btn-action" type="button" onclick="editType(${idx})">Type</button>
-                <button class="btn-action" type="button" onclick="editWine(${idx})">Bewerken</button>
-                <button class="btn-action" type="button" onclick="deleteWine(${idx})" style="border-color: rgba(209,39,39,.35); color: var(--danger);">Verwijderen</button>
-              </div>
-            </details>
-          </div>
-
-          ${showFooterLine ? `
-            <div class="small wine-footer">
-              ${w.Drinkvenster ? `Drinkvenster: ${escapeHtml(w.Drinkvenster)}` : ""}
-              ${(w.Drinkvenster && price != null && !isNaN(price)) ? " · " : ""}
-              ${(price != null && !isNaN(price)) ? `€ ${price.toFixed(2)}/fles` : ""}
-            </div>
-          ` : ""}
-        `;
-        cards.appendChild(card);
-      });
-
-      updateSummary();
-    }
-
-    function escapeHtml(str) {
-      return String(str)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    /***********************
-     * Actions
-     ***********************/
-    async function takeBottle(idx) {
-      const w = wines[idx];
-      if (!w) return;
-      if (!w.Aantal || w.Aantal <= 0) { alert("Er zijn geen flessen meer in voorraad."); return; }
-
-      const ok = confirm("Bevestig: 1 fles genomen van\n" + (w.Wijn || "onbekende wijn") + " (vak " + (w.Vak ?? "?") + ")");
-      if (!ok) return;
-
-      w.Aantal = (w.Aantal || 0) - 1;
-      w.LastDrunk = new Date().toISOString();
-      await saveData();
-      renderTable();
-    }
-
-    async function editLocation(idx) {
-      const w = wines[idx];
-      if (!w) return;
-
-      const currentVak = (w.Vak != null && !Number.isNaN(w.Vak)) ? w.Vak : "";
-      const newVak = prompt("Nieuwe vaklocatie:", currentVak);
-      if (newVak === null) return;
-      if (String(newVak).trim() === "") { alert("Vak mag niet leeg zijn."); return; }
-
-      const vakNum = parseInt(String(newVak).trim(), 10);
-      w.Vak = isNaN(vakNum) ? String(newVak).trim() : vakNum;
-
-      await saveData();
-      fillVakFilter();
-      renderTable();
-    }
-
-    async function editPrice(idx) {
-      const w = wines[idx];
-      if (!w) return;
-
-      const currentPrice = (w.PrijsHuidig != null) ? w.PrijsHuidig : w.PrijsAankoop;
-      const input = prompt("Nieuwe prijs per fles (in €):", currentPrice != null ? String(currentPrice) : "");
-      if (input === null) return;
-
-      const val = parseFloat(String(input).replace(",", "."));
-      if (isNaN(val) || val < 0) { alert("Ongeldige prijs."); return; }
-
-      w.PrijsHuidig = val;
-      await saveData();
-      renderTable();
-    }
-
-    async function editType(idx) {
-      const w = wines[idx];
-      if (!w) return;
-
-      const current = w.Type || guessType(w.Wijn) || "";
-      const input = prompt("Type: wit, rood, rosé, mousserend", current);
-      if (input === null) return;
-
-      const val = input.trim().toLowerCase();
-      let normalized = null;
-      if (val === "wit" || val === "white") normalized = "wit";
-      else if (val === "rood" || val === "red") normalized = "rood";
-      else if (val === "rose" || val === "rosé") normalized = "rose";
-      else if (val === "mousserend" || val === "bubbels" || val === "sparkling") normalized = "bubbels";
-
-      if (!normalized) { alert("Onbekend type."); return; }
-
-      w.Type = normalized;
-      await saveData();
-      renderTable();
-    }
-
-    async function autoFillDrinkWindow(idx) {
-      const w = wines[idx];
-      if (!w) return;
-
-      const suggestion = estimateDrinkWindowForWine(w);
-      if (!suggestion) { alert("Geen automatisch drinkvenster mogelijk (jaargang ontbreekt)."); return; }
-
-      if (w.Drinkvenster && !confirm("Overschrijven?\nHuidig: " + w.Drinkvenster + "\nNieuw: " + suggestion)) return;
-      w.Drinkvenster = suggestion;
-
-      await saveData();
-      renderTable();
-    }
-
-    async function autoFillAllDrinkWindows() {
-      let changed = 0;
-      wines.forEach(w => {
-        const current = w.Drinkvenster ? String(w.Drinkvenster).trim() : "";
-        if (!current) {
-          const suggestion = estimateDrinkWindowForWine(w);
-          if (suggestion) { w.Drinkvenster = suggestion; changed++; }
-        }
-      });
-
-      await saveData();
-      renderTable();
-      alert(changed > 0 ? (changed + " wijnen kregen een drinkvenster.") : "Geen wijnen zonder drinkvenster gevonden.");
-    }
-
-    async function autoFillFoodpairing(idx) {
-      const w = wines[idx];
-      if (!w) return;
-
-      const suggestion = estimateFoodpairingForWine(w);
-      if (!suggestion) { alert("Geen automatische foodpairing beschikbaar."); return; }
-
-      if (w.Foodpairing && !confirm("Overschrijven?\nHuidig: " + w.Foodpairing + "\nNieuw: " + suggestion)) return;
-      w.Foodpairing = suggestion;
-
-      await saveData();
-      renderTable();
-    }
-
-    async function autoFillAllFoodpairings() {
-      let changed = 0;
-      wines.forEach(w => {
-        const current = w.Foodpairing ? String(w.Foodpairing).trim() : "";
-        if (!current) {
-          const suggestion = estimateFoodpairingForWine(w);
-          if (suggestion) { w.Foodpairing = suggestion; changed++; }
-        }
-      });
-
-      await saveData();
-      renderTable();
-      alert(changed > 0 ? (changed + " wijnen kregen foodpairing.") : "Geen wijnen zonder foodpairing gevonden.");
-    }
-
-    async function editWine(idx) {
-      const w = wines[idx];
-      if (!w) return;
-
-      const newName = prompt("Nieuwe naam (leeg = ongewijzigd):", w.Wijn || "");
-      if (newName === null) return;
-      if (newName.trim() !== "") w.Wijn = newName.trim();
-
-      const newYear = prompt("Nieuwe jaargang (leeg = ongewijzigd):", w.Jaargang != null ? String(w.Jaargang) : "");
-      if (newYear === null) return;
-      if (newYear.trim() !== "") {
-        const yr = parseInt(newYear.trim(), 10);
-        if (!isNaN(yr)) w.Jaargang = yr;
-      }
-
-      const newVak = prompt("Nieuw vak (leeg = ongewijzigd):", (w.Vak != null && !Number.isNaN(w.Vak)) ? String(w.Vak) : "");
-      if (newVak === null) return;
-      if (newVak.trim() !== "") {
-        const vakNum = parseInt(newVak.trim(), 10);
-        w.Vak = isNaN(vakNum) ? newVak.trim() : vakNum;
-      }
-
-      const newQty = prompt("Nieuw aantal (leeg = ongewijzigd):", w.Aantal != null ? String(w.Aantal) : "");
-      if (newQty === null) return;
-      if (newQty.trim() !== "") {
-        const q = parseInt(newQty.trim(), 10);
-        if (!isNaN(q) && q >= 0) w.Aantal = q;
-      }
-
-      const newDV = prompt("Nieuw drinkvenster (leeg = ongewijzigd):", w.Drinkvenster || "");
-      if (newDV === null) return;
-      if (newDV.trim() !== "") w.Drinkvenster = newDV.trim();
-
-      const newFP = prompt("Nieuwe foodpairing (leeg = ongewijzigd):", w.Foodpairing || "");
-      if (newFP === null) return;
-      if (newFP.trim() !== "") w.Foodpairing = newFP.trim();
-
-      const newNotes = prompt("Nieuwe notities (leeg = ongewijzigd):", w.Notities || "");
-      if (newNotes === null) return;
-      if (newNotes.trim() !== "") w.Notities = newNotes.trim();
-
-      if (!w.Type) w.Type = guessType(w.Wijn);
-      normalizePrices(w);
-
-      await saveData();
-      fillVakFilter();
-      renderTable();
-    }
-
-    async function deleteWine(idx) {
-      const w = wines[idx];
-      if (!w) return;
-      const ok = confirm("Ben je zeker dat je deze wijn volledig wilt verwijderen?\n\n" + (w.Wijn || "Onbekende wijn"));
-      if (!ok) return;
-
-      wines.splice(idx, 1);
-      await saveData();
-      fillVakFilter();
-      renderTable();
-    }
-
-    /***********************
-     * Sommelier
-     ***********************/
-    function setDishAndSuggest(text) {
-      document.getElementById("dishInput").value = text;
-      suggestWine();
-    }
-
-    function suggestWine() {
-      const dish = (document.getElementById("dishInput").value || "").toLowerCase();
-      const result = document.getElementById("sommelierResult");
-      result.innerHTML = "";
-
-      if (!dish) {
-        result.innerHTML = "<div class='sommelier-result'>Geef een gerecht in om advies te krijgen.</div>";
-        return;
-      }
-
-      let candidates = wines.filter(w => (w.Aantal || 0) > 0);
-
-      if (dish.includes("kip") || dish.includes("poulet") || dish.includes("gevogelte")) {
-        candidates = candidates.filter(w => guessType(w.Wijn) === "wit" || (w.Foodpairing || "").toLowerCase().includes("kip"));
-      } else if (dish.includes("rund") || dish.includes("steak") || dish.includes("côte") || dish.includes("os")) {
-        candidates = candidates.filter(w => guessType(w.Wijn) === "rood");
-      } else if (dish.includes("vis") || dish.includes("zee") || dish.includes("oester") || dish.includes("scampi") || dish.includes("gamba")) {
-        candidates = candidates.filter(w => guessType(w.Wijn) === "wit" || guessType(w.Wijn) === "bubbels");
-      } else if (dish.includes("aperitief") || dish.includes("aperitif")) {
-        candidates = candidates.filter(w => guessType(w.Wijn) === "bubbels" || (w.Foodpairing || "").toLowerCase().includes("aperitief"));
-      }
-
-      if (candidates.length === 0) candidates = wines.filter(w => (w.Aantal || 0) > 0);
-      if (candidates.length === 0) {
-        result.innerHTML = "<div class='sommelier-result'>Er zijn geen flessen meer in voorraad.</div>";
-        return;
-      }
-
-      const matchWine = candidates.find(w => isOnDrink(w.Drinkvenster)) || candidates[0];
-
-      const weetje = matchWine.Notities || "Geen extra notities, maar dit is een interessante fles uit je kelder.";
-      const drink = matchWine.Drinkvenster ? `Drinkvenster: ${escapeHtml(matchWine.Drinkvenster)}.` : "";
-      const serveer = matchWine.Serveertemperatuur ? `Serveer rond ${escapeHtml(matchWine.Serveertemperatuur)}.` : "";
-      const vakInfo = (matchWine.Vak != null && matchWine.Vak !== "") ? `De fles ligt in vak ${escapeHtml(matchWine.Vak)}.` : "Locatie: vak nog niet ingevuld.";
-      const lastDrunkText = matchWine.LastDrunk ? `Laatst gedronken op ${formatLastDrunk(matchWine.LastDrunk)}.` : "";
-
-      result.innerHTML = `
-        <div class="sommelier-result">
-          <strong>Advies:</strong> ${escapeHtml(matchWine.Wijn)} (jaargang ${escapeHtml(matchWine.Jaargang || "n.v.t.")})<br>
-          ${matchWine.Vak ? `<span class="tag">Vak ${escapeHtml(matchWine.Vak)}</span>` : `<span class="tag tag-danger">Geen vak</span>`}
-          <br><br>
-          <strong>Weetje:</strong> ${escapeHtml(weetje)}<br>
-          ${drink} ${serveer} ${lastDrunkText}<br><br>
-          <em>${vakInfo}</em>
+  <div class="card">
+    <div class="panel-title">Overzicht &amp; voorraad</div>
+    <div class="subtitle small">
+      Gebruik <strong>Fles genomen</strong> om de voorraad aan te passen. Met <strong>Locatie wijzigen</strong> kun je het vak corrigeren. Met <strong>Prijs instellen</strong> bewaar je een prijs per fles.
+    </div>
+
+    <div style="margin:8px 0 4px; display:flex; gap:8px; flex-wrap:wrap;">
+      <button type="button" class="btn-ghost" onclick="autoFillAllDrinkWindows()">Drinkvenster aanvullen</button>
+      <button type="button" class="btn-ghost" onclick="autoFillAllFoodpairings()">Foodpairing aanvullen</button>
+      <button type="button" class="btn-ghost" onclick="exportData()">Export (JSON)</button>
+      <button type="button" class="btn-ghost" onclick="triggerImport()">Import (JSON)</button>
+      <input id="importFile" type="file" accept="application/json" style="display:none" onchange="importData(event)" />
+    </div>
+
+    <div id="summaryBar" class="summary-bar"></div>
+    <div id="wineCards" class="wine-cards"></div>
+
+    <table id="wineTable">
+      <thead>
+        <tr>
+          <th>Vak</th>
+          <th>Wijn</th>
+          <th>Jaar</th>
+          <th>Aantal</th>
+          <th>Prijs<br><span class="small">(€/fles)</span></th>
+          <th>Waarde<br><span class="small">(totaal)</span></th>
+          <th>Drinkvenster</th>
+          <th>Acties</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="panel-title">Sommelier (compact)</div>
+    <div class="subtitle small">Snelle suggesties uit je eigen kelder. Kies een type gerecht of typ zelf iets in.</div>
+
+    <input id="dishInput" type="text" placeholder="Bijv. kip in room-tomatensaus" />
+
+    <div class="sommelier-row">
+      <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('kip in room-tomatensaus')">Kip (roomsaus)</button>
+      <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('côte à l’os op de grill')">Rund / grill</button>
+      <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('gebakken vis')">Vis</button>
+      <button type="button" class="sommelier-chip" onclick="setDishAndSuggest('aperitiefhapjes')">Aperitief</button>
+    </div>
+
+    <button type="button" class="btn-primary" style="margin-top:8px;" onclick="suggestWine()">
+      <span>Geef advies</span> <span>✨</span>
+    </button>
+
+    <div id="sommelierResult"></div>
+  </div>
+
+  <div class="card">
+    <div class="panel-title">Nieuwe fles toevoegen</div>
+    <div class="subtitle small">Velden <strong>Vak</strong> en <strong>Wijn</strong> zijn verplicht.</div>
+
+    <form id="addForm" onsubmit="addWine(event)">
+      <div class="grid-add">
+        <div>
+          <label for="addVak">Vak *</label>
+          <input id="addVak" type="number" min="0" step="1" required />
         </div>
-      `;
+        <div>
+          <label for="addWijn">Wijn *</label>
+          <input id="addWijn" type="text" required />
+        </div>
+        <div>
+          <label for="addJaargang">Jaargang</label>
+          <input id="addJaargang" type="number" min="1900" max="2100" />
+        </div>
+        <div>
+          <label for="addType">Type</label>
+          <select id="addType">
+            <option value="">Automatisch bepalen</option>
+            <option value="wit">Wit</option>
+            <option value="rood">Rood</option>
+            <option value="rose">Rosé</option>
+            <option value="bubbels">Mousserend</option>
+          </select>
+        </div>
+        <div>
+          <label for="addAantal">Aantal</label>
+          <input id="addAantal" type="number" min="1" step="1" value="1" />
+        </div>
+        <div>
+          <label for="addAankoopPrijs">Aankoopprijs (€/fles)</label>
+          <input id="addAankoopPrijs" type="number" min="0" step="0.01" placeholder="Bijv. 15" />
+        </div>
+        <div>
+          <label for="addHuidigePrijs">Huidige prijs (€/fles)</label>
+          <input id="addHuidigePrijs" type="number" min="0" step="0.01" placeholder="Optioneel" />
+        </div>
+        <div>
+          <label for="addDrinkvenster">Drinkvenster</label>
+          <input id="addDrinkvenster" type="text" placeholder="Bijv. 2025–2028 of Nu drinken" />
+        </div>
+        <div>
+          <label for="addServeer">Serveertemperatuur</label>
+          <input id="addServeer" type="text" placeholder="Bijv. 8–10°C" />
+        </div>
+      </div>
+
+      <label for="addFood">Foodpairing</label>
+      <input id="addFood" type="text" placeholder="Bijv. geitenkaas, asperges, lichte vis" />
+
+      <label for="addNotes">Notities</label>
+      <textarea id="addNotes" placeholder="Bijv. frisse stijl, citrus, ideaal als aperitief."></textarea>
+
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button type="submit" class="btn-primary">Fles toevoegen</button>
+        <button type="button" class="btn-ghost" onclick="clearAddForm()">Formulier leegmaken</button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   Debug banner (iPhone/PWA)
+========================================================= */
+(function () {
+  const banner = document.getElementById("errorBanner");
+  function show(msg) {
+    if (!banner) return;
+    banner.style.display = "block";
+    banner.textContent = "FOUT in app:\n" + msg;
+  }
+  window.addEventListener("error", (e) => {
+    show((e.message || "Onbekende fout") + (e.lineno ? ("\nRegel: " + e.lineno) : ""));
+  });
+  window.addEventListener("unhandledrejection", (e) => {
+    show("Promise fout: " + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
+  });
+})();
+
+/* =========================================================
+   Basisdata & state
+   - Vul baseWines met je lijst, of laat leeg.
+========================================================= */
+const baseWines = []; // <-- hier je embedded data indien gewenst
+let wines = [];
+let currentView = "all";
+
+/* IndexedDB */
+const DB_NAME = "wijnkelderDB";
+const DB_VERSION = 1;
+const STORE_NAME = "wines";
+
+/* Legacy keys (localStorage migratie) */
+const LEGACY_STORAGE_KEYS = [
+  "wijnkelderData_v7_fp",
+  "wijnkelderData_v7",
+  "wijnkelderData_v6",
+  "wijnkelderData_v5",
+  "wijnkelderData"
+];
+
+/* =========================================================
+   Helpers
+========================================================= */
+function guessType(name) {
+  if (!name) return "onbekend";
+  const n = String(name).toLowerCase();
+  if (n.includes("rosé") || n.includes(" rose ")) return "rose";
+  if (n.includes("champagne") || n.includes("cava") || n.includes("prosecco") || n.includes("crémant")) return "bubbels";
+  if (n.includes("riesling") || n.includes("sauvignon") || n.includes("chardonnay") || n.includes("pinot grigio") || n.includes("veltliner") || n.includes("viognier")) return "wit";
+  if (n.includes("barolo") || n.includes("barbera") || n.includes("nebbiolo") || n.includes("rioja") || n.includes("malbec") || n.includes("cabernet") || n.includes("merlot") || n.includes("syrah") || n.includes("shiraz") || n.includes("amarone") || n.includes("valpolicella")) return "rood";
+  return "onbekend";
+}
+
+function isOnDrink(drinkvenster) {
+  if (!drinkvenster) return false;
+  const txt = String(drinkvenster).toLowerCase();
+  const year = new Date().getFullYear();
+
+  if (txt.includes("nu drinken") || txt.includes("nu op dronk") || txt.trim() === "nu") return true;
+
+  const rangeMatch = txt.match(/(\d{4})\D+(\d{4})/);
+  if (rangeMatch) {
+    const start = parseInt(rangeMatch[1], 10);
+    const end = parseInt(rangeMatch[2], 10);
+    return year >= start && year <= end;
+  }
+
+  const singleMatch = txt.match(/(\d{4})/);
+  if (singleMatch) {
+    const y = parseInt(singleMatch[1], 10);
+    return Math.abs(year - y) <= 1;
+  }
+  return false;
+}
+
+function estimateDrinkWindowForWine(w) {
+  const nowYear = new Date().getFullYear();
+  const y = parseInt(w?.Jaargang, 10);
+  if (!y || isNaN(y)) return null;
+
+  const type = guessType(w?.Wijn);
+  const name = String(w?.Wijn || "").toLowerCase();
+  let start, end;
+
+  if (type === "wit") { start = Math.max(y + 1, nowYear); end = start + 4; }
+  else if (type === "bubbels") {
+    if (name.includes("champagne") || name.includes("gimonnet") || name.includes("de venoge")) { start = Math.max(y + 2, nowYear); end = start + 8; }
+    else { start = Math.max(y, nowYear); end = start + 5; }
+  } else if (type === "rood") {
+    if (name.includes("barolo") || name.includes("amarone") || name.includes("valpolicella") || name.includes("pingus") || name.includes("dal forno") || name.includes("ribera")) {
+      start = Math.max(y + 5, nowYear); end = start + 15;
+    } else if (name.includes("riserva") || name.includes("superiore")) {
+      start = Math.max(y + 3, nowYear); end = start + 10;
+    } else {
+      start = Math.max(y + 2, nowYear); end = start + 6;
     }
+  } else { start = Math.max(y + 1, nowYear); end = start + 5; }
 
-    /***********************
-     * Add wine
-     ***********************/
-    async function addWine(event) {
-      event.preventDefault();
+  if (end < start) end = start + 1;
+  return `${start}–${end}`;
+}
 
-      const vak = document.getElementById("addVak").value.trim();
-      const wijn = document.getElementById("addWijn").value.trim();
-      const jaargang = document.getElementById("addJaargang").value.trim();
-      const aantalVal = document.getElementById("addAantal").value.trim();
-      const aankoopPrijsVal = document.getElementById("addAankoopPrijs").value.trim();
-      const huidigePrijsVal = document.getElementById("addHuidigePrijs").value.trim();
-      const drink = document.getElementById("addDrinkvenster").value.trim();
-      const serveer = document.getElementById("addServeer").value.trim();
-      const food = document.getElementById("addFood").value.trim();
-      const notes = document.getElementById("addNotes").value.trim();
-      const typeVal = document.getElementById("addType").value;
+function estimateFoodpairingForWine(w) {
+  const name = String(w?.Wijn || "").toLowerCase();
+  const type = guessType(w?.Wijn);
 
-      if (!vak || !wijn) { alert("Vak en wijnnaam zijn verplicht."); return; }
+  if (type === "bubbels" || name.includes("champagne") || name.includes("cava")) {
+    return "Aperitief, oesters, zeevruchten, sushi en lichte hapjes";
+  }
+  if (type === "wit") {
+    if (name.includes("sauvignon") || name.includes("assyrtiko") || name.includes("riesling")) return "Geitenkaas, salades, asperges, zeevruchten en lichte visgerechten";
+    if (name.includes("chardonnay")) return "Gevogelte, romige sauzen, rijke visgerechten en kreeft";
+    return "Visgerechten, schaal- en schelpdieren, salades en lichte witvleesgerechten";
+  }
+  if (type === "rood") {
+    if (name.includes("barolo") || name.includes("nebbiolo")) return "Rood vlees, wild, truffelgerechten en gerijpte harde kazen";
+    if (name.includes("amarone") || name.includes("valpolicella") || name.includes("ripasso")) return "Wild, stoofpotten, krachtige vleesgerechten en gerijpte kazen";
+    if (name.includes("pinot noir")) return "Eend, gevogelte, kalfsvlees en gerechten met paddenstoelen";
+    return "Gegrild vlees, stoofpotten, charcuterie en gerijpte kazen";
+  }
+  return "Algemene vlees- en pastagerechten, gegrilde groenten en kazen";
+}
 
-      const aantal = aantalVal ? parseInt(aantalVal, 10) : 1;
-      const aankoopPrijs = aankoopPrijsVal ? parseFloat(aankoopPrijsVal.replace(",", ".")) : null;
-      const huidigePrijs = huidigePrijsVal ? parseFloat(huidigePrijsVal.replace(",", ".")) : null;
-      const jaargangNum = jaargang ? parseInt(jaargang, 10) : null;
+function normalizePrices(w) {
+  if (!w || typeof w !== "object") return w;
+  if (w.PrijsHuidig != null || w.PrijsAankoop != null) return w;
 
-      const autoDV = drink ? null : estimateDrinkWindowForWine({ Wijn: wijn, Jaargang: jaargangNum });
-      const autoFP = food ? null : estimateFoodpairingForWine({ Wijn: wijn });
+  const candidates = [
+    w.Prijs, w.prijs,
+    w.Aankoopprijs, w.aankoopprijs,
+    w.AankoopPrijs, w.aankoopPrijs,
+    w.PrijsPerFles, w.prijsPerFles,
+    w.price, w.Price
+  ];
 
-      const newId = wines.length ? (Math.max(...wines.map(w => Number(w._id || 0))) + 1) : 1;
+  const raw = candidates.find(v => v != null && String(v).trim() !== "");
+  if (raw == null) return w;
 
-      const newWine = {
-        Vak: parseInt(vak, 10),
-        Wijn: wijn,
-        Type: typeVal || guessType(wijn),
-        Jaargang: jaargangNum,
-        Aantal: (!isNaN(aantal) && aantal >= 0) ? aantal : 1,
-        PrijsAankoop: (!isNaN(aankoopPrijs) ? aankoopPrijs : null),
-        PrijsHuidig: (!isNaN(huidigePrijs) ? huidigePrijs : null),
-        Drinkvenster: drink || autoDV || null,
-        Serveertemperatuur: serveer || null,
-        Foodpairing: food || autoFP || null,
-        Notities: notes || null,
-        _id: newId
+  const val = parseFloat(String(raw).replace(",", "."));
+  if (!isNaN(val) && val >= 0) w.PrijsAankoop = val;
+  return w;
+}
+
+function formatLastDrunk(last) {
+  if (!last) return "";
+  const d = new Date(last);
+  if (isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("nl-BE");
+}
+
+/* =========================================================
+   IndexedDB
+========================================================= */
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+
+    req.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: "_id" });
+      }
+    };
+
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbGetAll() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readonly");
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbPutAll(items) {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+
+    const clearReq = store.clear();
+    clearReq.onerror = () => reject(clearReq.error);
+
+    clearReq.onsuccess = () => {
+      (items || []).forEach(item => store.put(item));
+    };
+
+    tx.oncomplete = () => resolve(true);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function saveData() {
+  await idbPutAll(wines);
+}
+
+/* =========================================================
+   Import / Export
+========================================================= */
+function exportData() {
+  const payload = { exportedAt: new Date().toISOString(), wines };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "wijnkelder-export.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+}
+
+function triggerImport() {
+  const el = document.getElementById("importFile");
+  if (el) el.click();
+}
+
+async function importData(event) {
+  const file = event?.target?.files?.[0];
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+
+    const imported = Array.isArray(parsed) ? parsed : parsed.wines;
+    if (!Array.isArray(imported)) throw new Error("Ongeldig exportbestand (geen wines-array).");
+
+    const normalized = imported.map((w, idx) => {
+      const obj = {
+        ...w,
+        _id: (w._id != null) ? w._id : (idx + 1),
+        Type: w.Type || guessType(w.Wijn),
+        Aantal: (w.Aantal == null || isNaN(w.Aantal)) ? 0 : Number(w.Aantal)
       };
+      return normalizePrices(obj);
+    });
 
-      wines.push(newWine);
-      await saveData();
-      fillVakFilter();
-      renderTable();
-      clearAddForm();
+    wines = normalized;
+    await saveData();
+    fillVakFilter();
+    renderTable();
+
+    alert("Import gelukt. Data is nu bijgewerkt op dit toestel.");
+  } catch (e) {
+    alert("Import mislukt: " + (e && e.message ? e.message : String(e)));
+  } finally {
+    if (event?.target) event.target.value = "";
+  }
+}
+
+/* =========================================================
+   Init data (migratie + seed)
+========================================================= */
+async function initData() {
+  let dbWines = [];
+  try {
+    dbWines = await idbGetAll();
+  } catch (e) {
+    console.warn("IndexedDB read failed:", e);
+  }
+
+  // Migratie localStorage -> IndexedDB (éénmalig)
+  if (!dbWines || dbWines.length === 0) {
+    let legacyRaw = null;
+
+    for (const k of LEGACY_STORAGE_KEYS) {
+      const v = localStorage.getItem(k);
+      if (v) { legacyRaw = v; break; }
     }
 
-    function clearAddForm() {
-      document.getElementById("addForm").reset();
-      document.getElementById("addAantal").value = "1";
-    }
-
-    async function resetAll() {
-      const ok = confirm("Alle lokale wijzigingen wissen en terug naar basislijst?");
-      if (!ok) return;
-
-      LEGACY_STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
-      wines = baseWines.map((w, idx) => ({ ...w, _id: idx + 1 }));
-      await saveData();
-      fillVakFilter();
-      resetFilters();
-      renderTable();
-    }
-
-    /***********************
-     * Export / Import
-     ***********************/
-    function exportData() {
-      const payload = { exportedAt: new Date().toISOString(), wines };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "wijnkelder-export.json";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      URL.revokeObjectURL(url);
-    }
-
-    function triggerImport() {
-      document.getElementById("importFile").click();
-    }
-
-    async function importData(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-
+    if (legacyRaw) {
       try {
-        const text = await file.text();
-        const parsed = JSON.parse(text);
-        const imported = Array.isArray(parsed) ? parsed : parsed.wines;
-        if (!Array.isArray(imported)) throw new Error("Ongeldig exportbestand (geen wines-array).");
+        const legacyWines = JSON.parse(legacyRaw) || [];
+        const migrated = legacyWines.map((w, idx) => ({
+          ...w,
+          _id: (w._id != null) ? w._id : (idx + 1)
+        }));
 
-        const normalized = imported.map((w, idx) => {
-          const obj = {
-            ...w,
-            _id: (w._id != null) ? w._id : (idx + 1),
-            Type: w.Type || guessType(w.Wijn),
-            Aantal: (w.Aantal == null || isNaN(w.Aantal)) ? 0 : Number(w.Aantal)
-          };
-          return normalizePrices(obj);
-        });
-
-        wines = normalized;
-        await saveData();
-        fillVakFilter();
-        renderTable();
-        alert("Import gelukt. Data is nu bijgewerkt op dit toestel.");
+        await idbPutAll(migrated);
+        LEGACY_STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
+        dbWines = migrated;
+        console.log("Migratie localStorage → IndexedDB uitgevoerd");
       } catch (e) {
-        alert("Import mislukt: " + (e && e.message ? e.message : String(e)));
-      } finally {
-        event.target.value = "";
+        console.warn("Legacy parse failed:", e);
       }
     }
+  }
 
-    /***********************
-     * Wire up events + boot
-     ***********************/
-    async function boot() {
-      // inputs
-      document.getElementById("searchInput").addEventListener("input", renderTable);
-      document.getElementById("vakFilter").addEventListener("change", renderTable);
+  // Seed baseWines indien nog leeg
+  if (!dbWines || dbWines.length === 0) {
+    const seeded = (baseWines || []).map((w, idx) => ({ ...w, _id: idx + 1 }));
+    await idbPutAll(seeded);
+    dbWines = seeded;
+    console.log("BaseWines → IndexedDB seeded");
+  }
 
-      // form
-      document.getElementById("addForm").addEventListener("submit", addWine);
+  wines = dbWines;
 
-      // import
-      document.getElementById("importFile").addEventListener("change", importData);
+  // Normalisatie
+  wines.forEach((w, idx) => {
+    if (w._id == null) w._id = idx + 1;
+    if (w.Aantal == null || isNaN(w.Aantal)) w.Aantal = 0;
+    if (!w.Type) w.Type = guessType(w.Wijn);
+    normalizePrices(w);
+  });
+}
 
-      await initData();
-      fillVakFilter();
-      renderTable();
+/* =========================================================
+   UI / Filters
+========================================================= */
+function fillVakFilter() {
+  const filter = document.getElementById("vakFilter");
+  if (!filter) return;
+
+  filter.innerHTML = '<option value="">— Filter op vak —</option>';
+
+  const uniqueVakken = [...new Set(wines.map(w => w.Vak))]
+    .filter(v => v !== null && v !== undefined && v !== "" && !Number.isNaN(v))
+    .sort((a, b) => Number(a) - Number(b));
+
+  uniqueVakken.forEach(v => {
+    const opt = document.createElement("option");
+    opt.value = String(v);
+    opt.textContent = "Vak " + v;
+    filter.appendChild(opt);
+  });
+}
+
+function setView(view) {
+  currentView = view;
+  const bAll = document.getElementById("viewAll");
+  const bDrink = document.getElementById("viewOnDrink");
+  if (bAll) bAll.classList.toggle("active", view === "all");
+  if (bDrink) bDrink.classList.toggle("active", view === "onDrink");
+  renderTable();
+}
+
+function quickFilter(type) {
+  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  const selected = Array.from(document.querySelectorAll(".pill")).find(p => p.getAttribute("data-type") === type);
+  if (selected) selected.classList.add("active");
+  renderTable();
+}
+
+function clearTypeFilter() {
+  document.querySelectorAll(".pill").forEach(p => p.classList.remove("active"));
+  renderTable();
+}
+
+function resetFilters() {
+  const s = document.getElementById("searchInput");
+  const v = document.getElementById("vakFilter");
+  if (s) s.value = "";
+  if (v) v.value = "";
+  clearTypeFilter();
+  setView("all");
+  renderTable();
+}
+
+function updateSummary() {
+  const el = document.getElementById("summaryBar");
+  if (!el) return;
+
+  let totalBottles = 0;
+  let totalValue = 0;
+
+  wines.forEach(w => {
+    const aantal = Number(w.Aantal || 0);
+    if (!isNaN(aantal)) totalBottles += aantal;
+
+    const price = (w.PrijsHuidig != null) ? Number(w.PrijsHuidig)
+      : (w.PrijsAankoop != null) ? Number(w.PrijsAankoop)
+      : null;
+
+    if (price != null && !isNaN(price)) totalValue += aantal * price;
+  });
+
+  const valueText = totalValue > 0 ? `€ ${totalValue.toFixed(0)}` : "—";
+
+  el.innerHTML = `
+    <div class="summary-item"><span>Totaal flessen</span> <span class="value">${totalBottles}</span></div>
+    <div class="summary-item"><span>Totale waarde</span> <span class="value">${valueText}</span></div>
+  `;
+}
+
+/* =========================================================
+   Rendering
+========================================================= */
+function renderTable() {
+  const tbody = document.querySelector("#wineTable tbody");
+  const cards = document.getElementById("wineCards");
+  if (!tbody) return;
+
+  tbody.innerHTML = "";
+  if (cards) cards.innerHTML = "";
+
+  const search = String(document.getElementById("searchInput")?.value || "").toLowerCase();
+  const vak = String(document.getElementById("vakFilter")?.value || "");
+  const activePill = document.querySelector(".pill.active[data-type]");
+  const typeFilter = activePill ? activePill.getAttribute("data-type") : null;
+
+  const rows = wines
+    .map((w, idx) => ({ w, idx }))
+    .filter(({ w }) => {
+      if (currentView === "onDrink" && !isOnDrink(w.Drinkvenster)) return false;
+      if (vak !== "" && String(w.Vak) !== String(vak)) return false;
+
+      if (search) {
+        const inName = String(w.Wijn || "").toLowerCase().includes(search);
+        const inNotes = String(w.Notities || "").toLowerCase().includes(search);
+        const inFood = String(w.Foodpairing || "").toLowerCase().includes(search);
+        if (!inName && !inNotes && !inFood) return false;
+      }
+
+      if (typeFilter) {
+        const t = w.Type || guessType(w.Wijn);
+        if (typeFilter === "dessert") {
+          const fp = String(w.Foodpairing || "").toLowerCase();
+          const nt = String(w.Notities || "").toLowerCase();
+          if (!(fp.includes("dessert") || nt.includes("dessert"))) return false;
+        } else if (t !== typeFilter) return false;
+      }
+
+      return true;
+    })
+    .sort((a, b) => {
+      const vakA = (a.w.Vak == null || Number.isNaN(a.w.Vak)) ? 9999 : Number(a.w.Vak);
+      const vakB = (b.w.Vak == null || Number.isNaN(b.w.Vak)) ? 9999 : Number(b.w.Vak);
+      if (vakA !== vakB) return vakA - vakB;
+
+      const nameA = String(a.w.Wijn || "").toLowerCase();
+      const nameB = String(b.w.Wijn || "").toLowerCase();
+      if (nameA !== nameB) return nameA.localeCompare(nameB);
+
+      const yA = parseInt(a.w.Jaargang, 10) || 0;
+      const yB = parseInt(b.w.Jaargang, 10) || 0;
+      return yB - yA;
+    });
+
+  rows.forEach(({ w, idx }) => {
+    const onDrink = isOnDrink(w.Drinkvenster);
+
+    const locationMissing = (w.Vak === null || w.Vak === undefined || w.Vak === "" || Number.isNaN(w.Vak));
+    const vakDisplay = locationMissing ? '<span class="tag tag-danger">Geen vak!</span>' : (w.Vak ?? "");
+
+    let voorraadBadge = "";
+    if ((w.Aantal || 0) <= 0) voorraadBadge = '<span class="tag tag-danger">Op</span>';
+    else if (w.Aantal === 1) voorraadBadge = '<span class="tag tag-danger">Laatste fles</span>';
+    else if (w.Aantal <= 3) voorraadBadge = '<span class="tag tag-ok">Lage voorraad</span>';
+
+    let drinkBadge = "";
+    if (onDrink && currentView === "all") drinkBadge = '<span class="chip-badge">Nu op dronk</span>';
+
+    const price = (w.PrijsHuidig != null) ? Number(w.PrijsHuidig)
+      : (w.PrijsAankoop != null) ? Number(w.PrijsAankoop)
+      : null;
+
+    const priceText = (price != null && !isNaN(price)) ? price.toFixed(2) : "—";
+    const aantal = Number(w.Aantal || 0);
+    const value = (price != null && !isNaN(price) && !isNaN(aantal)) ? (aantal * price) : null;
+    const valueText = value != null ? `€ ${value.toFixed(0)}` : "—";
+
+    let infoBadge = "";
+    if (price == null || isNaN(price)) infoBadge += '<span class="tag">Geen prijs</span>';
+    if (!w.Drinkvenster) infoBadge += '<span class="tag">Geen drinkvenster</span>';
+
+    const type = w.Type || guessType(w.Wijn);
+    const typeLabel = (type === "wit") ? "Wit"
+      : (type === "rood") ? "Rood"
+      : (type === "bubbels") ? "Mousserend"
+      : (type === "rose") ? "Rosé"
+      : "";
+
+    /* Desktop/table row */
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${vakDisplay}</td>
+      <td>
+        <div><strong>${w.Wijn || ""}</strong></div>
+        <div class="small">
+          ${typeLabel ? `<span class="tag">${typeLabel}</span>` : ""}
+          <div style="margin-top:4px;">
+            ${drinkBadge} ${infoBadge}
+          </div>
+        </div>
+      </td>
+      <td>${w.Jaargang || ""}</td>
+      <td>
+        <div>${w.Aantal ?? 0}</div>
+        <div>${voorraadBadge}</div>
+      </td>
+      <td>${priceText}</td>
+      <td>${valueText}</td>
+      <td>${w.Drinkvenster || ""}</td>
+      <td>
+        <div class="inline-actions">
+          <button class="btn-small" type="button" onclick="takeBottle(${idx})">Fles genomen</button>
+          <button class="btn-small" type="button" onclick="editLocation(${idx})">Locatie</button>
+          <button class="btn-small" type="button" onclick="editPrice(${idx})">Prijs</button>
+          <button class="btn-small" type="button" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
+          <button class="btn-small" type="button" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
+          <button class="btn-small" type="button" onclick="editType(${idx})">Type</button>
+          <button class="btn-small" type="button" onclick="editWine(${idx})">Bewerken</button>
+          <button class="btn-small" type="button" onclick="deleteWine(${idx})">Verwijderen</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+
+    /* Mobile cards */
+    if (cards) {
+      const vakText = locationMissing ? "Geen vak" : `Vak ${w.Vak}`;
+      const yearText = w.Jaargang ? String(w.Jaargang) : "Jaargang n.v.t.";
+      const showFooterLine = !!(w.Drinkvenster || (price != null && !isNaN(price)));
+
+      const card = document.createElement("div");
+      card.className = "wine-card";
+
+      card.innerHTML = `
+        <div class="wine-top">
+          <div style="min-width:0;">
+            <div class="wine-title">${w.Wijn || ""}</div>
+            <div class="wine-meta">${typeLabel ? typeLabel + " · " : ""}${yearText} · ${vakText}</div>
+            <div class="wine-badges">
+              ${onDrink ? `<span class="chip-badge">Nu op dronk</span>` : ""}
+              ${voorraadBadge || ""}
+              ${(price == null || isNaN(price)) ? `<span class="tag">Geen prijs</span>` : ""}
+              ${(!w.Drinkvenster) ? `<span class="tag">Geen drinkvenster</span>` : ""}
+            </div>
+          </div>
+
+          <div style="text-align:right; flex:0 0 auto;">
+            <div class="qty">${w.Aantal ?? 0}</div>
+          </div>
+        </div>
+
+        <div class="actions-primary">
+          <button class="btn-action" type="button" onclick="takeBottle(${idx})">Fles genomen</button>
+          <button class="btn-action" type="button" onclick="editLocation(${idx})">Locatie</button>
+
+          <details class="more-actions">
+            <summary>Meer…</summary>
+            <div class="more-grid">
+              <button class="btn-action" type="button" onclick="editPrice(${idx})">Prijs</button>
+              <button class="btn-action" type="button" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
+              <button class="btn-action" type="button" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
+              <button class="btn-action" type="button" onclick="editType(${idx})">Type</button>
+              <button class="btn-action" type="button" onclick="editWine(${idx})">Bewerken</button>
+              <button class="btn-action" type="button" onclick="deleteWine(${idx})" style="border-color: rgba(209,39,39,.35); color: var(--danger);">Verwijderen</button>
+            </div>
+          </details>
+        </div>
+
+        ${showFooterLine ? `
+          <div class="small wine-footer">
+            ${w.Drinkvenster ? `Drinkvenster: ${w.Drinkvenster}` : ""}
+            ${(w.Drinkvenster && price != null && !isNaN(price)) ? " · " : ""}
+            ${(price != null && !isNaN(price)) ? `€ ${price.toFixed(2)}/fles` : ""}
+          </div>
+        ` : ""}
+      `;
+
+      cards.appendChild(card);
     }
+  });
 
-    boot();
+  updateSummary();
+}
 
-    /***********************
-     * Service worker
-     ***********************/
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js")
-        .then(() => console.log("Service worker geregistreerd"))
-        .catch(err => console.error("SW error:", err));
+/* =========================================================
+   Acties
+========================================================= */
+function takeBottle(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  if (!w.Aantal || w.Aantal <= 0) { alert("Er zijn geen flessen meer in voorraad."); return; }
+  if (!confirm("Bevestig: 1 fles genomen van\n" + (w.Wijn || "onbekende wijn") + " (vak " + (w.Vak ?? "?") + ")")) return;
+  w.Aantal = (w.Aantal || 0) - 1;
+  w.LastDrunk = new Date().toISOString();
+  saveData();
+  renderTable();
+}
+
+function editLocation(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const currentVak = (w.Vak != null && !Number.isNaN(w.Vak)) ? w.Vak : "";
+  const newVak = prompt("Nieuwe vaklocatie:", currentVak);
+  if (newVak === null) return;
+  if (String(newVak).trim() === "") { alert("Vak mag niet leeg zijn."); return; }
+  const vakNum = parseInt(String(newVak).trim(), 10);
+  w.Vak = isNaN(vakNum) ? String(newVak).trim() : vakNum;
+  saveData(); fillVakFilter(); renderTable();
+}
+
+function editPrice(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const currentPrice = (w.PrijsHuidig != null) ? w.PrijsHuidig : w.PrijsAankoop;
+  const input = prompt("Nieuwe prijs per fles (in €):", currentPrice != null ? String(currentPrice) : "");
+  if (input === null) return;
+  const val = parseFloat(String(input).replace(",", "."));
+  if (isNaN(val) || val < 0) { alert("Ongeldige prijs."); return; }
+  w.PrijsHuidig = val;
+  saveData(); renderTable();
+}
+
+function editType(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const current = w.Type || guessType(w.Wijn) || "";
+  const input = prompt("Type: wit, rood, rosé, mousserend", current);
+  if (input === null) return;
+
+  const val = input.trim().toLowerCase();
+  let normalized = null;
+  if (val === "wit" || val === "white") normalized = "wit";
+  else if (val === "rood" || val === "red") normalized = "rood";
+  else if (val === "rose" || val === "rosé") normalized = "rose";
+  else if (val === "mousserend" || val === "bubbels" || val === "sparkling") normalized = "bubbels";
+
+  if (!normalized) { alert("Onbekend type."); return; }
+  w.Type = normalized;
+  saveData(); renderTable();
+}
+
+function autoFillDrinkWindow(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const suggestion = estimateDrinkWindowForWine(w);
+  if (!suggestion) { alert("Geen automatisch drinkvenster mogelijk (jaargang ontbreekt)."); return; }
+  if (w.Drinkvenster && !confirm("Overschrijven?\nHuidig: " + w.Drinkvenster + "\nNieuw: " + suggestion)) return;
+  w.Drinkvenster = suggestion;
+  saveData(); renderTable();
+}
+
+function autoFillAllDrinkWindows() {
+  let changed = 0;
+  wines.forEach(w => {
+    const current = w.Drinkvenster ? String(w.Drinkvenster).trim() : "";
+    if (!current) {
+      const suggestion = estimateDrinkWindowForWine(w);
+      if (suggestion) { w.Drinkvenster = suggestion; changed++; }
     }
-  </script>
+  });
+  saveData(); renderTable();
+  alert(changed > 0 ? (changed + " wijnen kregen een drinkvenster.") : "Geen wijnen zonder drinkvenster gevonden.");
+}
+
+function autoFillFoodpairing(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const suggestion = estimateFoodpairingForWine(w);
+  if (!suggestion) { alert("Geen automatische foodpairing beschikbaar."); return; }
+  if (w.Foodpairing && !confirm("Overschrijven?\nHuidig: " + w.Foodpairing + "\nNieuw: " + suggestion)) return;
+  w.Foodpairing = suggestion;
+  saveData(); renderTable();
+}
+
+function autoFillAllFoodpairings() {
+  let changed = 0;
+  wines.forEach(w => {
+    const current = w.Foodpairing ? String(w.Foodpairing).trim() : "";
+    if (!current) {
+      const suggestion = estimateFoodpairingForWine(w);
+      if (suggestion) { w.Foodpairing = suggestion; changed++; }
+    }
+  });
+  saveData(); renderTable();
+  alert(changed > 0 ? (changed + " wijnen kregen foodpairing.") : "Geen wijnen zonder foodpairing gevonden.");
+}
+
+function editWine(idx) {
+  const w = wines[idx];
+  if (!w) return;
+
+  const newName = prompt("Nieuwe naam (leeg = ongewijzigd):", w.Wijn || "");
+  if (newName === null) return;
+  if (newName.trim() !== "") w.Wijn = newName.trim();
+
+  const newYear = prompt("Nieuwe jaargang (leeg = ongewijzigd):", w.Jaargang != null ? String(w.Jaargang) : "");
+  if (newYear === null) return;
+  if (newYear.trim() !== "") {
+    const yr = parseInt(newYear.trim(), 10);
+    if (!isNaN(yr)) w.Jaargang = yr;
+  }
+
+  const newVak = prompt("Nieuw vak (leeg = ongewijzigd):", (w.Vak != null && !Number.isNaN(w.Vak)) ? String(w.Vak) : "");
+  if (newVak === null) return;
+  if (newVak.trim() !== "") {
+    const vakNum = parseInt(newVak.trim(), 10);
+    w.Vak = isNaN(vakNum) ? newVak.trim() : vakNum;
+  }
+
+  const newQty = prompt("Nieuw aantal (leeg = ongewijzigd):", w.Aantal != null ? String(w.Aantal) : "");
+  if (newQty === null) return;
+  if (newQty.trim() !== "") {
+    const q = parseInt(newQty.trim(), 10);
+    if (!isNaN(q) && q >= 0) w.Aantal = q;
+  }
+
+  const newDV = prompt("Nieuw drinkvenster (leeg = ongewijzigd):", w.Drinkvenster || "");
+  if (newDV === null) return;
+  if (newDV.trim() !== "") w.Drinkvenster = newDV.trim();
+
+  const newFP = prompt("Nieuwe foodpairing (leeg = ongewijzigd):", w.Foodpairing || "");
+  if (newFP === null) return;
+  if (newFP.trim() !== "") w.Foodpairing = newFP.trim();
+
+  const newNotes = prompt("Nieuwe notities (leeg = ongewijzigd):", w.Notities || "");
+  if (newNotes === null) return;
+  if (newNotes.trim() !== "") w.Notities = newNotes.trim();
+
+  if (!w.Type) w.Type = guessType(w.Wijn);
+
+  saveData(); fillVakFilter(); renderTable();
+}
+
+function deleteWine(idx) {
+  const w = wines[idx];
+  if (!w) return;
+  const ok = confirm("Ben je zeker dat je deze wijn volledig wilt verwijderen?\n\n" + (w.Wijn || "Onbekende wijn"));
+  if (!ok) return;
+  wines.splice(idx, 1);
+  saveData(); fillVakFilter(); renderTable();
+}
+
+/* =========================================================
+   Sommelier
+========================================================= */
+function setDishAndSuggest(text) {
+  const inp = document.getElementById("dishInput");
+  if (inp) inp.value = text;
+  suggestWine();
+}
+
+function suggestWine() {
+  const dish = String(document.getElementById("dishInput")?.value || "").toLowerCase();
+  const result = document.getElementById("sommelierResult");
+  if (!result) return;
+  result.innerHTML = "";
+
+  if (!dish) {
+    result.innerHTML = "<div class='sommelier-result'>Geef een gerecht in om advies te krijgen.</div>";
+    return;
+  }
+
+  let candidates = wines.filter(w => (w.Aantal || 0) > 0);
+
+  if (dish.includes("kip") || dish.includes("poulet") || dish.includes("gevogelte")) {
+    candidates = candidates.filter(w => guessType(w.Wijn) === "wit" || String(w.Foodpairing || "").toLowerCase().includes("kip"));
+  } else if (dish.includes("rund") || dish.includes("steak") || dish.includes("côte") || dish.includes("os")) {
+    candidates = candidates.filter(w => guessType(w.Wijn) === "rood");
+  } else if (dish.includes("vis") || dish.includes("zee") || dish.includes("oester") || dish.includes("scampi") || dish.includes("gamba")) {
+    candidates = candidates.filter(w => guessType(w.Wijn) === "wit" || guessType(w.Wijn) === "bubbels");
+  } else if (dish.includes("aperitief") || dish.includes("aperitif")) {
+    candidates = candidates.filter(w => guessType(w.Wijn) === "bubbels" || String(w.Foodpairing || "").toLowerCase().includes("aperitief"));
+  }
+
+  if (candidates.length === 0) candidates = wines.filter(w => (w.Aantal || 0) > 0);
+  if (candidates.length === 0) {
+    result.innerHTML = "<div class='sommelier-result'>Er zijn geen flessen meer in voorraad.</div>";
+    return;
+  }
+
+  const matchWine = candidates.find(w => isOnDrink(w.Drinkvenster)) || candidates[0];
+
+  const weetje = matchWine.Notities || "Geen extra notities, maar dit is een interessante fles uit je kelder.";
+  const drink = matchWine.Drinkvenster ? `Drinkvenster: ${matchWine.Drinkvenster}.` : "";
+  const serveer = matchWine.Serveertemperatuur ? `Serveer rond ${matchWine.Serveertemperatuur}.` : "";
+  const vakInfo = (matchWine.Vak != null && matchWine.Vak !== "") ? `De fles ligt in vak ${matchWine.Vak}.` : "Locatie: vak nog niet ingevuld.";
+  const lastDrunkText = matchWine.LastDrunk ? `Laatst gedronken op ${formatLastDrunk(matchWine.LastDrunk)}.` : "";
+
+  result.innerHTML = `
+    <div class="sommelier-result">
+      <strong>Advies:</strong> ${matchWine.Wijn} (jaargang ${matchWine.Jaargang || "n.v.t."})<br>
+      ${(matchWine.Vak != null && matchWine.Vak !== "") ? `<span class="tag">Vak ${matchWine.Vak}</span>` : `<span class="tag tag-danger">Geen vak</span>`}
+      <br><br>
+      <strong>Weetje:</strong> ${weetje}<br>
+      ${drink} ${serveer} ${lastDrunkText}<br><br>
+      <em>${vakInfo}</em>
+    </div>
+  `;
+}
+
+/* =========================================================
+   Add wine
+========================================================= */
+function addWine(event) {
+  event.preventDefault();
+
+  const vak = String(document.getElementById("addVak")?.value || "").trim();
+  const wijn = String(document.getElementById("addWijn")?.value || "").trim();
+  const jaargang = String(document.getElementById("addJaargang")?.value || "").trim();
+  const aantalVal = String(document.getElementById("addAantal")?.value || "").trim();
+  const aankoopPrijsVal = String(document.getElementById("addAankoopPrijs")?.value || "").trim();
+  const huidigePrijsVal = String(document.getElementById("addHuidigePrijs")?.value || "").trim();
+  const drink = String(document.getElementById("addDrinkvenster")?.value || "").trim();
+  const serveer = String(document.getElementById("addServeer")?.value || "").trim();
+  const food = String(document.getElementById("addFood")?.value || "").trim();
+  const notes = String(document.getElementById("addNotes")?.value || "").trim();
+  const typeVal = String(document.getElementById("addType")?.value || "");
+
+  if (!vak || !wijn) { alert("Vak en wijnnaam zijn verplicht."); return; }
+
+  const aantal = aantalVal ? parseInt(aantalVal, 10) : 1;
+  const aankoopPrijs = aankoopPrijsVal ? parseFloat(aankoopPrijsVal.replace(",", ".")) : null;
+  const huidigePrijs = huidigePrijsVal ? parseFloat(huidigePrijsVal.replace(",", ".")) : null;
+  const jaargangNum = jaargang ? parseInt(jaargang, 10) : null;
+
+  const autoDV = drink ? null : estimateDrinkWindowForWine({ Wijn: wijn, Jaargang: jaargangNum });
+  const autoFP = food ? null : estimateFoodpairingForWine({ Wijn: wijn });
+
+  const nextId = wines.length ? (Math.max(...wines.map(w => Number(w._id || 0))) + 1) : 1;
+
+  const newWine = {
+    Vak: parseInt(vak, 10),
+    Wijn: wijn,
+    Type: typeVal || guessType(wijn),
+    Jaargang: (!isNaN(jaargangNum) ? jaargangNum : null),
+    Aantal: (!isNaN(aantal) && aantal >= 0) ? aantal : 1,
+    PrijsAankoop: (!isNaN(aankoopPrijs) ? aankoopPrijs : null),
+    PrijsHuidig: (!isNaN(huidigePrijs) ? huidigePrijs : null),
+    Drinkvenster: drink || autoDV || null,
+    Serveertemperatuur: serveer || null,
+    Foodpairing: food || autoFP || null,
+    Notities: notes || null,
+    _id: nextId
+  };
+
+  wines.push(newWine);
+  saveData(); fillVakFilter(); renderTable();
+  clearAddForm();
+}
+
+function clearAddForm() {
+  const form = document.getElementById("addForm");
+  if (form) form.reset();
+  const a = document.getElementById("addAantal");
+  if (a) a.value = "1";
+}
+
+/* =========================================================
+   Reset all (terug naar baseWines)
+========================================================= */
+async function resetAll() {
+  if (!confirm("Alle lokale wijzigingen wissen en terug naar basislijst?")) return;
+  LEGACY_STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
+
+  // reset DB naar baseWines
+  const seeded = (baseWines || []).map((w, idx) => ({ ...w, _id: idx + 1 }));
+  wines = seeded;
+  await saveData();
+
+  fillVakFilter();
+  resetFilters();
+}
+
+/* =========================================================
+   Boot
+========================================================= */
+(async function boot() {
+  await initData();
+  fillVakFilter();
+  renderTable();
+})();
+
+/* Service worker register */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js")
+    .then(() => console.log("Service worker geregistreerd"))
+    .catch(err => console.error("SW error:", err));
+}
+</script>
+
 </body>
 </html>

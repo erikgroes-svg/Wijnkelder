@@ -680,6 +680,11 @@
   });
 })();
 </script>
+</script>
+
+<script>
+// Export / Import helpers + prijs-normalisatie
+
 function exportData() {
   const payload = {
     exportedAt: new Date().toISOString(),
@@ -703,40 +708,8 @@ function triggerImport() {
   document.getElementById("importFile").click();
 }
 
-async function importData(event) {
-  const file = event.target.files && event.target.files[0];
-  if (!file) return;
-
-  try {
-    const text = await file.text();
-    const parsed = JSON.parse(text);
-
-    const imported = Array.isArray(parsed) ? parsed : parsed.wines;
-    if (!Array.isArray(imported)) throw new Error("Ongeldig exportbestand (geen wines-array).");
-
-    // Normaliseer + zorg dat _id bestaat
-    const normalized = imported.map((w, idx) => ({
-      ...w,
-      _id: (w._id != null) ? w._id : (idx + 1),
-      Type: w.Type || guessType(w.Wijn),
-      Aantal: (w.Aantal == null || isNaN(w.Aantal)) ? 0 : w.Aantal
-      return normalizePrices(obj);
-    }));
-
-    wines = normalized;
-    await saveData();
-    fillVakFilter();
-    renderTable();
-
-    alert("Import gelukt. Data is nu bijgewerkt op dit toestel.");
-  } catch (e) {
-    alert("Import mislukt: " + (e && e.message ? e.message : String(e)));
-  } finally {
-    event.target.value = "";
-  }
-}
 function normalizePrices(w) {
-  // Al goed?
+  // Als reeds aanwezig: ok
   if (w.PrijsHuidig != null || w.PrijsAankoop != null) return w;
 
   // Veelvoorkomende alternatieve keys (oude versies / imports)
@@ -753,47 +726,54 @@ function normalizePrices(w) {
 
   const val = parseFloat(String(raw).replace(",", "."));
   if (!isNaN(val) && val >= 0) {
-    // Kies: als er maar 1 prijs is, zet die als aankoopprijs
+    // Als we slechts één prijs kennen: zet die als aankoopprijs
     w.PrijsAankoop = val;
   }
   return w;
 }
 
+async function importData(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+
+    const imported = Array.isArray(parsed) ? parsed : parsed.wines;
+    if (!Array.isArray(imported)) throw new Error("Ongeldig exportbestand (geen wines-array).");
+
+    // Normaliseer + zorg dat _id bestaat + prijzen normaliseren
+    const normalized = imported.map((w, idx) => {
+      const obj = {
+        ...w,
+        _id: (w._id != null) ? w._id : (idx + 1),
+        Type: w.Type || guessType(w.Wijn),
+        Aantal: (w.Aantal == null || isNaN(w.Aantal)) ? 0 : Number(w.Aantal)
+      };
+      return normalizePrices(obj);
+    });
+
+    wines = normalized;
+    await saveData();
+    fillVakFilter();
+    renderTable();
+
+    alert("Import gelukt. Data is nu bijgewerkt op dit toestel.");
+  } catch (e) {
+    alert("Import mislukt: " + (e && e.message ? e.message : String(e)));
+  } finally {
+    event.target.value = "";
+  }
+}
+</script>
+
 <script>
 // Basisdata (embedded)
 const baseWines = [
-  { Vak: 1, Wijn: "Elena Walch Vigna Castel Ringberg Sauvignon", Jaargang: 2022, Aantal: 1, Drinkvenster: "2025–2028", Notities: "Frisse Sauvignon; 1 fles onlangs geopend", Serveertemperatuur: "8–10°C", Foodpairing: "Geitenkaas, salades, asperges, lichte vis", Kwaliteitscheck: "OK" },
-  { Vak: 1, Wijn: "Les Grazilles languedoc", Jaargang: 2022, Aantal: 3, Drinkvenster: null, Notities: null, Serveertemperatuur: "14–16°C", Foodpairing: "BBQ, lam, kruidige stoofpotten", Kwaliteitscheck: "OK" },
-  { Vak: 1, Wijn: "Château Roquefort Les Roches Blanches Sauvignon", Jaargang: 2023, Aantal: 2, Drinkvenster: "2024–2026", Notities: "Fris, nu drinken", Serveertemperatuur: "8–10°C", Foodpairing: "Geitenkaas, salades, asperges, lichte vis", Kwaliteitscheck: "OK" },
-  { Vak: 1, Wijn: "Morella mezzogiorno", Jaargang: 2022, Aantal: 2, Drinkvenster: null, Notities: null, Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 1, Wijn: "Roter veltliner reserve", Jaargang: 2020, Aantal: 4, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Aziatische keuken, varkensvlees, tempura", Kwaliteitscheck: "OK" },
-  { Vak: 1, Wijn: "Kiemberger mitterberg sauvignon", Jaargang: 2019, Aantal: 1, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Geitenkaas, salades, asperges, lichte vis", Kwaliteitscheck: "OK" },
-  { Vak: 1, Wijn: "Kerschbaum chardonnay reserve", Jaargang: 2020, Aantal: 5, Drinkvenster: null, Notities: null, Serveertemperatuur: "10–12°C", Foodpairing: "Gevogelte, romige sauzen, rijke visgerechten", Kwaliteitscheck: "OK" },
-  { Vak: 1, Wijn: "Estate Argyros Assyrtiko", Jaargang: 2022, Aantal: 5, Drinkvenster: "2024–2030", Notities: "Mineraal/zilt; top bij zeevruchten", Serveertemperatuur: "9–11°C", Foodpairing: "Oesters, zeevruchten, gegrilde vis", Kwaliteitscheck: "OK" },
-  { Vak: 1, Wijn: "champagne yves jacope brut", Jaargang: null, Aantal: 1, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Aperitief, sushi, zeevruchten, lichte hapjes", Kwaliteitscheck: "JAARGANG ONTBREEKT" },
-  { Vak: null, Wijn: "champagne pierre gimonnet gastronome", Jaargang: 2018, Aantal: 2, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Aperitief, sushi, zeevruchten, lichte hapjes", Kwaliteitscheck: "OK" },
-  { Vak: 2, Wijn: "Girlan Trattmann Pinot Noir Riserva", Jaargang: 2021, Aantal: 1, Drinkvenster: "2024–2032", Notities: "Elegante Pinot Noir", Serveertemperatuur: "14–16°C", Foodpairing: "Eend, kalf, paddenstoelen, gegrilde groenten", Kwaliteitscheck: "OK" },
-  { Vak: 2, Wijn: "Girlan Trattmann Pinot Noir Riserva", Jaargang: 2018, Aantal: 2, Drinkvenster: "2023–2030", Notities: "Reeds mooi op dronk", Serveertemperatuur: "14–16°C", Foodpairing: "Eend, kalf, paddenstoelen, gegrilde groenten", Kwaliteitscheck: "OK" },
-  { Vak: 2, Wijn: "Girlan Flora Pinot Noir Riserva", Jaargang: 2021, Aantal: 10, Drinkvenster: "2024–2032", Notities: "Finesse, Bourgogne-stijl", Serveertemperatuur: "14–16°C", Foodpairing: "Eend, kalf, paddenstoelen, gegrilde groenten", Kwaliteitscheck: "OK" },
-  { Vak: 2, Wijn: "Weingut Tesch “Patriot” (Blaufränkisch)", Jaargang: 2017, Aantal: 5, Drinkvenster: "2023–2032", Notities: null, Serveertemperatuur: "14–16°C", Foodpairing: "Wild, stoofpotten, gerijpte kazen", Kwaliteitscheck: "OK" },
-  { Vak: 2, Wijn: "champagne autreau blanc de blancs brut", Jaargang: null, Aantal: 10, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Aperitief, sushi, zeevruchten, lichte hapjes", Kwaliteitscheck: "JAARGANG ONTBREEKT" },
-  { Vak: null, Wijn: "champagne de venoge", Jaargang: null, Aantal: 2, Drinkvenster: null, Notities: null, Serveertemperatuur: "8–10°C", Foodpairing: "Aperitief, sushi, zeevruchten, lichte hapjes", Kwaliteitscheck: "JAARGANG ONTBREEKT" },
-  { Vak: 3, Wijn: "Marion Teroldego", Jaargang: 2016, Aantal: 1, Drinkvenster: "2022–2030", Notities: "Krachtig rood", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 3, Wijn: "Fantini Edizione Cinque Autoctoni “22”", Jaargang: 2022, Aantal: 2, Drinkvenster: "2024–2034", Notities: "Zuid-Italië; iconische blend", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 3, Wijn: "Marion Calto", Jaargang: 2018, Aantal: 12, Drinkvenster: "2024–2032", Notities: "Vol en elegant", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 3, Wijn: "Brigaldara Amarone della Valpolicella “Cavolo”", Jaargang: 2017, Aantal: 7, Drinkvenster: "2025–2038", Notities: "Middellang bewaar", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 3, Wijn: "Lupo Meraviglia Tre di Tre Rosso", Jaargang: 2022, Aantal: 7, Drinkvenster: "2024–2028", Notities: "Drinkwijn", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 4, Wijn: "Brigaldara Amarone della Valpolicella “Case Vecie”", Jaargang: 2018, Aantal: 18, Drinkvenster: "2026–2040", Notities: "Topbewaar Amarone", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 4, Wijn: "Brigaldara Amarone della Valpolicella “Cavolo”", Jaargang: 2015, Aantal: 2, Drinkvenster: "2024–2035", Notities: "Op dronk", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 4, Wijn: "Dal Forno Romano Valpolicella Superiore Monte Lodoletta", Jaargang: 2018, Aantal: 6, Drinkvenster: "2028–2045", Notities: "Iconisch; lang bewaren", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 4, Wijn: "Biscardo Amarone della Valpolicella Classico", Jaargang: 2020, Aantal: 3, Drinkvenster: "2025–2033", Notities: "Middellang bewaar", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 4, Wijn: "Antiche Terre Venete Amarone “Baorna”", Jaargang: 2021, Aantal: 6, Drinkvenster: "2024–2032", Notities: "Toegankelijke Amarone", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 5, Wijn: "Flor de Pingus", Jaargang: 2021, Aantal: 12, Drinkvenster: "2025–2038", Notities: "Top Ribera del Duero", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 6, Wijn: "Barolo Monfalletto (Cordero di Montezemolo)", Jaargang: 2020, Aantal: 12, Drinkvenster: "2027–2042", Notities: "Lang bewaren", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 6, Wijn: "Cumot Nebbiolo d’Alba Superiore", Jaargang: 2015, Aantal: 4, Drinkvenster: "2023–2030", Notities: "Eerder drinkbaar", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 6, Wijn: "Rocche dei Manzoni “La Cresta” Barbera d’Alba", Jaargang: 2019, Aantal: 8, Drinkvenster: "2023–2031", Notities: "Drinkklaar", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" },
-  { Vak: 6, Wijn: "Cordero di Montezemolo Barbera d’Alba Superiore “Funtanì”", Jaargang: 2020, Aantal: 12, Drinkvenster: "2024–2032", Notities: "Soepel rood", Serveertemperatuur: "N.t.b.", Foodpairing: "N.t.b.", Kwaliteitscheck: "OK" }
+  ...
 ];
+</script>
 
 let wines = [];
 let currentView = "all";

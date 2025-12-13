@@ -734,6 +734,29 @@ async function importData(event) {
     event.target.value = "";
   }
 }
+function normalizePrices(w) {
+  // Al goed?
+  if (w.PrijsHuidig != null || w.PrijsAankoop != null) return w;
+
+  // Veelvoorkomende alternatieve keys (oude versies / imports)
+  const candidates = [
+    w.Prijs, w.prijs,
+    w.Aankoopprijs, w.aankoopprijs,
+    w.AankoopPrijs, w.aankoopPrijs,
+    w.PrijsPerFles, w.prijsPerFles,
+    w.price, w.Price
+  ];
+
+  const raw = candidates.find(v => v != null && String(v).trim() !== "");
+  if (raw == null) return w;
+
+  const val = parseFloat(String(raw).replace(",", "."));
+  if (!isNaN(val) && val >= 0) {
+    // Kies: als er maar 1 prijs is, zet die als aankoopprijs
+    w.PrijsAankoop = val;
+  }
+  return w;
+}
 
 <script>
 // Basisdata (embedded)

@@ -550,6 +550,14 @@
       <button type="button" class="btn-ghost" onclick="autoFillAllDrinkWindows()">Drinkvenster aanvullen</button>
       <button type="button" class="btn-ghost" onclick="autoFillAllFoodpairings()">Foodpairing aanvullen</button>
     </div>
+<div style="margin:8px 0 4px; display:flex; gap:8px; flex-wrap:wrap;">
+  <button type="button" class="btn-ghost" onclick="autoFillAllDrinkWindows()">Drinkvenster aanvullen</button>
+  <button type="button" class="btn-ghost" onclick="autoFillAllFoodpairings()">Foodpairing aanvullen</button>
+
+  <button type="button" class="btn-ghost" onclick="exportData()">Export (JSON)</button>
+  <button type="button" class="btn-ghost" onclick="triggerImport()">Import (JSON)</button>
+  <input id="importFile" type="file" accept="application/json" style="display:none" onchange="importData(event)" />
+</div>
 
     <div id="summaryBar" class="summary-bar"></div>
     <div id="wineCards" class="wine-cards"></div>
@@ -672,6 +680,60 @@
   });
 })();
 </script>
+function exportData() {
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    wines
+  };
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "wijnkelder-export.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+}
+
+function triggerImport() {
+  document.getElementById("importFile").click();
+}
+
+async function importData(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+
+    const imported = Array.isArray(parsed) ? parsed : parsed.wines;
+    if (!Array.isArray(imported)) throw new Error("Ongeldig exportbestand (geen wines-array).");
+
+    // Normaliseer + zorg dat _id bestaat
+    const normalized = imported.map((w, idx) => ({
+      ...w,
+      _id: (w._id != null) ? w._id : (idx + 1),
+      Type: w.Type || guessType(w.Wijn),
+      Aantal: (w.Aantal == null || isNaN(w.Aantal)) ? 0 : w.Aantal
+    }));
+
+    wines = normalized;
+    await saveData();
+    fillVakFilter();
+    renderTable();
+
+    alert("Import gelukt. Data is nu bijgewerkt op dit toestel.");
+  } catch (e) {
+    alert("Import mislukt: " + (e && e.message ? e.message : String(e)));
+  } finally {
+    event.target.value = "";
+  }
+}
 
 <script>
 // Basisdata (embedded)

@@ -1206,16 +1206,25 @@ function renderTable() {
       card.className = "wine-card";
 
       card.innerHTML = `
-        <div class="wine-top">
-          <div style="min-width:0;">
-            <div class="wine-title">${w.Wijn || ""}</div>
-            <div class="wine-meta">${typeLabel ? typeLabel + " · " : ""}${yearText} · ${vakText}</div>
-            <div class="wine-badges">
-              ${onDrink ? `<span class="chip-badge">Nu op dronk</span>` : ""}
-              ${voorraadBadge || ""}
-              ${(price == null || isNaN(price)) ? `<span class="tag">Geen prijs</span>` : ""}
-              ${(!w.Drinkvenster) ? `<span class="tag">Geen drinkvenster</span>` : ""}
-            </div>
+    <div class="wine-top">
+  ${w.Photo ? `
+    <img
+      src="${w.Photo}"
+      style="
+        width:64px;
+        height:96px;
+        object-fit:cover;
+        border-radius:10px;
+        border:1px solid rgba(0,0,0,.12);
+        margin-right:10px;
+        flex:0 0 auto;
+      "
+    />
+  ` : ""}
+
+  <div class="wine-left">
+    <div class="wine-title">${w.Wijn || ""}</div>
+
           </div>
 
           <div style="text-align:right; flex:0 0 auto;">

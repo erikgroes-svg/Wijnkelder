@@ -314,6 +314,115 @@
     margin-right: 8px;
   }
 }
+/* Mobile-first: cards i.p.v. tabel */
+.wine-cards { display: none; }
+
+   @media (max-width: 768px) {
+  .card .subtitle.small { display: none; }
+}
+
+@media (max-width: 768px) {
+  /* verberg de tabel volledig op mobiel */
+  #wineTable { display: none; }
+  .wine-cards { display: block; }
+
+  /* compacter header padding op mobiel */
+  header { padding: 12px 14px; }
+  header .subtitle-top { display:none; } /* scheelt veel hoogte */
+
+  .wine-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 14px;
+    margin: 10px 8px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .wine-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .wine-left { min-width: 0; }
+  .wine-title {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  .wine-meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .wine-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .wine-right { text-align: right; flex: 0 0 auto; }
+
+  .qty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+    padding: 0 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,.10);
+    background: #fff;
+    font-size: 16px;
+    font-weight: 800;
+  }
+
+  .actions-primary {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .btn-action {
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: 1px solid #d5d5dd;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  details.more-actions { margin-top: 10px; }
+  details.more-actions > summary {
+    list-style: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: 1px solid #d5d5dd;
+    background: #f2f2f7;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  details.more-actions > summary::-webkit-details-marker { display:none; }
+
+  .more-grid {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
 
     /* Error banner for debugging */
     #errorBanner {
@@ -332,6 +441,7 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.25);
       white-space: pre-wrap;
     }
+   
   </style>
 </head>
 <body>
@@ -389,6 +499,7 @@
     </div>
 
     <div id="summaryBar" class="summary-bar"></div>
+    <div id="wineCards" class="wine-cards"></div>
 
     <table id="wineTable">
       <thead>
@@ -814,6 +925,8 @@ function renderTable() {
   const tbody = document.querySelector("#wineTable tbody");
   if (!tbody) return;
   tbody.innerHTML = "";
+  const cards = document.getElementById("wineCards");
+  if (cards) cards.innerHTML = "";
 
   const search = (document.getElementById("searchInput").value || "").toLowerCase();
   const vak = document.getElementById("vakFilter").value;
@@ -926,6 +1039,58 @@ function renderTable() {
       </td>
     `;
     tbody.appendChild(tr);
+       // Mobile cards rendering (iPhone)
+    if (cards) {
+      const vakText = locationMissing ? "Geen vak" : `Vak ${w.Vak}`;
+      const yearText = w.Jaargang ? String(w.Jaargang) : "Jaargang n.v.t.";
+      const dvText = w.Drinkvenster ? `Drinkvenster: ${w.Drinkvenster}` : "Geen drinkvenster";
+      const priceInfo = (price != null && !isNaN(price)) ? `€ ${price.toFixed(2)}/fles` : "Geen prijs";
+
+      const card = document.createElement("div");
+      card.className = "wine-card";
+
+      card.innerHTML = `
+        <div class="wine-top">
+          <div class="wine-left">
+            <div class="wine-title">${w.Wijn || ""}</div>
+            <div class="wine-meta">${typeLabel ? typeLabel + " · " : ""}${yearText} · ${vakText}</div>
+            <div class="wine-badges">
+              ${onDrink ? `<span class="chip-badge">Nu op dronk</span>` : ""}
+              ${voorraadBadge || ""}
+              ${(price == null || isNaN(price)) ? `<span class="tag">Geen prijs</span>` : ""}
+              ${(!w.Drinkvenster) ? `<span class="tag">Geen drinkvenster</span>` : ""}
+            </div>
+          </div>
+
+          <div class="wine-right">
+            <div class="qty">${w.Aantal ?? 0}</div>
+          </div>
+        </div>
+
+        <div class="actions-primary">
+          <button class="btn-action" onclick="takeBottle(${idx})">Fles genomen</button>
+          <button class="btn-action" onclick="editLocation(${idx})">Locatie</button>
+
+          <details class="more-actions">
+            <summary>Meer…</summary>
+            <div class="more-grid">
+              <button class="btn-action" onclick="editPrice(${idx})">Prijs</button>
+              <button class="btn-action" onclick="autoFillDrinkWindow(${idx})">Auto DV</button>
+              <button class="btn-action" onclick="autoFillFoodpairing(${idx})">Auto FP</button>
+              <button class="btn-action" onclick="editType(${idx})">Type</button>
+              <button class="btn-action" onclick="editWine(${idx})">Bewerken</button>
+              <button class="btn-action" onclick="deleteWine(${idx})" style="border-color: rgba(209,39,39,.35); color: var(--danger);">Verwijderen</button>
+            </div>
+          </details>
+        </div>
+
+        <div class="small" style="margin-top:10px; color: var(--text-muted);">
+          ${dvText} · ${priceInfo}
+        </div>
+      `;
+
+      cards.appendChild(card);
+    }
   });
 
   updateSummary();

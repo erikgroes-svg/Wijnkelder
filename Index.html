@@ -281,6 +281,38 @@
   .wine-footer { margin-top: 10px; color: var(--text-muted); }
 }
 
+@media (max-width: 768px) {
+  .wine-card { padding: 12px; margin: 10px 10px; }
+  .wine-badges { margin-top: 8px; }
+  .actions-primary { margin-top: 10px; }
+}
+   @media (max-width: 768px) {
+  .btn-action {
+    padding: 10px 12px;
+    border-radius: 14px;         /* minder “pil” */
+    border: 1px solid rgba(0,0,0,.10);
+    background: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .btn-action.primary {
+    background: var(--accent);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 10px 22px rgba(15,98,254,0.22);
+  }
+
+  .btn-action.secondary {
+    background: #f2f2f7;
+  }
+
+  details.more-actions > summary {
+    border-radius: 14px;
+    background: #f2f2f7;
+  }
+}
+
     /* iPhone / small screens */
   @media (max-width: 768px) {
   table thead {
@@ -461,6 +493,8 @@
     </div>
   </div>
   <button class="btn-ghost" onclick="resetAll()">Reset lokale wijzigingen</button>
+  <button class="btn-action primary" onclick="takeBottle(${idx})">Fles genomen</button>
+  <button class="btn-action secondary" onclick="editLocation(${idx})">Locatie</button>
 </header>
 
 <div class="container">
